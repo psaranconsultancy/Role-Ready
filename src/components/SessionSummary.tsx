@@ -1,5 +1,5 @@
 import React from 'react';
-import { Award } from 'lucide-react';
+import { Award, RotateCcw } from 'lucide-react';
 import type { Question, Feedback } from '@contracts';
 import { getScoreBand } from './FeedbackPanel';
 
@@ -15,6 +15,12 @@ export const SessionSummary: React.FC<SessionSummaryProps> = ({
   answersByQuestionId,
 }) => {
   const band = getScoreBand(overallScore);
+
+  const weakestQuestion = [...questions].sort((a, b) => {
+    const scoreA = answersByQuestionId[a.id]?.overall ?? 100;
+    const scoreB = answersByQuestionId[b.id]?.overall ?? 100;
+    return scoreA - scoreB;
+  })[0];
 
   const scrollToQuestion = (position: number) => {
     const el = document.getElementById(`question-${position}`);
@@ -47,10 +53,24 @@ export const SessionSummary: React.FC<SessionSummaryProps> = ({
               All 6 questions answered and scored
             </h2>
             <p className="text-xs text-slate-600">
-              Click any question score below to jump to its detailed feedback or try again.
+              Click any question score below to jump to its detailed debrief or re-drill your lowest score.
             </p>
           </div>
         </div>
+
+        {weakestQuestion && (
+          <button
+            type="button"
+            onClick={() => scrollToQuestion(weakestQuestion.position)}
+            className="inline-flex items-center gap-1.5 self-start rounded-xl border border-indigo-200 bg-white px-3.5 py-2 text-xs font-semibold text-indigo-700 shadow-sm transition hover:bg-indigo-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-600 sm:self-center"
+          >
+            <RotateCcw className="h-3.5 w-3.5" aria-hidden="true" />
+            <span>
+              Re-drill Q{weakestQuestion.position} (
+              {answersByQuestionId[weakestQuestion.id]?.overall ?? 0}/100)
+            </span>
+          </button>
+        )}
       </div>
 
       {/* Per-question score row */}
@@ -89,4 +109,3 @@ export const SessionSummary: React.FC<SessionSummaryProps> = ({
     </section>
   );
 };
-

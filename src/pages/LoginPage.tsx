@@ -59,7 +59,7 @@ export const LoginPage: React.FC = () => {
             RoleReady
           </h1>
           <p className="mt-1.5 text-sm text-slate-600">
-            Practice 6 tailored interview questions grounded in your own resume and target job description.
+            AI interview practice that tells you exactly what to fix — grounded in your resume and target job description.
           </p>
         </div>
 
@@ -207,11 +207,17 @@ export const LoginPage: React.FC = () => {
               className="h-4 w-4 shrink-0 text-indigo-600"
               aria-hidden="true"
             />
-            <span>Instant 0–100 evidence-checked scoring + stronger rewrite</span>
+            <span>Scored like a hiring manager: 0–100 verdict, what to fix next, & stronger rewrite</span>
+          </li>
+          <li className="flex items-center gap-2">
+            <CheckCircle2
+              className="h-4 w-4 shrink-0 text-indigo-600"
+              aria-hidden="true"
+            />
+            <span>Automatic evidence check flags claims not backed by your resume</span>
           </li>
         </ul>
       </div>
     </div>
   );
 };
-

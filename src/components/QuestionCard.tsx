@@ -70,6 +70,10 @@ export const QuestionCard: React.FC<QuestionCardProps> = ({
   }, [existingFeedback]);
 
   const charCount = answerText.trim().length;
+  const wordCount = answerText
+    .trim()
+    .split(/\s+/)
+    .filter(Boolean).length;
   const isValidLength = charCount >= 20 && charCount <= 4000;
   const typeMeta = QUESTION_TYPE_STYLES[question.type] ?? {
     label: question.type,
@@ -194,21 +198,23 @@ export const QuestionCard: React.FC<QuestionCardProps> = ({
       {isEditing ? (
         <form onSubmit={handleSubmit} className="mt-4 space-y-3">
           <div>
-            <div className="mb-1.5 flex items-center justify-between">
+            <div className="mb-1.5 flex flex-wrap items-center justify-between gap-1">
               <label
                 htmlFor={textareaId}
                 className="text-xs font-semibold text-slate-700"
               >
-                Your Answer (STAR format recommended)
+                Your Answer (STAR format · 60+ words & concrete metrics recommended)
               </label>
               <span
                 className={`text-xs font-medium ${
                   charCount > 0 && (charCount < 20 || charCount > 4000)
                     ? 'text-amber-700'
-                    : 'text-slate-500'
+                    : wordCount >= 60
+                      ? 'text-emerald-700'
+                      : 'text-slate-500'
                 }`}
               >
-                {charCount} / 4,000 chars (min 20)
+                {wordCount} words · {charCount} / 4,000 chars (min 20)
               </span>
             </div>
 
@@ -233,7 +239,9 @@ export const QuestionCard: React.FC<QuestionCardProps> = ({
                 ? `${20 - charCount} more character${20 - charCount === 1 ? '' : 's'} needed to submit`
                 : charCount > 4000
                   ? `${charCount - 4000} characters over the 4,000 limit`
-                  : 'Ready to score against your resume evidence'}
+                  : wordCount < 60
+                    ? `Tip: Aim for 60+ words (${60 - wordCount} more) for full STAR structure points`
+                    : 'Strong length — ready to score against your resume evidence'}
             </p>
 
             <div className="flex items-center gap-2">
@@ -283,4 +291,3 @@ export const QuestionCard: React.FC<QuestionCardProps> = ({
     </section>
   );
 };
-
