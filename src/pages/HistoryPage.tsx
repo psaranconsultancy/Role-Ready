@@ -13,6 +13,7 @@ import { listSessions, toApiError } from '../lib/api';
 import { ErrorBanner } from '../components/ErrorBanner';
 import { getScoreBand } from '../components/FeedbackPanel';
 import { ScoreRing } from '../components/ScoreRing';
+import { AmbientHeroCanvas } from '../components/AmbientHeroCanvas';
 
 const STATUS_BADGE: Record<
   Session['status'],
@@ -115,16 +116,33 @@ export const HistoryPage: React.FC = () => {
       </div>
 
       <main className="mx-auto max-w-[1024px] space-y-6 px-4 pt-8 sm:px-6 sm:pt-10">
-        {/* Header */}
-        <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
-          <div>
-            <h1 className="font-display text-3xl font-bold tracking-tight text-[#1d1d1f] sm:text-4xl">
-              Your practice sessions
-            </h1>
-            <p className="mt-1 text-sm text-[#6e6e73]">
-              Reopen any completed session to review your scored answers or
-              continue where you left off.
-            </p>
+        {/* Studio Readiness Header Card with Ambient Motion */}
+        <div className="bento-card-dark relative overflow-hidden p-6 text-[#f5f5f7] sm:p-8">
+          <AmbientHeroCanvas
+            backdropImage="/assets/img/hero-candidate-focus.jpg"
+            videoOpacity={0.38}
+          />
+          <div className="relative z-10 flex flex-col justify-between gap-5 sm:flex-row sm:items-center">
+            <div className="max-w-xl">
+              <span className="inline-flex items-center gap-1.5 rounded-full border border-white/15 bg-white/[0.08] px-3 py-1 text-xs font-medium text-[#2997ff]">
+                <Sparkles className="h-3.5 w-3.5" aria-hidden="true" />
+                <span>Interview readiness studio</span>
+              </span>
+              <h1 className="mt-3 font-display text-3xl font-bold tracking-tight text-[#f5f5f7] sm:text-4xl">
+                Your practice sessions
+              </h1>
+              <p className="mt-1.5 text-sm leading-relaxed text-[#d2d2d7]">
+                Reopen any completed session to review your scored answers, or
+                start a fresh run to sharpen your delivery before the real room.
+              </p>
+            </div>
+            <Link
+              to="/new"
+              className="btn-pill-primary min-h-[44px] shrink-0 self-start px-6 py-2.5 text-sm font-semibold sm:self-auto"
+            >
+              <Plus className="h-4 w-4" aria-hidden="true" />
+              <span>Start new practice</span>
+            </Link>
           </div>
         </div>
 

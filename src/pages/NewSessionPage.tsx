@@ -193,7 +193,7 @@ export const NewSessionPage: React.FC = () => {
 
       <main className="mx-auto max-w-[820px] px-4 pt-8 sm:px-6 sm:pt-12">
         {/* Header & Sample Fill Action */}
-        <div className="mb-8 flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
+        <div className="mb-6 flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
           <div>
             <h2 className="font-display text-3xl font-bold tracking-tight text-[#1d1d1f] sm:text-4xl">
               Set up your interview
@@ -216,6 +216,32 @@ export const NewSessionPage: React.FC = () => {
             />
             <span>Fill sample resume &amp; JD</span>
           </button>
+        </div>
+
+        {/* Confidence Preparation Studio Banner */}
+        <div className="bento-card-light mb-8 grid overflow-hidden sm:grid-cols-12">
+          <div className="visual-media-frame min-h-[160px] rounded-none sm:col-span-5">
+            <img
+              src="/assets/img/feature-evidence-mapping.jpg"
+              alt="Prepared candidate reviewing resume lines and role requirements at a calm desk"
+              loading="eager"
+              decoding="async"
+              className="visual-media-img"
+            />
+          </div>
+          <div className="flex flex-col justify-center p-5 sm:col-span-7 sm:p-6">
+            <span className="inline-flex w-fit items-center gap-1.5 rounded-full bg-[#30d158]/15 px-2.5 py-0.5 text-xs font-semibold text-[#15803d]">
+              Built from your own experience
+            </span>
+            <p className="mt-2 font-display text-base font-bold text-[#1d1d1f]">
+              Every question comes from work you have already done
+            </p>
+            <p className="mt-1 text-xs leading-relaxed text-[#6e6e73]">
+              We match numbered lines from your PDF directly to the job
+              description so you can rehearse concrete examples before you step
+              into the interview.
+            </p>
+          </div>
         </div>
 
         {apiError && (

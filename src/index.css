@@ -240,6 +240,49 @@
   padding-bottom: calc(1rem + env(safe-area-inset-bottom, 0px));
 }
 
+/* Ambient Hero Moving Visuals & Editorial Media Frames */
+.hero-backdrop-photo {
+  filter: saturate(1.05) contrast(1.05);
+  transform: scale(1.02);
+}
+
+.hero-bg-video {
+  mix-blend-mode: screen;
+  filter: saturate(1.15) contrast(1.06);
+}
+
+.hero-vignette {
+  background-color: rgba(0, 0, 0, 0.35);
+}
+
+.visual-media-frame {
+  position: relative;
+  overflow: hidden;
+  border-radius: 18px;
+  background-color: #161617;
+}
+
+.visual-media-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.7s var(--ease-spring), filter 0.5s ease;
+}
+
+.bento-card-light:hover .visual-media-img,
+.bento-card-dark:hover .visual-media-img,
+.visual-media-frame:hover .visual-media-img {
+  transform: scale(1.035);
+}
+
+.visual-media-scrim {
+  position: absolute;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.22);
+  pointer-events: none;
+}
+
 /* Reduced motion accessibility */
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {

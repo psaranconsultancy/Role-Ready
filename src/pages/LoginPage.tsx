@@ -6,6 +6,7 @@ import { useAuth } from '../context/AuthContext';
 import { isMockMode, toApiError } from '../lib/api';
 import { ErrorBanner } from '../components/ErrorBanner';
 import { Logo } from '../components/Logo';
+import { AmbientHeroCanvas } from '../components/AmbientHeroCanvas';
 
 export const LoginPage: React.FC = () => {
   const { user, loading: authLoading, signIn, signUp, signInDemo } = useAuth();
@@ -62,8 +63,12 @@ export const LoginPage: React.FC = () => {
   return (
     <main className="flex min-h-[calc(100dvh-3rem)] flex-col justify-center bg-[#f5f5f7] px-4 py-10 sm:px-6 lg:py-16">
       <div className="mx-auto grid w-full max-w-[1024px] gap-8 lg:grid-cols-12 lg:items-center">
-        {/* Left Column: Studio Showcase */}
+        {/* Left Column: Studio Showcase with Ambient Motion + Confidence Visual */}
         <div className="bento-card-dark relative overflow-hidden p-7 text-[#f5f5f7] sm:p-10 lg:col-span-6">
+          <AmbientHeroCanvas
+            backdropImage="/assets/img/hero-candidate-focus.jpg"
+            videoOpacity={0.42}
+          />
           <div className="relative z-10">
             <Logo theme="dark" size="md" />
 
@@ -71,12 +76,29 @@ export const LoginPage: React.FC = () => {
               Practise every question with your own resume in view
             </h1>
 
-            <p className="mt-3 text-sm leading-relaxed text-[#a1a1a6] sm:text-base">
+            <p className="mt-3 text-sm leading-relaxed text-[#d2d2d7] sm:text-base">
               RoleReady pairs your PDF resume with the job description to write
               six targeted interview questions and score your answers.
             </p>
 
-            <ul className="mt-7 space-y-3.5 text-sm text-[#d2d2d7]">
+            <div className="visual-media-frame mt-6 h-44 w-full border border-white/15">
+              <img
+                src="/assets/img/feature-calm-interview.jpg"
+                alt="Confident candidate speaking with hiring leaders in a calm glass room"
+                loading="eager"
+                decoding="async"
+                className="visual-media-img"
+              />
+              <div className="visual-media-scrim" />
+              <div className="absolute bottom-3 left-3 right-3 flex items-center justify-between gap-2 rounded-xl bg-black/65 px-3 py-2 text-xs text-white backdrop-blur-md">
+                <span>Rehearse in private until your delivery feels natural</span>
+                <span className="shrink-0 font-semibold text-[#30d158]">
+                  6 questions
+                </span>
+              </div>
+            </div>
+
+            <ul className="mt-6 space-y-3 text-sm text-[#d2d2d7]">
               <li className="flex items-start gap-3">
                 <CheckCircle2
                   className="mt-0.5 h-4 w-4 shrink-0 text-[#30d158]"

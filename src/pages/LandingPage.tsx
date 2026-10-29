@@ -16,6 +16,7 @@ import { isMockMode } from '../lib/api';
 import { ScoreRing } from '../components/ScoreRing';
 import { ReferenceChip } from '../components/ReferenceChip';
 import { Logo } from '../components/Logo';
+import { AmbientHeroCanvas } from '../components/AmbientHeroCanvas';
 
 export const LandingPage: React.FC = () => {
   const { user, signInDemo } = useAuth();
@@ -82,11 +83,16 @@ export const LandingPage: React.FC = () => {
         </div>
       </div>
 
-      {/* 1. Flagship Dark Hero Showcase */}
+      {/* 1. Flagship Dark Hero Showcase with Ambient Video + 60fps Canvas */}
       <section className="relative overflow-hidden bg-black px-4 pb-20 pt-14 text-[#f5f5f7] sm:px-6 sm:pb-28 sm:pt-20">
+        <AmbientHeroCanvas
+          backdropImage="/assets/img/hero-boardroom.jpg"
+          videoOpacity={0.55}
+        />
+
         <div className="relative z-10 mx-auto max-w-[1080px]">
           <div className="mx-auto max-w-3xl text-center">
-            <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/[0.06] px-3.5 py-1 text-xs font-medium text-[#2997ff]">
+            <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/[0.08] px-3.5 py-1 text-xs font-medium text-[#2997ff]">
               <Sparkles className="h-3.5 w-3.5" aria-hidden="true" />
               <span>Interview practice built from your resume</span>
             </div>
@@ -95,7 +101,7 @@ export const LandingPage: React.FC = () => {
               Walk in knowing what they’ll ask
             </h1>
 
-            <p className="mx-auto mt-5 max-w-2xl text-[17px] leading-[1.45] text-[#86868b] sm:text-[21px]">
+            <p className="mx-auto mt-5 max-w-2xl text-[17px] leading-[1.45] text-[#d2d2d7] sm:text-[21px]">
               Upload your resume, paste the job description, and practise six
               questions built from both. Every question cites the exact line
               from your resume and the job requirement it tests, and every
@@ -134,7 +140,7 @@ export const LandingPage: React.FC = () => {
               )}
             </div>
 
-            <p className="mt-4 flex flex-wrap items-center justify-center gap-x-3 gap-y-1 text-xs text-[#86868b]">
+            <p className="mt-4 flex flex-wrap items-center justify-center gap-x-3 gap-y-1 text-xs text-[#a1a1a6]">
               <span className="inline-flex items-center gap-1">
                 <Lock className="h-3 w-3 text-[#30d158]" aria-hidden="true" />
                 Free to try, takes 10 minutes, and your resume stays private
@@ -142,15 +148,60 @@ export const LandingPage: React.FC = () => {
             </p>
           </div>
 
-          {/* Live Bento Product Preview */}
-          <div className="mt-12 sm:mt-16" data-ui="hero-preview">
-            <div className="mx-auto max-w-[960px] rounded-[28px] border border-white/15 bg-[#161617] p-5 sm:p-8">
+          {/* Editorial Candidate Confidence Banner + Live Bento Product Preview */}
+          <div className="mt-12 space-y-6 sm:mt-16" data-ui="hero-preview">
+            {/* Editorial Studio Confidence Visual */}
+            <div className="mx-auto max-w-[960px] overflow-hidden rounded-[28px] border border-white/15 bg-[#161617]">
+              <div className="grid lg:grid-cols-12">
+                <div className="visual-media-frame min-h-[240px] rounded-none lg:col-span-7 lg:min-h-[300px]">
+                  <img
+                    src="/assets/img/hero-candidate-focus.jpg"
+                    alt="Prepared candidate reviewing interview readiness scores in a calm evening studio"
+                    loading="eager"
+                    decoding="async"
+                    className="visual-media-img"
+                  />
+                  <div className="visual-media-scrim" />
+                  <div className="absolute bottom-4 left-4 right-4 flex items-center justify-between gap-3 rounded-2xl border border-white/15 bg-black/65 px-4 py-2.5 backdrop-blur-md">
+                    <div>
+                      <p className="text-xs font-semibold text-white">
+                        Quiet confidence comes from rehearsal
+                      </p>
+                      <p className="text-xs text-[#a1a1a6]">
+                        Practise your real projects until every metric and story
+                        flows naturally
+                      </p>
+                    </div>
+                    <span className="shrink-0 rounded-full bg-[#30d158]/20 px-2.5 py-1 text-xs font-semibold text-[#30d158]">
+                      Ready
+                    </span>
+                  </div>
+                </div>
+
+                <div className="flex flex-col justify-center p-6 sm:p-8 lg:col-span-5">
+                  <span className="inline-flex w-fit items-center gap-1.5 rounded-full bg-[#0071e3]/20 px-3 py-1 text-xs font-semibold text-[#2997ff]">
+                    Built for calm command
+                  </span>
+                  <h2 className="mt-3 font-display text-xl font-bold leading-snug text-[#f5f5f7] sm:text-2xl">
+                    You already did the work. We help you tell the story.
+                  </h2>
+                  <p className="mt-2.5 text-xs leading-relaxed text-[#a1a1a6] sm:text-sm">
+                    Interview nerves happen when you are guessing what the panel
+                    wants. Seeing your own resume lines mapped to their job
+                    description turns uncertainty into a clear, repeatable plan.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* Interactive Question + Scorecard Preview */}
+            <div className="mx-auto max-w-[960px] rounded-[28px] border border-white/15 bg-[#161617]/95 p-5 backdrop-blur-md sm:p-8">
               <div className="mb-5 flex flex-wrap items-center justify-between gap-3 border-b border-white/10 pb-4">
                 <div className="flex items-center gap-2.5">
                   <span className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-[#0071e3] text-xs font-bold tabular-nums text-white">
                     Q1
                   </span>
-                  <span className="text-xs font-medium text-[#86868b]">
+                  <span className="text-xs font-medium text-[#a1a1a6]">
                     Senior Product Analyst at FinFlow
                   </span>
                   <span className="rounded-full bg-[#0071e3]/20 px-2.5 py-0.5 text-xs font-medium text-[#2997ff]">
@@ -173,7 +224,7 @@ export const LandingPage: React.FC = () => {
 
                   {/* Interactive Citation Chips */}
                   <div className="flex flex-wrap items-center gap-2 rounded-2xl border border-white/10 bg-white/[0.04] p-3">
-                    <span className="text-xs font-medium text-[#86868b]">
+                    <span className="text-xs font-medium text-[#a1a1a6]">
                       Cites:
                     </span>
                     <ReferenceChip
@@ -189,7 +240,7 @@ export const LandingPage: React.FC = () => {
                   </div>
 
                   <div className="rounded-2xl border border-white/10 bg-black/50 p-4">
-                    <div className="mb-1.5 flex items-center justify-between text-xs font-medium text-[#86868b]">
+                    <div className="mb-1.5 flex items-center justify-between text-xs font-medium text-[#a1a1a6]">
                       <span>Candidate answer</span>
                       <span className="tabular-nums text-[#30d158]">
                         72 words
@@ -208,13 +259,13 @@ export const LandingPage: React.FC = () => {
                 <div className="flex flex-col justify-between gap-4 rounded-[22px] border border-white/10 bg-[#1c1c1e] p-5 lg:col-span-5">
                   <div className="flex items-center justify-between gap-4">
                     <div>
-                      <p className="text-xs font-medium text-[#86868b]">
+                      <p className="text-xs font-medium text-[#a1a1a6]">
                         Scorecard
                       </p>
                       <p className="mt-1 font-display text-lg font-bold text-[#f5f5f7]">
                         Strong · Clear business impact
                       </p>
-                      <p className="mt-0.5 text-xs text-[#86868b]">
+                      <p className="mt-0.5 text-xs text-[#a1a1a6]">
                         Backed by line R3 with zero unverified claims
                       </p>
                     </div>
@@ -223,13 +274,13 @@ export const LandingPage: React.FC = () => {
 
                   <div className="grid grid-cols-2 gap-2 border-t border-white/10 pt-3 text-xs">
                     <div className="rounded-xl bg-white/[0.04] px-3 py-2">
-                      <span className="text-[#86868b]">Relevance</span>
+                      <span className="text-[#a1a1a6]">Relevance</span>
                       <p className="font-semibold tabular-nums text-[#30d158]">
                         5 / 5
                       </p>
                     </div>
                     <div className="rounded-xl bg-white/[0.04] px-3 py-2">
-                      <span className="text-[#86868b]">Evidence</span>
+                      <span className="text-[#a1a1a6]">Evidence</span>
                       <p className="font-semibold tabular-nums text-[#30d158]">
                         4 / 5
                       </p>
@@ -250,7 +301,7 @@ export const LandingPage: React.FC = () => {
         </div>
       </section>
 
-      {/* 2. How It Works */}
+      {/* 2. How It Works with Editorial Photography Frames */}
       <section
         id="how-it-works"
         className="mx-auto max-w-[1080px] px-4 py-16 sm:px-6 sm:py-24"
@@ -266,7 +317,21 @@ export const LandingPage: React.FC = () => {
         </div>
 
         <div className="mt-12 grid gap-6 md:grid-cols-3">
-          <div className="bento-card-light p-7">
+          {/* Step 1 */}
+          <div className="bento-card-light flex flex-col overflow-hidden p-6 sm:p-7">
+            <div className="visual-media-frame mb-5 h-44 w-full">
+              <img
+                src="/assets/img/feature-evidence-mapping.jpg"
+                alt="Candidate reviewing resume lines mapped to role requirements at a sunlit desk"
+                loading="lazy"
+                decoding="async"
+                className="visual-media-img"
+              />
+              <div className="visual-media-scrim" />
+              <span className="absolute bottom-3 left-3 rounded-full bg-black/70 px-2.5 py-1 text-xs font-semibold text-white backdrop-blur-md">
+                Step 1 · Map your proof
+              </span>
+            </div>
             <div className="flex items-center justify-between">
               <span className="inline-flex h-10 w-10 items-center justify-center rounded-2xl bg-[#0071e3]/10 text-[#0071e3]">
                 <FileText className="h-5 w-5" aria-hidden="true" />
@@ -275,7 +340,7 @@ export const LandingPage: React.FC = () => {
                 1 of 3
               </span>
             </div>
-            <h3 className="mt-5 font-display text-xl font-bold text-[#1d1d1f]">
+            <h3 className="mt-4 font-display text-xl font-bold text-[#1d1d1f]">
               Upload resume and JD
             </h3>
             <p className="mt-2 text-sm leading-relaxed text-[#6e6e73]">
@@ -285,7 +350,21 @@ export const LandingPage: React.FC = () => {
             </p>
           </div>
 
-          <div className="bento-card-light p-7">
+          {/* Step 2 */}
+          <div className="bento-card-light flex flex-col overflow-hidden p-6 sm:p-7">
+            <div className="visual-media-frame mb-5 h-44 w-full">
+              <img
+                src="/assets/img/feature-calm-interview.jpg"
+                alt="Confident candidate speaking with two attentive hiring managers in a glass meeting room"
+                loading="lazy"
+                decoding="async"
+                className="visual-media-img"
+              />
+              <div className="visual-media-scrim" />
+              <span className="absolute bottom-3 left-3 rounded-full bg-black/70 px-2.5 py-1 text-xs font-semibold text-white backdrop-blur-md">
+                Step 2 · Rehearse real prompts
+              </span>
+            </div>
             <div className="flex items-center justify-between">
               <span className="inline-flex h-10 w-10 items-center justify-center rounded-2xl bg-[#0071e3]/10 text-[#0071e3]">
                 <Layers className="h-5 w-5" aria-hidden="true" />
@@ -294,7 +373,7 @@ export const LandingPage: React.FC = () => {
                 2 of 3
               </span>
             </div>
-            <h3 className="mt-5 font-display text-xl font-bold text-[#1d1d1f]">
+            <h3 className="mt-4 font-display text-xl font-bold text-[#1d1d1f]">
               Answer 6 tailored questions
             </h3>
             <p className="mt-2 text-sm leading-relaxed text-[#6e6e73]">
@@ -304,7 +383,21 @@ export const LandingPage: React.FC = () => {
             </p>
           </div>
 
-          <div className="bento-card-light p-7">
+          {/* Step 3 */}
+          <div className="bento-card-light flex flex-col overflow-hidden p-6 sm:p-7">
+            <div className="visual-media-frame mb-5 h-44 w-full">
+              <img
+                src="/assets/img/feature-ready-mindset.jpg"
+                alt="Accomplished candidate walking through a sunlit glass atrium with confidence"
+                loading="lazy"
+                decoding="async"
+                className="visual-media-img"
+              />
+              <div className="visual-media-scrim" />
+              <span className="absolute bottom-3 left-3 rounded-full bg-black/70 px-2.5 py-1 text-xs font-semibold text-white backdrop-blur-md">
+                Step 3 · Walk in ready
+              </span>
+            </div>
             <div className="flex items-center justify-between">
               <span className="inline-flex h-10 w-10 items-center justify-center rounded-2xl bg-[#30d158]/15 text-[#15803d]">
                 <RotateCcw className="h-5 w-5" aria-hidden="true" />
@@ -313,7 +406,7 @@ export const LandingPage: React.FC = () => {
                 3 of 3
               </span>
             </div>
-            <h3 className="mt-5 font-display text-xl font-bold text-[#1d1d1f]">
+            <h3 className="mt-4 font-display text-xl font-bold text-[#1d1d1f]">
               Get scored, fix, re-drill
             </h3>
             <p className="mt-2 text-sm leading-relaxed text-[#6e6e73]">
@@ -421,13 +514,17 @@ export const LandingPage: React.FC = () => {
         </div>
       </section>
 
-      {/* 4. Closing Dark Flagship CTA Band */}
-      <section className="bg-black px-4 py-16 text-center text-[#f5f5f7] sm:px-6 sm:py-24">
-        <div className="mx-auto max-w-2xl">
+      {/* 4. Closing Dark Flagship CTA Band with Ambient Canvas */}
+      <section className="relative overflow-hidden bg-black px-4 py-16 text-center text-[#f5f5f7] sm:px-6 sm:py-24">
+        <AmbientHeroCanvas
+          backdropImage="/assets/img/feature-ready-mindset.jpg"
+          videoOpacity={0.42}
+        />
+        <div className="relative z-10 mx-auto max-w-2xl">
           <h2 className="font-display text-3xl font-bold tracking-tight text-[#f5f5f7] sm:text-5xl">
             Your next interview is a practice run away
           </h2>
-          <p className="mt-4 text-base text-[#86868b] sm:text-lg">
+          <p className="mt-4 text-base text-[#d2d2d7] sm:text-lg">
             Open a sample session right now or upload your own PDF resume in
             seconds.
           </p>
