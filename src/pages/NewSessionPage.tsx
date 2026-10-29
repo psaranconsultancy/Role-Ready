@@ -9,6 +9,8 @@ import {
   X,
   ArrowLeft,
   ArrowRight,
+  Link2,
+  Plus,
 } from 'lucide-react';
 import type { ApiError } from '@contracts';
 import {
@@ -17,6 +19,12 @@ import {
   generateQuestions,
   toApiError,
 } from '../lib/api';
+import {
+  useSubscriptionTier,
+  INDUSTRY_OPTIONS,
+  DEPARTMENT_OPTIONS,
+  SENIORITY_OPTIONS,
+} from '../lib/tiers';
 import {
   SAMPLE_ROLE_TITLE,
   SAMPLE_COMPANY,
@@ -29,12 +37,15 @@ type GenerationStage = 'idle' | 'parsing' | 'generating';
 export const NewSessionPage: React.FC = () => {
   const navigate = useNavigate();
   const fileInputRef = useRef<HTMLInputElement | null>(null);
+  const extraContextFileRef = useRef<HTMLInputElement | null>(null);
+  const { grillContext, updateGrillContext } = useSubscriptionTier();
 
   const [file, setFile] = useState<File | null>(null);
   const [dragOver, setDragOver] = useState(false);
   const [roleTitle, setRoleTitle] = useState('');
   const [company, setCompany] = useState('');
   const [jdText, setJdText] = useState('');
+  const [newContextLink, setNewContextLink] = useState('');
 
   const [fileError, setFileError] = useState<string | null>(null);
   const [jdError, setJdError] = useState<string | null>(null);
@@ -538,6 +549,266 @@ export const NewSessionPage: React.FC = () => {
                 {jdError}
               </p>
             )}
+          </section>
+
+          {/* 4. Deep Context: Industry, Department, C-Suite Level, Uploads & Links */}
+          <section
+            data-ui="deep-context-card"
+            className="bento-card-light p-6 sm:p-8"
+          >
+            <div className="flex flex-wrap items-center justify-between gap-2">
+              <h3 className="font-display text-lg font-bold text-[#1d1d1f]">
+                4. Niche role context, uploads &amp; links{' '}
+                <span className="font-sans text-xs font-normal text-[#86868b]">
+                  (powers Grill Me™ deep-dive questioning)
+                </span>
+              </h3>
+              <span className="rounded-full bg-[#0071e3]/10 px-3 py-0.5 text-xs font-semibold text-[#0071e3]">
+                IC to C-Suite calibration
+              </span>
+            </div>
+            <p className="mt-1 text-xs text-[#6e6e73]">
+              Specify your industry, department, and seniority level, or attach
+              board decks, case studies, and company URLs so your follow-up
+              grilling matches the exact niche of the role.
+            </p>
+
+            <div className="mt-4 grid gap-4 sm:grid-cols-3">
+              <div>
+                <label
+                  htmlFor="new-industry-select"
+                  className="block text-xs font-semibold text-[#1d1d1f]"
+                >
+                  Industry
+                </label>
+                <select
+                  id="new-industry-select"
+                  disabled={isBusy}
+                  value={grillContext.industry}
+                  onChange={(e) =>
+                    updateGrillContext({
+                      ...grillContext,
+                      industry: e.target.value,
+                    })
+                  }
+                  className="mt-1.5 block min-h-[44px] w-full rounded-2xl border border-black/15 bg-[#f5f5f7]/60 px-3.5 py-2 text-sm text-[#1d1d1f] focus:border-[#0071e3] focus:bg-white focus:outline-none"
+                >
+                  {INDUSTRY_OPTIONS.map((opt) => (
+                    <option key={opt} value={opt}>
+                      {opt}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div>
+                <label
+                  htmlFor="new-dept-select"
+                  className="block text-xs font-semibold text-[#1d1d1f]"
+                >
+                  Department
+                </label>
+                <select
+                  id="new-dept-select"
+                  disabled={isBusy}
+                  value={grillContext.department}
+                  onChange={(e) =>
+                    updateGrillContext({
+                      ...grillContext,
+                      department: e.target.value,
+                    })
+                  }
+                  className="mt-1.5 block min-h-[44px] w-full rounded-2xl border border-black/15 bg-[#f5f5f7]/60 px-3.5 py-2 text-sm text-[#1d1d1f] focus:border-[#0071e3] focus:bg-white focus:outline-none"
+                >
+                  {DEPARTMENT_OPTIONS.map((opt) => (
+                    <option key={opt} value={opt}>
+                      {opt}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div>
+                <label
+                  htmlFor="new-seniority-select"
+                  className="block text-xs font-semibold text-[#1d1d1f]"
+                >
+                  Level (up to C-Suite)
+                </label>
+                <select
+                  id="new-seniority-select"
+                  disabled={isBusy}
+                  value={grillContext.seniority}
+                  onChange={(e) =>
+                    updateGrillContext({
+                      ...grillContext,
+                      seniority: e.target.value,
+                    })
+                  }
+                  className="mt-1.5 block min-h-[44px] w-full rounded-2xl border border-black/15 bg-[#f5f5f7]/60 px-3.5 py-2 text-sm text-[#1d1d1f] focus:border-[#0071e3] focus:bg-white focus:outline-none"
+                >
+                  {SENIORITY_OPTIONS.map((opt) => (
+                    <option key={opt} value={opt}>
+                      {opt}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </div>
+
+            <div className="mt-4">
+              <label
+                htmlFor="new-niche-focus"
+                className="block text-xs font-semibold text-[#1d1d1f]"
+              >
+                Niche focus or board mandate
+              </label>
+              <input
+                id="new-niche-focus"
+                type="text"
+                disabled={isBusy}
+                value={grillContext.nicheFocus}
+                onChange={(e) =>
+                  updateGrillContext({
+                    ...grillContext,
+                    nicheFocus: e.target.value,
+                  })
+                }
+                placeholder="e.g. B2B payment orchestration, Series C GTM expansion, AI infrastructure latency…"
+                className="mt-1.5 block min-h-[44px] w-full rounded-2xl border border-black/15 bg-[#f5f5f7]/60 px-4 py-2.5 text-base text-[#1d1d1f] placeholder:text-[#86868b] focus:border-[#0071e3] focus:bg-white focus:outline-none"
+              />
+            </div>
+
+            <div className="mt-4 grid gap-4 sm:grid-cols-2">
+              {/* Supplemental File Uploads */}
+              <div className="rounded-2xl border border-black/10 bg-[#f5f5f7]/70 p-4">
+                <div className="flex items-center justify-between gap-2">
+                  <span className="text-xs font-semibold text-[#1d1d1f]">
+                    Supplemental files (Decks, RFCs, 10-K)
+                  </span>
+                  <input
+                    ref={extraContextFileRef}
+                    type="file"
+                    accept=".pdf,.doc,.docx,.txt,.md"
+                    onChange={(e) => {
+                      const f = e.target.files?.[0];
+                      if (
+                        f &&
+                        !grillContext.uploadedFiles.includes(f.name)
+                      ) {
+                        updateGrillContext({
+                          ...grillContext,
+                          uploadedFiles: [
+                            ...grillContext.uploadedFiles,
+                            f.name,
+                          ],
+                        });
+                      }
+                      e.target.value = '';
+                    }}
+                    className="sr-only"
+                  />
+                  <button
+                    type="button"
+                    disabled={isBusy}
+                    onClick={() => extraContextFileRef.current?.click()}
+                    className="inline-flex items-center gap-1 rounded-full bg-[#0071e3]/10 px-3 py-1 text-xs font-semibold text-[#0071e3] hover:bg-[#0071e3]/20"
+                  >
+                    <Plus className="h-3 w-3" aria-hidden="true" />
+                    <span>Add file</span>
+                  </button>
+                </div>
+                <div className="mt-2.5 flex flex-wrap gap-1.5">
+                  {grillContext.uploadedFiles.map((fileName) => (
+                    <span
+                      key={fileName}
+                      className="inline-flex items-center gap-1.5 rounded-full border border-black/10 bg-white px-2.5 py-1 text-xs text-[#1d1d1f]"
+                    >
+                      <span className="max-w-[180px] truncate">{fileName}</span>
+                      <button
+                        type="button"
+                        onClick={() =>
+                          updateGrillContext({
+                            ...grillContext,
+                            uploadedFiles: grillContext.uploadedFiles.filter(
+                              (f) => f !== fileName
+                            ),
+                          })
+                        }
+                        aria-label={`Remove ${fileName}`}
+                        className="text-[#86868b] hover:text-[#1d1d1f]"
+                      >
+                        <X className="h-3 w-3" aria-hidden="true" />
+                      </button>
+                    </span>
+                  ))}
+                </div>
+              </div>
+
+              {/* Shared Context Links */}
+              <div className="rounded-2xl border border-black/10 bg-[#f5f5f7]/70 p-4">
+                <span className="flex items-center gap-1.5 text-xs font-semibold text-[#1d1d1f]">
+                  <Link2 className="h-3.5 w-3.5 text-[#0071e3]" aria-hidden="true" />
+                  <span>Shared links (Company URLs, Memos, Profiles)</span>
+                </span>
+                <div className="mt-2 flex gap-1.5">
+                  <input
+                    type="url"
+                    aria-label="Add context link URL"
+                    disabled={isBusy}
+                    value={newContextLink}
+                    onChange={(e) => setNewContextLink(e.target.value)}
+                    placeholder="https://company.com/strategy-memo"
+                    className="min-h-[36px] flex-1 rounded-xl border border-black/15 bg-white px-3 py-1 text-xs text-[#1d1d1f] placeholder:text-[#86868b] focus:border-[#0071e3] focus:outline-none"
+                  />
+                  <button
+                    type="button"
+                    disabled={isBusy}
+                    onClick={() => {
+                      const trimmed = newContextLink.trim();
+                      if (
+                        trimmed &&
+                        !grillContext.sharedLinks.includes(trimmed)
+                      ) {
+                        updateGrillContext({
+                          ...grillContext,
+                          sharedLinks: [...grillContext.sharedLinks, trimmed],
+                        });
+                        setNewContextLink('');
+                      }
+                    }}
+                    className="rounded-xl bg-[#0071e3] px-3 py-1 text-xs font-semibold text-white hover:bg-[#0077ed]"
+                  >
+                    Add
+                  </button>
+                </div>
+                <div className="mt-2 flex flex-wrap gap-1.5">
+                  {grillContext.sharedLinks.map((url) => (
+                    <span
+                      key={url}
+                      className="inline-flex items-center gap-1.5 rounded-full border border-black/10 bg-white px-2.5 py-1 text-xs text-[#0071e3]"
+                    >
+                      <span className="max-w-[180px] truncate">{url}</span>
+                      <button
+                        type="button"
+                        onClick={() =>
+                          updateGrillContext({
+                            ...grillContext,
+                            sharedLinks: grillContext.sharedLinks.filter(
+                              (l) => l !== url
+                            ),
+                          })
+                        }
+                        aria-label={`Remove ${url}`}
+                        className="text-[#86868b] hover:text-[#1d1d1f]"
+                      >
+                        <X className="h-3 w-3" aria-hidden="true" />
+                      </button>
+                    </span>
+                  ))}
+                </div>
+              </div>
+            </div>
           </section>
 
           {/* Submit Action Bar */}

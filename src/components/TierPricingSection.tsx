@@ -85,29 +85,29 @@ export const TierPricingSection: React.FC<TierPricingSectionProps> = ({
       <div className="mt-8 grid gap-4 rounded-[24px] border border-black/10 bg-white p-5 sm:grid-cols-3 sm:p-6">
         <div className="rounded-2xl bg-[#f5f5f7] p-4">
           <p className="font-display text-sm font-bold text-[#1d1d1f]">
-            1. Decision-tree questioning
+            1. Niche C-Suite context, uploads &amp; links
           </p>
           <p className="mt-1 text-xs leading-relaxed text-[#6e6e73]">
-            Walks through every branch of your answer (ownership, trade-offs,
-            counterfactuals, and failure modes) until no weak spots remain.
+            Upload board decks, 10-Ks, or case studies, share company links, and
+            set your exact industry, department, and level up to C-Suite.
           </p>
         </div>
         <div className="rounded-2xl bg-[#f5f5f7] p-4">
           <p className="font-display text-sm font-bold text-[#1d1d1f]">
-            2. Automatic resume cross-check
+            2. AI Voice Interviewer &amp; Roast Heat Dial
           </p>
           <p className="mt-1 text-xs leading-relaxed text-[#6e6e73]">
-            Automatically cross-examines your parsed resume lines and the job
-            description in context, cutting out generic filler questions.
+            Choose a Male or Female AI voice interviewer and turn the Heat Dial
+            up to Executive Roast or down to Warm Rehearsal as you practise.
           </p>
         </div>
         <div className="rounded-2xl bg-[#f5f5f7] p-4">
           <p className="font-display text-sm font-bold text-[#1d1d1f]">
-            3. Built for final-round panels
+            3. Timing &amp; calm-under-pressure telemetry
           </p>
           <p className="mt-1 text-xs leading-relaxed text-[#6e6e73]">
-            Designed for bar-raiser loops, executive panels, and salary
-            negotiations where pre-interview stress-testing secures the offer.
+            Scores your response latency, speaking pace (WPM), filler-word
+            discipline, and vocal composure under a live countdown clock.
           </p>
         </div>
       </div>
