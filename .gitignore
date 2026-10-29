@@ -6,6 +6,8 @@ node_modules
 # Build
 dist
 dist-ssr
+.vite
+*.tsbuildinfo
 *.local
 
 # Environment variables
@@ -23,4 +25,3 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
-
