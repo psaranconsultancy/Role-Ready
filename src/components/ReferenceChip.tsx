@@ -1,8 +1,8 @@
 import React, { useState, useId } from 'react';
-import { FileText, Target } from 'lucide-react';
+import { FileText, Briefcase } from 'lucide-react';
 
 interface ReferenceChipProps {
-  id: string; // e.g. "R4" or "J2"
+  id: string;
   text: string;
   kind: 'resume' | 'jd';
 }
@@ -16,50 +16,51 @@ export const ReferenceChip: React.FC<ReferenceChipProps> = ({
   const tooltipId = useId();
 
   const isResume = kind === 'resume';
-  const badgeClasses = isResume
-    ? 'border-[#1d5fbf]/35 bg-[#1d5fbf]/10 text-[#1d5fbf] hover:bg-[#1d5fbf]/15'
-    : 'border-[#cfd5de] bg-[#eaecef] text-[#383c42] hover:bg-[#dfe3e8]';
-
-  const labelPrefix = isResume ? 'Resume line' : 'JD requirement';
 
   return (
-    <div
-      className="relative inline-block"
-      onMouseEnter={() => setOpen(true)}
-      onMouseLeave={() => setOpen(false)}
-    >
+    <span className="relative inline-block">
       <button
         type="button"
         aria-describedby={open ? tooltipId : undefined}
+        onMouseEnter={() => setOpen(true)}
+        onMouseLeave={() => setOpen(false)}
         onFocus={() => setOpen(true)}
         onBlur={() => setOpen(false)}
         onClick={() => setOpen((prev) => !prev)}
-        className={`inline-flex min-h-[26px] items-center gap-1 rounded-[4px] border px-2 py-0.5 font-mono text-xs font-medium transition focus:outline-none focus-visible:ring-2 focus-visible:ring-[#0a0a0a] ${badgeClasses}`}
+        className={`inline-flex min-h-[28px] items-center gap-1.5 rounded-full border px-2.5 py-0.5 font-mono text-xs font-semibold transition ${
+          isResume
+            ? 'border-[#0071e3]/25 bg-[#0071e3]/10 text-[#0071e3] hover:border-[#0071e3]/50 hover:bg-[#0071e3]/15'
+            : 'border-black/15 bg-black/[0.04] text-[#1d1d1f] hover:border-black/30 hover:bg-black/[0.08]'
+        }`}
       >
         {isResume ? (
           <FileText className="h-3 w-3 shrink-0" aria-hidden="true" />
         ) : (
-          <Target className="h-3 w-3 shrink-0" aria-hidden="true" />
+          <Briefcase className="h-3 w-3 shrink-0" aria-hidden="true" />
         )}
         <span>{id}</span>
         <span className="sr-only">
-          ({labelPrefix}: {text})
+          ({isResume ? 'Resume line' : 'Job requirement'}: {text})
         </span>
       </button>
 
       {open && (
-        <div
+        <span
           id={tooltipId}
           role="tooltip"
-          className="absolute bottom-full left-0 z-20 mb-2 w-64 sm:w-80 rounded-[8px] border border-[#2e2e2e] bg-[#141414] p-3 text-left text-xs leading-relaxed text-[#ffffff]"
+          className=" frosted-globalnav-dark pointer-events-none absolute bottom-full left-0 z-50 mb-2 w-72 max-w-[85vw] rounded-[16px] border border-white/15 bg-[#161617]/95 p-3.5 text-left text-xs leading-relaxed text-[#f5f5f7] shadow-2xl sm:w-80"
         >
-          <div className="mb-1 flex items-center gap-1.5 font-medium text-[#b4b4b4]">
-            <span>{labelPrefix}</span>
-            <span className="font-mono text-[#ffffff]">{id}</span>
-          </div>
-          <p className="text-[#f2f4f7]">{text}</p>
-        </div>
+          <span className="mb-1 flex items-center justify-between gap-2 font-mono text-[10px] font-semibold uppercase tracking-wider text-[#86868b]">
+            <span className={isResume ? 'text-[#2997ff]' : 'text-[#30d158]'}>
+              {isResume ? `Resume Evidence · ${id}` : `Role Requirement · ${id}`}
+            </span>
+            <span>Verbatim</span>
+          </span>
+          <span className="block font-sans text-[12.5px] font-normal leading-snug text-[#f5f5f7]">
+            “{text}”
+          </span>
+        </span>
       )}
-    </div>
+    </span>
   );
 };

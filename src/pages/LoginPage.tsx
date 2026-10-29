@@ -1,256 +1,315 @@
 import React, { useState } from 'react';
-import { Navigate, useNavigate } from 'react-router-dom';
-import { Loader2, ArrowRight } from 'lucide-react';
+import { Navigate, Link, useNavigate } from 'react-router-dom';
+import { Loader2, Sparkles, ArrowRight, Lock, CheckCircle2 } from 'lucide-react';
 import type { ApiError } from '@contracts';
 import { useAuth } from '../context/AuthContext';
-import { toApiError } from '../lib/api';
+import { isMockMode, toApiError } from '../lib/api';
 import { ErrorBanner } from '../components/ErrorBanner';
+import { Logo } from '../components/Logo';
 
 export const LoginPage: React.FC = () => {
-  const { user, signIn, signUp } = useAuth();
+  const { user, loading: authLoading, signIn, signUp, signInDemo } = useAuth();
   const navigate = useNavigate();
 
   const [mode, setMode] = useState<'signin' | 'signup'>('signin');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState('alex.rivera@example.com');
+  const [password, setPassword] = useState('interview2025');
   const [submitting, setSubmitting] = useState(false);
+  const [demoLoading, setDemoLoading] = useState(false);
   const [error, setError] = useState<ApiError | null>(null);
 
-  if (user) {
+  if (!authLoading && user) {
     return <Navigate to="/history" replace />;
   }
 
-  const handleSubmit = async (e?: React.FormEvent) => {
-    if (e) e.preventDefault();
-    if (submitting) return;
-
-    setSubmitting(true);
+  const runAuthAction = async () => {
     setError(null);
+    setSubmitting(true);
     try {
       if (mode === 'signin') {
         await signIn(email, password);
       } else {
         await signUp(email, password);
       }
-      navigate('/history', { replace: true });
+      navigate('/history');
     } catch (err) {
-      setError(
-        toApiError(
-          err,
-          'unauthorized',
-          mode === 'signin'
-            ? 'Could not sign in with those credentials.'
-            : 'Could not create your account.'
-        )
-      );
+      setError(toApiError(err, 'unauthorized'));
     } finally {
       setSubmitting(false);
     }
   };
 
+  const handleDemoSignIn = async () => {
+    setError(null);
+    setDemoLoading(true);
+    try {
+      await signInDemo();
+      navigate('/history');
+    } catch (err) {
+      setError(toApiError(err, 'bad_request'));
+    } finally {
+      setDemoLoading(false);
+    }
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    await runAuthAction();
+  };
+
+  const mockActive = isMockMode();
+
   return (
-    <div className="flex min-h-screen flex-col justify-center bg-[#f2f4f7] px-4 py-10 sm:px-6 lg:px-8">
-      <div className="mx-auto grid w-full max-w-4xl grid-cols-1 gap-8 lg:grid-cols-12 lg:items-center">
-        {/* Left column: Product identity + real interface preview */}
-        <div className="lg:col-span-7 space-y-5">
-          <div className="flex items-center gap-2.5">
-            <svg
-              width="28"
-              height="28"
-              viewBox="0 0 24 24"
-              fill="none"
-              aria-hidden="true"
-              className="shrink-0"
-            >
-              <rect x="1" y="1" width="22" height="22" rx="5" fill="#141414" />
-              <path
-                d="M7.5 16.5V7.5H12.2C13.9 7.5 15 8.4 15 9.9C15 11.1 14.2 11.9 13 12.2L15.3 16.5H13.3L11.2 12.4H9.3V16.5H7.5ZM9.3 10.9H12C12.8 10.9 13.2 10.5 13.2 9.9C13.2 9.3 12.8 8.9 12 8.9H9.3V10.9Z"
-                fill="#ffffff"
-              />
-              <circle cx="17.5" cy="7.5" r="2" fill="#1d5fbf" />
-            </svg>
-            <span className="text-lg font-semibold tracking-tight text-[#0a0a0a]">
-              RoleReady
-            </span>
-          </div>
-
-          <h1 className="text-[22px] font-semibold leading-tight tracking-tight text-[#0a0a0a] sm:text-[24px]">
-            Resume-grounded interview practice
-          </h1>
-
-          <p className="text-sm leading-relaxed text-[#5a6069]">
-            Upload your resume PDF and paste the job posting. RoleReady numbers your resume achievements (R1..Rn), extracts the role requirements (J1..Jn), and grades each typed answer against the evidence you actually have.
-          </p>
-
-          {/* Real interface specimen (data-ui) showing the R/J citation ledger */}
+    <main className="flex min-h-[calc(100dvh-3rem)] flex-col justify-center bg-[#f5f5f7] px-4 py-10 sm:px-6 lg:py-16">
+      <div className="mx-auto grid w-full max-w-[1024px] gap-8 lg:grid-cols-12 lg:items-center">
+        {/* Left Column: Studio Showcase */}
+        <div className="bento-card-dark relative overflow-hidden p-7 text-[#f5f5f7] sm:p-10 lg:col-span-6">
           <div
-            data-ui="true"
-            className="rounded-[8px] border border-[#e2e5ea] bg-[#ffffff] p-4"
-          >
-            <div className="flex items-center justify-between border-b border-[#eef0f3] pb-2.5 text-xs">
-              <div className="flex items-center gap-2">
-                <span className="font-mono font-medium text-[#0a0a0a]">Q1</span>
-                <span className="rounded-[4px] bg-[#eaecef] px-2 py-0.5 text-[#383c42]">
-                  Behavioural
-                </span>
-              </div>
-              <span className="num font-medium text-[#04250e] bg-[#dcfae5] border border-[#b7e4c7] rounded-[4px] px-2 py-0.5">
-                94 / 100 · Strong
-              </span>
-            </div>
+            aria-hidden="true"
+            className="pointer-events-none absolute -right-20 -top-20 h-64 w-64 rounded-full bg-[#0071e3]/25 blur-3xl"
+          />
 
-            <p className="mt-2.5 text-sm font-medium leading-relaxed text-[#0a0a0a]">
-              “Walk me through how you built the Looker churn-risk dashboard for those 40 account managers at PayPulse. How did you decide which signals to include?”
+          <div className="relative z-10">
+            <Logo theme="dark" size="md" showBadge />
+
+            <h1 className="mt-6 font-display text-3xl font-bold leading-[1.1] tracking-tight text-[#f5f5f7] sm:text-4xl">
+              Practise every question with your own evidence in view.
+            </h1>
+
+            <p className="mt-3 text-sm leading-relaxed text-[#a1a1a6] sm:text-base">
+              RoleReady pairs your resume PDF with any job description to craft
+              six targeted interview questions and grade your answers like a
+              hiring manager.
             </p>
 
-            <div className="mt-2.5 flex flex-wrap items-center gap-1.5 text-xs">
-              <span className="text-[#5a6069]">Citations:</span>
-              <span className="rounded-[4px] border border-[#1d5fbf]/35 bg-[#1d5fbf]/10 px-1.5 py-0.5 font-mono text-[#1d5fbf]">
-                R4 · Looker churn dashboard (-14% churn)
-              </span>
-              <span className="rounded-[4px] border border-[#cfd5de] bg-[#eaecef] px-1.5 py-0.5 font-mono text-[#383c42]">
-                J4 · Commercial BI adoption
-              </span>
+            <ul className="mt-7 space-y-3.5 text-sm text-[#d2d2d7]">
+              <li className="flex items-start gap-3">
+                <CheckCircle2
+                  className="mt-0.5 h-4 w-4 shrink-0 text-[#30d158]"
+                  aria-hidden="true"
+                />
+                <span>
+                  <strong className="font-semibold text-white">
+                    Verbatim citations:
+                  </strong>{' '}
+                  Every question links to <code className="font-mono text-xs text-[#2997ff]">R1..Rn</code> resume lines and <code className="font-mono text-xs text-[#30d158]">J1..Jn</code> role requirements.
+                </span>
+              </li>
+              <li className="flex items-start gap-3">
+                <CheckCircle2
+                  className="mt-0.5 h-4 w-4 shrink-0 text-[#30d158]"
+                  aria-hidden="true"
+                />
+                <span>
+                  <strong className="font-semibold text-white">
+                    0–100 hiring-manager rubric:
+                  </strong>{' '}
+                  Scored on Relevance, Specificity, Structure, and Evidence.
+                </span>
+              </li>
+              <li className="flex items-start gap-3">
+                <CheckCircle2
+                  className="mt-0.5 h-4 w-4 shrink-0 text-[#30d158]"
+                  aria-hidden="true"
+                />
+                <span>
+                  <strong className="font-semibold text-white">
+                    Stronger rewrite &amp; claim check:
+                  </strong>{' '}
+                  Flags unverified claims and writes a tighter STAR response.
+                </span>
+              </li>
+            </ul>
+
+            <div className="mt-8 border-t border-white/10 pt-5 text-xs text-[#86868b]">
+              <Link
+                to="/"
+                className="inline-flex items-center gap-1.5 font-medium text-[#2997ff] hover:underline"
+              >
+                <span>Back to product overview</span>
+                <ArrowRight className="h-3.5 w-3.5" aria-hidden="true" />
+              </Link>
             </div>
           </div>
         </div>
 
-        {/* Right column: Sign in / Create account card */}
-        <div className="lg:col-span-5">
-          <div className="rounded-[8px] border border-[#e2e5ea] bg-[#ffffff] p-6">
-            {/* Segmented control */}
-            <div
-              role="tablist"
-              aria-label="Authentication mode"
-              className="mb-5 grid grid-cols-2 rounded-[6px] bg-[#e8ecf1] p-1"
-            >
-              <button
-                type="button"
-                role="tab"
-                aria-selected={mode === 'signin'}
-                onClick={() => {
-                  setMode('signin');
-                  setError(null);
-                }}
-                className={`min-h-[32px] rounded-[4px] py-1.5 text-sm font-medium transition focus:outline-none focus-visible:ring-2 focus-visible:ring-[#0a0a0a] ${
-                  mode === 'signin'
-                    ? 'bg-[#ffffff] text-[#0a0a0a]'
-                    : 'text-[#5a6069] hover:text-[#0a0a0a]'
-                }`}
-              >
-                Sign in
-              </button>
-              <button
-                type="button"
-                role="tab"
-                aria-selected={mode === 'signup'}
-                onClick={() => {
-                  setMode('signup');
-                  setError(null);
-                }}
-                className={`min-h-[32px] rounded-[4px] py-1.5 text-sm font-medium transition focus:outline-none focus-visible:ring-2 focus-visible:ring-[#0a0a0a] ${
-                  mode === 'signup'
-                    ? 'bg-[#ffffff] text-[#0a0a0a]'
-                    : 'text-[#5a6069] hover:text-[#0a0a0a]'
-                }`}
-              >
-                Create account
-              </button>
+        {/* Right Column: Authentication Bento Card */}
+        <div className="bento-card-light p-6 sm:p-10 lg:col-span-6">
+          {mockActive && (
+            <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-black/10 bg-[#f5f5f7] px-3.5 py-1.5 text-xs font-medium text-[#1d1d1f]">
+              <span
+                className="h-2 w-2 rounded-full bg-[#30d158]"
+                aria-hidden="true"
+              />
+              <span>Demo mode · sample data, nothing is saved to a server</span>
             </div>
+          )}
 
-            <form onSubmit={handleSubmit} className="space-y-4" noValidate>
-              <div>
-                <label
-                  htmlFor="email-input"
-                  className="block text-sm font-medium text-[#0a0a0a]"
-                >
-                  Email address
-                </label>
-                <input
-                  id="email-input"
-                  type="email"
-                  autoComplete="email"
-                  required
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  disabled={submitting}
-                  placeholder="alex.rivera@paypulse.io"
-                  className="mt-1.5 min-h-[38px] w-full rounded-[6px] border border-[#cfd5de] bg-[#ffffff] px-3 py-2 text-sm text-[#0a0a0a] placeholder:text-[#5a6069] focus:border-[#0a0a0a] focus:outline-none focus:ring-1 focus:ring-[#0a0a0a] disabled:bg-[#f2f4f7]"
-                />
-              </div>
+          <h2 className="font-display text-2xl font-bold tracking-tight text-[#1d1d1f]">
+            {mode === 'signin'
+              ? 'Sign in to RoleReady'
+              : 'Create your RoleReady account'}
+          </h2>
+          <p className="mt-1 text-sm text-[#6e6e73]">
+            Access your saved interview sessions, scores, and tailored feedback.
+          </p>
 
-              <div>
-                <label
-                  htmlFor="password-input"
-                  className="block text-sm font-medium text-[#0a0a0a]"
-                >
-                  Password (minimum 6 characters)
-                </label>
-                <input
-                  id="password-input"
-                  type="password"
-                  autoComplete={
-                    mode === 'signin' ? 'current-password' : 'new-password'
-                  }
-                  required
-                  minLength={6}
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  disabled={submitting}
-                  placeholder="••••••••"
-                  className="mt-1.5 min-h-[38px] w-full rounded-[6px] border border-[#cfd5de] bg-[#ffffff] px-3 py-2 text-sm text-[#0a0a0a] placeholder:text-[#5a6069] focus:border-[#0a0a0a] focus:outline-none focus:ring-1 focus:ring-[#0a0a0a] disabled:bg-[#f2f4f7]"
-                />
-              </div>
-
-              {error && (
-                <ErrorBanner error={error} onRetry={() => handleSubmit()} />
-              )}
-
+          {/* One-Click Demo User Button */}
+          {mockActive && (
+            <div className="mt-6">
               <button
-                type="submit"
-                disabled={submitting}
-                className="mt-2 inline-flex min-h-[38px] w-full items-center justify-center gap-2 rounded-[6px] bg-[#141414] px-4 py-2 text-sm font-medium text-[#ffffff] transition hover:bg-[#2a2a2a] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#0a0a0a] disabled:cursor-not-allowed disabled:opacity-50"
+                type="button"
+                onClick={handleDemoSignIn}
+                disabled={demoLoading || submitting}
+                className="btn-pill-primary min-h-[46px] w-full px-6 py-3 text-sm font-semibold shadow-sm disabled:opacity-60"
               >
-                {submitting ? (
+                {demoLoading ? (
                   <>
                     <Loader2
                       className="h-4 w-4 animate-spin"
                       aria-hidden="true"
                     />
-                    <span>
-                      {mode === 'signin'
-                        ? 'Signing in…'
-                        : 'Creating account…'}
-                    </span>
+                    <span>Signing in as demo user…</span>
                   </>
                 ) : (
                   <>
-                    <span>
-                      {mode === 'signin' ? 'Sign in' : 'Create account'}
-                    </span>
-                    <ArrowRight className="h-4 w-4" aria-hidden="true" />
+                    <Sparkles className="h-4 w-4" aria-hidden="true" />
+                    <span>Continue as demo user</span>
                   </>
                 )}
               </button>
-            </form>
 
-            <div className="mt-5 border-t border-[#eef0f3] pt-4 text-center">
-              <button
-                type="button"
-                onClick={() => {
-                  setMode(mode === 'signin' ? 'signup' : 'signin');
-                  setError(null);
-                }}
-                className="text-xs font-medium text-[#5a6069] hover:text-[#0a0a0a] focus:outline-none focus-visible:underline"
-              >
-                {mode === 'signin'
-                  ? "Don't have an account? Create one"
-                  : 'Already have an account? Sign in'}
-              </button>
+              <div className="relative my-6 flex items-center justify-center">
+                <div className="w-full border-t border-black/10" />
+                <span className="bg-white px-3 text-xs font-medium text-[#86868b]">
+                  or use your email
+                </span>
+                <div className="w-full border-t border-black/10" />
+              </div>
             </div>
+          )}
+
+          {/* Segmented Pill Tabs */}
+          <div
+            role="tablist"
+            aria-label="Authentication mode"
+            className="mt-4 grid grid-cols-2 rounded-full bg-[#f5f5f7] p-1"
+          >
+            <button
+              type="button"
+              role="tab"
+              aria-selected={mode === 'signin'}
+              onClick={() => {
+                setMode('signin');
+                setError(null);
+              }}
+              className={`min-h-[38px] rounded-full text-xs font-semibold transition ${
+                mode === 'signin'
+                  ? 'bg-white text-[#1d1d1f] shadow-sm'
+                  : 'text-[#6e6e73] hover:text-[#1d1d1f]'
+              }`}
+            >
+              Sign in
+            </button>
+            <button
+              type="button"
+              role="tab"
+              aria-selected={mode === 'signup'}
+              onClick={() => {
+                setMode('signup');
+                setError(null);
+              }}
+              className={`min-h-[38px] rounded-full text-xs font-semibold transition ${
+                mode === 'signup'
+                  ? 'bg-white text-[#1d1d1f] shadow-sm'
+                  : 'text-[#6e6e73] hover:text-[#1d1d1f]'
+              }`}
+            >
+              Create account
+            </button>
           </div>
+
+          {error && (
+            <div className="mt-5">
+              <ErrorBanner error={error} onRetry={runAuthAction} />
+            </div>
+          )}
+
+          <form onSubmit={handleSubmit} className="mt-5 space-y-4" noValidate>
+            <div>
+              <label
+                htmlFor="auth-email"
+                className="block text-xs font-semibold text-[#1d1d1f]"
+              >
+                Email address
+              </label>
+              <input
+                id="auth-email"
+                type="email"
+                autoComplete="email"
+                required
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="you@company.com"
+                className="mt-1.5 block min-h-[44px] w-full rounded-2xl border border-black/15 bg-[#f5f5f7]/60 px-4 py-2.5 text-base text-[#1d1d1f] placeholder:text-[#86868b] focus:border-[#0071e3] focus:bg-white focus:outline-none"
+              />
+            </div>
+
+            <div>
+              <label
+                htmlFor="auth-password"
+                className="block text-xs font-semibold text-[#1d1d1f]"
+              >
+                Password
+              </label>
+              <input
+                id="auth-password"
+                type="password"
+                autoComplete={
+                  mode === 'signin' ? 'current-password' : 'new-password'
+                }
+                required
+                minLength={6}
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="At least 6 characters"
+                className="mt-1.5 block min-h-[44px] w-full rounded-2xl border border-black/15 bg-[#f5f5f7]/60 px-4 py-2.5 text-base text-[#1d1d1f] placeholder:text-[#86868b] focus:border-[#0071e3] focus:bg-white focus:outline-none"
+              />
+            </div>
+
+            <button
+              type="submit"
+              disabled={submitting || demoLoading}
+              className={`min-h-[46px] w-full rounded-full px-6 py-3 text-sm font-semibold transition disabled:opacity-60 ${
+                mockActive
+                  ? 'btn-pill-secondary-light'
+                  : 'btn-pill-primary'
+              }`}
+            >
+              {submitting ? (
+                <>
+                  <Loader2
+                    className="h-4 w-4 animate-spin"
+                    aria-hidden="true"
+                  />
+                  <span>
+                    {mode === 'signin' ? 'Signing in…' : 'Creating account…'}
+                  </span>
+                </>
+              ) : (
+                <span>
+                  {mode === 'signin' ? 'Sign in with email' : 'Create account'}
+                </span>
+              )}
+            </button>
+          </form>
+
+          <p className="mt-5 flex items-center justify-center gap-1.5 text-center text-xs text-[#86868b]">
+            <Lock className="h-3.5 w-3.5 text-[#30d158]" aria-hidden="true" />
+            <span>Your resume and interview responses remain private.</span>
+          </p>
         </div>
       </div>
-    </div>
+    </main>
   );
 };

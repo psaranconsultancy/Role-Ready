@@ -8,6 +8,7 @@ import {
   RotateCcw,
 } from 'lucide-react';
 import type { Feedback } from '@contracts';
+import { ScoreRing } from './ScoreRing';
 
 interface FeedbackPanelProps {
   feedback: Feedback;
@@ -23,24 +24,24 @@ export function getScoreBand(score: number): {
   if (score >= 75) {
     return {
       label: 'Strong',
-      badgeClass: 'border-[#b7e4c7] bg-[#dcfae5] text-[#04250e]',
-      barClass: 'bg-[#1d5fbf]',
-      textSignalClass: 'text-[#247b50]',
+      badgeClass: 'border-[#30d158]/35 bg-[#30d158]/15 text-[#15803d]',
+      barClass: 'bg-[#30d158]',
+      textSignalClass: 'text-[#15803d]',
     };
   }
   if (score >= 50) {
     return {
       label: 'Solid start',
-      badgeClass: 'border-[#fde68a] bg-[#fffbeb] text-[#92400e]',
-      barClass: 'bg-[#141414]',
-      textSignalClass: 'text-[#92400e]',
+      badgeClass: 'border-[#ff9f0a]/35 bg-[#ff9f0a]/15 text-[#b45309]',
+      barClass: 'bg-[#ff9f0a]',
+      textSignalClass: 'text-[#b45309]',
     };
   }
   return {
     label: 'Needs work',
-    badgeClass: 'border-[#f5c2c0] bg-[#ffedea] text-[#831c1e]',
-    barClass: 'bg-[#c4242a]',
-    textSignalClass: 'text-[#c4242a]',
+    badgeClass: 'border-[#ff453a]/35 bg-[#ff453a]/15 text-[#d70015]',
+    barClass: 'bg-[#ff453a]',
+    textSignalClass: 'text-[#d70015]',
   };
 }
 
@@ -52,7 +53,7 @@ const CRITERIA_LABELS: Array<{
   {
     key: 'relevance',
     label: 'Relevance',
-    description: 'Answers the question asked for this role',
+    description: 'Answers the prompt for this role',
   },
   {
     key: 'evidence',
@@ -62,12 +63,12 @@ const CRITERIA_LABELS: Array<{
   {
     key: 'structure',
     label: 'Structure',
-    description: 'Clear STAR story (Situation, Task, Action, Result)',
+    description: 'Clear STAR flow (Situation, Task, Action, Result)',
   },
   {
     key: 'impact',
     label: 'Impact',
-    description: 'Concrete outcome or metric',
+    description: 'Quantified outcome or business result',
   },
 ];
 
@@ -89,80 +90,72 @@ export const FeedbackPanel: React.FC<FeedbackPanelProps> = ({
   };
 
   return (
-    <div className="mt-5 space-y-4 rounded-[8px] border border-[#e2e5ea] bg-[#f8f9fb] p-4 sm:p-5">
-      {/* Top row: overall score + Try again */}
-      <div className="flex flex-wrap items-center justify-between gap-4 border-b border-[#e2e5ea] pb-4">
-        <div className="flex items-baseline gap-3">
-          <div
-            className="flex items-baseline gap-1"
-            aria-label={`Overall score ${feedback.overall} out of 100 (${band.label})`}
-          >
-            <span className="num text-[30px] font-normal leading-none tracking-tight text-[#0a0a0a]">
-              {feedback.overall}
-            </span>
-            <span className="num text-xs text-[#5a6069]">/100</span>
+    <div className="mt-6 space-y-5 rounded-[22px] border border-black/10 bg-[#f5f5f7] p-5 sm:p-6">
+      {/* Top Row: ScoreRing + Verdict + Try Again Pill */}
+      <div className="flex flex-wrap items-center justify-between gap-4 border-b border-black/10 pb-5">
+        <div className="flex items-center gap-4">
+          <ScoreRing score={feedback.overall} size="md" theme="light" />
+          <div>
+            <div className="flex flex-wrap items-center gap-2">
+              <span
+                className={`inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold ${band.badgeClass}`}
+              >
+                {band.label}
+              </span>
+              <span className="font-mono text-xs text-[#6e6e73]">
+                {feedback.overall} / 100
+              </span>
+            </div>
+            <p className="mt-1 font-display text-base font-bold text-[#1d1d1f]">
+              Hiring-Manager Scorecard
+            </p>
+            <p className="text-xs text-[#6e6e73]">
+              Checked against your cited resume lines and role requirements
+            </p>
           </div>
-
-          <span
-            className={`inline-flex items-center rounded-[4px] border px-2 py-0.5 text-xs font-medium ${band.badgeClass}`}
-          >
-            {band.label}
-          </span>
-
-          <span className="hidden sm:inline-block text-xs text-[#5a6069]">
-            Checked against cited resume lines and JD requirements
-          </span>
         </div>
 
         <button
           type="button"
           onClick={onTryAgain}
-          className="inline-flex min-h-[34px] items-center gap-1.5 rounded-[6px] border border-[#cfd5de] bg-[#ffffff] px-3 py-1 text-xs font-medium text-[#0a0a0a] transition hover:bg-[#f2f4f7] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#0a0a0a]"
+          className="btn-pill-secondary-light min-h-[38px] px-4 py-1.5 text-xs font-semibold"
         >
-          <RotateCcw className="h-3.5 w-3.5 text-[#5a6069]" aria-hidden="true" />
+          <RotateCcw className="h-3.5 w-3.5" aria-hidden="true" />
           <span>Try again</span>
         </button>
       </div>
 
-      {/* Four 1-5 criterion strip split by 1px hairlines (achromatic-ledger style) */}
-      <div className="grid grid-cols-2 divide-y divide-[#e2e5ea] overflow-hidden rounded-[8px] border border-[#e2e5ea] bg-[#ffffff] sm:grid-cols-4 sm:divide-x sm:divide-y-0">
-        {CRITERIA_LABELS.map(({ key, label, description }, idx) => {
+      {/* 4 Criterion Bento Cells (1–5) */}
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
+        {CRITERIA_LABELS.map(({ key, label, description }) => {
           const val = feedback.scores[key];
           const pct = Math.max(0, Math.min(100, (val / 5) * 100));
           return (
             <div
               key={key}
-              className={`p-3.5 ${idx % 2 === 1 ? 'border-l border-[#e2e5ea] sm:border-l-0' : ''}`}
+              className="rounded-2xl border border-black/[0.07] bg-white p-3.5 shadow-sm"
             >
-              <div className="flex items-baseline justify-between gap-2">
-                <span className="text-xs font-medium text-[#5a6069]">
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-semibold text-[#1d1d1f]">
                   {label}
                 </span>
-                <span className="num text-sm font-medium text-[#0a0a0a]">
-                  {val}
-                  <span className="text-xs font-normal text-[#5a6069]">/5</span>
+                <span
+                  className="font-mono text-xs font-bold text-[#0071e3]"
+                  aria-label={`${label} score ${val} out of 5`}
+                >
+                  {val}/5
                 </span>
               </div>
               <div
-                className="mt-2 flex h-1.5 w-full overflow-hidden rounded-[2px] bg-[#eaecef]"
-                role="progressbar"
-                aria-valuenow={val}
-                aria-valuemin={1}
-                aria-valuemax={5}
-                aria-label={`${label}: ${val} out of 5`}
+                className="mt-2 h-1.5 w-full overflow-hidden rounded-full bg-black/[0.07]"
+                aria-hidden="true"
               >
                 <div
-                  className={`h-full ${
-                    val >= 4
-                      ? 'bg-[#1d5fbf]'
-                      : val === 3
-                        ? 'bg-[#141414]'
-                        : 'bg-[#c4242a]'
-                  }`}
+                  className="h-full rounded-full bg-[#0071e3] transition-all duration-300"
                   style={{ width: `${pct}%` }}
                 />
               </div>
-              <p className="mt-1.5 text-xs leading-snug text-[#5a6069]">
+              <p className="mt-2 text-[11px] leading-snug text-[#6e6e73]">
                 {description}
               </p>
             </div>
@@ -170,95 +163,97 @@ export const FeedbackPanel: React.FC<FeedbackPanelProps> = ({
         })}
       </div>
 
-      {/* Unsupported claims warning (only if any) */}
-      {feedback.unsupported_claims && feedback.unsupported_claims.length > 0 && (
-        <div
-          role="region"
-          aria-label="Unsupported claims warning"
-          className="rounded-[8px] border border-[#fde68a] bg-[#fffbeb] p-3.5 text-[#92400e]"
-        >
-          <div className="flex items-start gap-2.5">
-            <AlertTriangle
-              className="mt-0.5 h-4 w-4 shrink-0 text-[#92400e]"
-              aria-hidden="true"
-            />
-            <div className="space-y-1 text-sm">
-              <div className="font-medium text-[#92400e]">
-                Claims not backed by your resume
+      {/* Unsupported Claims Warning (Evidence Check) */}
+      {feedback.unsupported_claims &&
+        feedback.unsupported_claims.length > 0 && (
+          <div
+            role="note"
+            aria-label="Unsupported claims warning"
+            className="rounded-2xl border border-[#ff9f0a]/40 bg-[#fffbeb] p-4 text-[#92400e]"
+          >
+            <div className="flex items-start gap-3">
+              <AlertTriangle
+                className="mt-0.5 h-4 w-4 shrink-0 text-[#d97706]"
+                aria-hidden="true"
+              />
+              <div>
+                <div className="flex flex-wrap items-center gap-2">
+                  <p className="font-display text-xs font-bold uppercase tracking-wider text-[#92400e]">
+                    Evidence Check · Not in your resume
+                  </p>
+                </div>
+                <p className="mt-1 text-xs text-[#92400e]/90">
+                  These statements in your answer could not be verified against
+                  your uploaded resume lines:
+                </p>
+                <ul className="mt-2 list-disc space-y-1 pl-4 text-xs font-medium">
+                  {feedback.unsupported_claims.map((claim, idx) => (
+                    <li key={idx}>{claim}</li>
+                  ))}
+                </ul>
               </div>
-              <p className="text-xs text-[#92400e]">
-                Hiring managers probe metrics and team scope. Remove claims that do not appear in R1..Rn:
-              </p>
-              <ul className="list-disc space-y-1 pl-5 text-xs font-medium text-[#92400e]">
-                {feedback.unsupported_claims.map((claim, idx) => (
-                  <li key={idx}>“{claim}”</li>
-                ))}
-              </ul>
             </div>
           </div>
-        </div>
-      )}
+        )}
 
-      {/* What worked & One fix */}
-      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-        <div className="rounded-[8px] border border-[#e2e5ea] bg-[#ffffff] p-3.5">
-          <div className="mb-1.5 flex items-center gap-1.5 text-xs font-medium text-[#247b50]">
-            <CheckCircle2 className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
+      {/* What Worked & What to Fix Next */}
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+        <div className="rounded-2xl border border-black/[0.07] bg-white p-4 shadow-sm">
+          <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-[#15803d]">
+            <CheckCircle2 className="h-4 w-4 shrink-0" aria-hidden="true" />
             <span>What worked</span>
           </div>
-          <p className="text-sm leading-relaxed text-[#0a0a0a]">
+          <p className="mt-3 text-sm leading-relaxed text-[#1d1d1f]">
             {feedback.what_worked}
           </p>
         </div>
 
-        <div className="rounded-[8px] border border-[#e2e5ea] bg-[#ffffff] p-3.5">
-          <div className="mb-1.5 flex items-center gap-1.5 text-xs font-medium text-[#1d5fbf]">
-            <Wrench className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
-            <span>One fix</span>
+        <div className="rounded-2xl border border-[#0071e3]/25 bg-white p-4 shadow-sm">
+          <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-[#0071e3]">
+            <Wrench className="h-4 w-4 shrink-0" aria-hidden="true" />
+            <span>What to fix next</span>
           </div>
-          <p className="text-sm leading-relaxed text-[#0a0a0a]">
+          <p className="mt-3 text-sm leading-relaxed text-[#1d1d1f]">
             {feedback.one_fix}
           </p>
         </div>
       </div>
 
-      {/* Stronger answer with copy button */}
-      <div className="rounded-[8px] border border-[#e2e5ea] bg-[#ffffff] p-4">
-        <div className="mb-2 flex flex-wrap items-center justify-between gap-2">
-          <div className="text-xs font-medium text-[#5a6069]">
-            Stronger answer (built strictly from your resume facts)
+      {/* Stronger Rewrite Quote Block */}
+      <div className="rounded-2xl border border-black/10 bg-white p-5 shadow-sm">
+        <div className="flex flex-wrap items-center justify-between gap-2 border-b border-black/[0.06] pb-3">
+          <div>
+            <span className="font-mono text-[11px] font-semibold uppercase tracking-wider text-[#0071e3]">
+              Stronger Rewrite
+            </span>
+            <h4 className="font-display text-sm font-bold text-[#1d1d1f]">
+              Hiring-Manager Example Grounded in Your Resume
+            </h4>
           </div>
           <button
             type="button"
             onClick={handleCopyStronger}
-            className="inline-flex min-h-[30px] items-center gap-1.5 rounded-[6px] border border-[#cfd5de] bg-[#ffffff] px-2.5 py-1 text-xs font-medium text-[#0a0a0a] transition hover:bg-[#f2f4f7] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#0a0a0a]"
+            className="btn-pill-secondary-light min-h-[32px] px-3 py-1 text-xs font-semibold"
           >
             {copied ? (
               <>
-                <Check className="h-3.5 w-3.5 text-[#247b50]" aria-hidden="true" />
+                <Check
+                  className="h-3.5 w-3.5 text-[#15803d]"
+                  aria-hidden="true"
+                />
                 <span>Copied</span>
               </>
             ) : (
               <>
-                <Copy className="h-3.5 w-3.5 text-[#5a6069]" aria-hidden="true" />
-                <span>Copy answer</span>
+                <Copy className="h-3.5 w-3.5" aria-hidden="true" />
+                <span>Copy rewrite</span>
               </>
             )}
           </button>
         </div>
-        <p className="text-sm leading-relaxed text-[#0a0a0a]">
+        <blockquote className="mt-3.5 border-l-2 border-[#0071e3] pl-4 text-sm leading-relaxed text-[#1d1d1f]">
           {feedback.stronger_answer}
-        </p>
-      </div>
-
-      {/* Submitted answer */}
-      <div className="rounded-[8px] border border-[#e2e5ea] bg-[#ffffff] p-3.5">
-        <div className="mb-1 text-xs font-medium text-[#5a6069]">
-          Your submitted answer
-        </div>
-        <p className="whitespace-pre-line text-sm text-[#5a6069]">
-          {feedback.answer_text}
-        </p>
+        </blockquote>
       </div>
     </div>
   );

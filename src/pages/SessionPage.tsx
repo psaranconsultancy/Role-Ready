@@ -2,9 +2,13 @@ import React, { useEffect, useState, useCallback } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import {
   ArrowLeft,
-  Loader2,
   ChevronDown,
   ChevronUp,
+  CheckCircle2,
+  Circle,
+  FileText,
+  Briefcase,
+  FolderOpen,
 } from 'lucide-react';
 import type { Session, Question, Feedback, ApiError } from '@contracts';
 import { getSession, toApiError } from '../lib/api';
@@ -18,19 +22,19 @@ const STATUS_BADGE: Record<
 > = {
   draft: {
     label: 'Draft',
-    className: 'border-[#cfd5de] bg-[#eaecef] text-[#383c42]',
+    className: 'border-black/15 bg-black/[0.05] text-[#6e6e73]',
   },
   ready: {
     label: 'Ready',
-    className: 'border-[#cfd5de] bg-[#eaecef] text-[#383c42]',
+    className: 'border-[#0071e3]/30 bg-[#0071e3]/10 text-[#0071e3]',
   },
   in_progress: {
     label: 'In progress',
-    className: 'border-[#fde68a] bg-[#fffbeb] text-[#92400e]',
+    className: 'border-[#ff9f0a]/35 bg-[#ff9f0a]/15 text-[#b45309]',
   },
   completed: {
     label: 'Completed',
-    className: 'border-[#b7e4c7] bg-[#dcfae5] text-[#04250e]',
+    className: 'border-[#30d158]/35 bg-[#30d158]/15 text-[#15803d]',
   },
 };
 
@@ -99,42 +103,62 @@ export const SessionPage: React.FC = () => {
     });
   };
 
+  const scrollToQuestion = (position: number) => {
+    const el = document.getElementById(`question-${position}`);
+    if (el) {
+      el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  };
+
   if (loading) {
     return (
-      <main className="mx-auto max-w-4xl px-4 py-16 text-center sm:px-6">
-        <div className="inline-flex flex-col items-center gap-2.5">
-          <Loader2
-            className="h-6 w-6 animate-spin text-[#1d5fbf]"
-            aria-hidden="true"
-          />
-          <p className="text-sm text-[#5a6069]">
-            Loading interview session…
-          </p>
+      <div className="min-h-[calc(100dvh-3rem)] bg-[#f5f5f7] px-4 py-12 sm:px-6">
+        <div className="mx-auto max-w-[1080px] space-y-6">
+          <div className="bento-card-light h-28 animate-pulse p-6" />
+          <div className="grid gap-6 lg:grid-cols-12">
+            <div className="bento-card-light hidden h-80 animate-pulse lg:col-span-3 lg:block" />
+            <div className="space-y-6 lg:col-span-9">
+              <div className="bento-card-light h-64 animate-pulse p-6" />
+              <div className="bento-card-light h-64 animate-pulse p-6" />
+            </div>
+          </div>
         </div>
-      </main>
+      </div>
     );
   }
 
   if (error || !session) {
     return (
-      <main className="mx-auto max-w-3xl px-4 py-10 sm:px-6">
+      <main className="mx-auto max-w-2xl px-4 py-12 sm:px-6">
         <ErrorBanner error={error} onRetry={loadSessionData} />
-        <div className="mt-4">
-          <Link
-            to="/history"
-            className="inline-flex items-center gap-1.5 text-xs font-medium text-[#0a0a0a] hover:underline"
-          >
-            <ArrowLeft className="h-3.5 w-3.5" aria-hidden="true" />
-            <span>Back to History</span>
-          </Link>
+        <div className="bento-card-light mt-6 p-8 text-center">
+          <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-black/[0.05] text-[#6e6e73]">
+            <FolderOpen className="h-6 w-6" aria-hidden="true" />
+          </div>
+          <h1 className="mt-4 font-display text-xl font-bold text-[#1d1d1f]">
+            Session not found
+          </h1>
+          <p className="mt-1 text-sm text-[#6e6e73]">
+            This interview session may have been removed or belongs to a
+            different account.
+          </p>
+          <div className="mt-6">
+            <Link
+              to="/history"
+              className="btn-pill-primary min-h-[42px] px-6 py-2 text-xs font-semibold"
+            >
+              <ArrowLeft className="h-3.5 w-3.5" aria-hidden="true" />
+              <span>Back to Practice History</span>
+            </Link>
+          </div>
         </div>
       </main>
     );
   }
 
   const totalQuestions = questions.length || 6;
-  const answeredCount = questions.filter(
-    (q) => Boolean(answersByQuestionId[q.id])
+  const answeredCount = questions.filter((q) =>
+    Boolean(answersByQuestionId[q.id])
   ).length;
   const allAnswered =
     questions.length > 0 && answeredCount >= questions.length;
@@ -155,49 +179,44 @@ export const SessionPage: React.FC = () => {
   const jdRequirements = session.jd_requirements ?? [];
 
   return (
-    <main className="mx-auto max-w-4xl space-y-4 px-4 py-6 sm:px-6 sm:py-8">
-      {/* Breadcrumb + Title Header */}
-      <header className="rounded-[8px] border border-[#e2e5ea] bg-[#ffffff] p-5">
-        <div className="flex flex-wrap items-center justify-between gap-4">
-          <div>
-            <div className="flex flex-wrap items-center gap-2 text-xs text-[#5a6069]">
-              <Link
-                to="/history"
-                className="inline-flex items-center gap-1 font-medium text-[#5a6069] hover:text-[#0a0a0a] focus:outline-none focus-visible:underline"
-              >
-                <ArrowLeft className="h-3.5 w-3.5" aria-hidden="true" />
-                <span>History</span>
-              </Link>
-              <span>/</span>
-              <span>{session.company || 'Interview session'}</span>
-              <span
-                className={`inline-flex items-center rounded-[4px] border px-2 py-0.5 text-xs font-medium ${statusMeta.className}`}
-              >
-                {statusMeta.label}
-              </span>
-            </div>
-
-            <h1 className="mt-1.5 text-[24px] font-semibold tracking-tight text-[#0a0a0a]">
+    <div className="min-h-[calc(100dvh-3rem)] bg-[#f5f5f7] pb-20 text-[#1d1d1f]">
+      {/* Sticky Local Sub-Navigation Bar */}
+      <div className="frosted-localnav-light sticky top-12 z-30 h-[54px] w-full">
+        <div className="mx-auto flex h-full max-w-[1080px] items-center justify-between gap-4 px-4 sm:px-6">
+          <div className="flex min-w-0 items-center gap-2.5">
+            <Link
+              to="/history"
+              className="inline-flex shrink-0 items-center gap-1 text-xs font-medium text-[#6e6e73] transition hover:text-[#1d1d1f]"
+            >
+              <ArrowLeft className="h-3.5 w-3.5" aria-hidden="true" />
+              <span className="hidden sm:inline">History</span>
+            </Link>
+            <span className="text-black/15" aria-hidden="true">
+              /
+            </span>
+            <h1 className="truncate font-display text-sm font-bold tracking-tight text-[#1d1d1f] sm:text-base">
               {session.role_title || 'Target Role Interview'}
               {session.company ? (
-                <span className="font-normal text-[#5a6069]">
+                <span className="font-normal text-[#6e6e73]">
                   {' '}
                   · {session.company}
                 </span>
               ) : null}
             </h1>
+            <span
+              className={`hidden shrink-0 items-center rounded-full border px-2.5 py-0.5 text-[11px] font-semibold md:inline-flex ${statusMeta.className}`}
+            >
+              {statusMeta.label}
+            </span>
           </div>
 
-          {/* Progress strip */}
-          <div className="w-full sm:w-52">
-            <div className="flex items-baseline justify-between text-xs">
-              <span className="text-[#5a6069]">Answered</span>
-              <span className="num font-medium text-[#0a0a0a]">
-                {answeredCount} of {totalQuestions}
-              </span>
-            </div>
+          {/* Progress Indicator */}
+          <div className="flex shrink-0 items-center gap-3">
+            <span className="font-mono text-xs font-semibold text-[#1d1d1f]">
+              {answeredCount} of {totalQuestions} answered
+            </span>
             <div
-              className="mt-1.5 h-1.5 w-full overflow-hidden rounded-[2px] bg-[#eaecef]"
+              className="hidden h-2 w-28 overflow-hidden rounded-full bg-black/10 sm:block"
               role="progressbar"
               aria-valuenow={answeredCount}
               aria-valuemin={0}
@@ -205,7 +224,7 @@ export const SessionPage: React.FC = () => {
               aria-label={`${answeredCount} of ${totalQuestions} questions answered`}
             >
               <div
-                className="h-full bg-[#1d5fbf]"
+                className="h-full rounded-full bg-[#0071e3] transition-all duration-300"
                 style={{
                   width: `${Math.round((answeredCount / totalQuestions) * 100)}%`,
                 }}
@@ -213,57 +232,84 @@ export const SessionPage: React.FC = () => {
             </div>
           </div>
         </div>
+      </div>
 
-        {/* Collapsible parsed Resume Lines & JD Requirements ledger */}
+      <main className="mx-auto max-w-[1080px] space-y-6 px-4 pt-6 sm:px-6 sm:pt-8">
+        {/* Session Summary Banner when all 6 questions are answered */}
+        {allAnswered && computedOverall !== null && (
+          <SessionSummary
+            overallScore={computedOverall}
+            questions={questions}
+            answersByQuestionId={answersByQuestionId}
+          />
+        )}
+
+        {/* Extracted Evidence Drawer (R1..Rn & J1..Jn) */}
         {(resumeLines.length > 0 || jdRequirements.length > 0) && (
-          <div className="mt-4 border-t border-[#eef0f3] pt-3">
+          <div className="bento-card-light px-5 py-4 sm:px-6">
             <button
               type="button"
               onClick={() => setShowReferences((prev) => !prev)}
               aria-expanded={showReferences}
-              className="inline-flex items-center gap-1.5 text-xs font-medium text-[#5a6069] hover:text-[#0a0a0a] focus:outline-none focus-visible:underline"
+              className="flex w-full items-center justify-between gap-3 text-left text-xs font-semibold text-[#1d1d1f]"
             >
-              <span className="num">
-                {showReferences
-                  ? 'Hide extracted resume lines & JD requirements'
-                  : `Inspect extracted resume lines (R1..R${resumeLines.length}) & JD requirements (J1..J${jdRequirements.length})`}
+              <span className="flex flex-wrap items-center gap-2">
+                <span className="inline-flex items-center gap-1 rounded-full bg-[#0071e3]/10 px-2.5 py-0.5 font-mono text-[11px] text-[#0071e3]">
+                  <FileText className="h-3 w-3" aria-hidden="true" />
+                  R1..R{resumeLines.length}
+                </span>
+                <span className="inline-flex items-center gap-1 rounded-full bg-black/[0.05] px-2.5 py-0.5 font-mono text-[11px] text-[#1d1d1f]">
+                  <Briefcase className="h-3 w-3" aria-hidden="true" />
+                  J1..J{jdRequirements.length}
+                </span>
+                <span className="text-[#6e6e73]">
+                  {showReferences
+                    ? 'Hide extracted resume lines & role requirements'
+                    : 'Inspect all extracted resume lines & role requirements'}
+                </span>
               </span>
               {showReferences ? (
-                <ChevronUp className="h-3.5 w-3.5" aria-hidden="true" />
+                <ChevronUp
+                  className="h-4 w-4 shrink-0 text-[#6e6e73]"
+                  aria-hidden="true"
+                />
               ) : (
-                <ChevronDown className="h-3.5 w-3.5" aria-hidden="true" />
+                <ChevronDown
+                  className="h-4 w-4 shrink-0 text-[#6e6e73]"
+                  aria-hidden="true"
+                />
               )}
             </button>
 
             {showReferences && (
-              <div className="mt-3 grid grid-cols-1 divide-y divide-[#e2e5ea] rounded-[6px] border border-[#e2e5ea] bg-[#f8f9fb] text-xs sm:grid-cols-2 sm:divide-x sm:divide-y-0">
-                <div className="p-3.5">
-                  <div className="font-medium text-[#0a0a0a]">
-                    Resume Lines (R1..R{resumeLines.length})
-                  </div>
-                  <ul className="mt-2 space-y-1.5 text-[#5a6069]">
+              <div className="mt-4 grid grid-cols-1 gap-4 border-t border-black/10 pt-4 text-xs md:grid-cols-2">
+                <div className="rounded-2xl bg-[#f5f5f7] p-4">
+                  <p className="font-display text-xs font-bold uppercase tracking-wider text-[#0071e3]">
+                    Resume Evidence Lines (R1..R{resumeLines.length})
+                  </p>
+                  <ul className="mt-3 space-y-2 text-[#1d1d1f]">
                     {resumeLines.map((r) => (
                       <li key={r.id} className="leading-relaxed">
-                        <span className="mr-1.5 inline-block rounded-[4px] border border-[#1d5fbf]/35 bg-[#1d5fbf]/10 px-1.5 py-0.5 font-mono text-[11px] font-medium text-[#1d5fbf]">
+                        <span className="mr-1.5 inline-block rounded-full border border-[#0071e3]/30 bg-[#0071e3]/10 px-2 py-0.5 font-mono text-[10px] font-bold text-[#0071e3]">
                           {r.id}
                         </span>
-                        <span className="text-[#0a0a0a]">{r.text}</span>
+                        <span>{r.text}</span>
                       </li>
                     ))}
                   </ul>
                 </div>
 
-                <div className="p-3.5">
-                  <div className="font-medium text-[#0a0a0a]">
-                    JD Requirements (J1..J{jdRequirements.length})
-                  </div>
-                  <ul className="mt-2 space-y-1.5 text-[#5a6069]">
+                <div className="rounded-2xl bg-[#f5f5f7] p-4">
+                  <p className="font-display text-xs font-bold uppercase tracking-wider text-[#1d1d1f]">
+                    Job Requirements (J1..J{jdRequirements.length})
+                  </p>
+                  <ul className="mt-3 space-y-2 text-[#1d1d1f]">
                     {jdRequirements.map((j) => (
                       <li key={j.id} className="leading-relaxed">
-                        <span className="mr-1.5 inline-block rounded-[4px] border border-[#cfd5de] bg-[#eaecef] px-1.5 py-0.5 font-mono text-[11px] font-medium text-[#383c42]">
+                        <span className="mr-1.5 inline-block rounded-full border border-black/15 bg-white px-2 py-0.5 font-mono text-[10px] font-bold text-[#1d1d1f]">
                           {j.id}
                         </span>
-                        <span className="text-[#0a0a0a]">{j.text}</span>
+                        <span>{j.text}</span>
                       </li>
                     ))}
                   </ul>
@@ -272,30 +318,79 @@ export const SessionPage: React.FC = () => {
             )}
           </div>
         )}
-      </header>
 
-      {/* Session Summary Banner when all 6 are answered */}
-      {allAnswered && computedOverall !== null && (
-        <SessionSummary
-          overallScore={computedOverall}
-          questions={questions}
-          answersByQuestionId={answersByQuestionId}
-        />
-      )}
+        {/* Two-Column Studio Workspace: Left Rail (Desktop) + Main Questions */}
+        <div className="grid gap-6 lg:grid-cols-12 lg:items-start">
+          {/* Desktop Sticky Question Navigator Rail */}
+          <aside
+            aria-label="Question navigator"
+            className="bento-card-light hidden p-4 lg:sticky lg:top-28 lg:col-span-3 lg:block"
+          >
+            <p className="px-2 font-mono text-[11px] font-semibold uppercase tracking-wider text-[#86868b]">
+              6 Tailored Questions
+            </p>
+            <ul className="mt-2.5 space-y-1">
+              {questions.map((q) => {
+                const ans = answersByQuestionId[q.id];
+                const isAnswered = Boolean(ans);
+                return (
+                  <li key={q.id}>
+                    <button
+                      type="button"
+                      onClick={() => scrollToQuestion(q.position)}
+                      className="flex w-full items-center justify-between gap-2 rounded-xl px-2.5 py-2 text-left text-xs transition hover:bg-[#f5f5f7]"
+                    >
+                      <span className="flex items-center gap-2 font-medium text-[#1d1d1f]">
+                        {isAnswered ? (
+                          <CheckCircle2
+                            className="h-4 w-4 shrink-0 text-[#30d158]"
+                            aria-hidden="true"
+                          />
+                        ) : (
+                          <Circle
+                            className="h-4 w-4 shrink-0 text-[#86868b]"
+                            aria-hidden="true"
+                          />
+                        )}
+                        <span className="font-mono font-bold">
+                          Q{q.position}
+                        </span>
+                        <span className="truncate capitalize text-[#6e6e73]">
+                          {q.type.replace('_', ' ')}
+                        </span>
+                      </span>
 
-      {/* 6 Question Cards */}
-      <div className="space-y-4">
-        {questions.map((q) => (
-          <QuestionCard
-            key={q.id}
-            question={q}
-            existingFeedback={answersByQuestionId[q.id]}
-            resumeLines={resumeLines}
-            jdRequirements={jdRequirements}
-            onScored={handleQuestionScored}
-          />
-        ))}
-      </div>
-    </main>
+                      {ans ? (
+                        <span className="font-mono text-[11px] font-semibold text-[#15803d]">
+                          {ans.overall}
+                        </span>
+                      ) : (
+                        <span className="font-mono text-[10px] text-[#86868b]">
+                          Open
+                        </span>
+                      )}
+                    </button>
+                  </li>
+                );
+              })}
+            </ul>
+          </aside>
+
+          {/* Question Cards List */}
+          <div className="space-y-6 lg:col-span-9">
+            {questions.map((q) => (
+              <QuestionCard
+                key={q.id}
+                question={q}
+                existingFeedback={answersByQuestionId[q.id]}
+                resumeLines={resumeLines}
+                jdRequirements={jdRequirements}
+                onScored={handleQuestionScored}
+              />
+            ))}
+          </div>
+        </div>
+      </main>
+    </div>
   );
 };

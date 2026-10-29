@@ -4,6 +4,7 @@ import {
   signIn as apiSignIn,
   signUp as apiSignUp,
   signOut as apiSignOut,
+  signInAsDemo as apiSignInAsDemo,
   type AppUser,
 } from '../lib/api';
 
@@ -12,6 +13,7 @@ interface AuthContextValue {
   loading: boolean;
   signIn: (email: string, password: string) => Promise<void>;
   signUp: (email: string, password: string) => Promise<void>;
+  signInDemo: () => Promise<void>;
   signOut: () => Promise<void>;
 }
 
@@ -50,6 +52,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     setUser(created);
   };
 
+  const handleSignInDemo = async () => {
+    const demo = await apiSignInAsDemo();
+    setUser(demo);
+  };
+
   const handleSignOut = async () => {
     await apiSignOut();
     setUser(null);
@@ -62,6 +69,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
         loading,
         signIn: handleSignIn,
         signUp: handleSignUp,
+        signInDemo: handleSignInDemo,
         signOut: handleSignOut,
       }}
     >
@@ -77,4 +85,3 @@ export function useAuth(): AuthContextValue {
   }
   return ctx;
 }
-

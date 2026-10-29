@@ -1,11 +1,14 @@
 import React, { useState, useRef } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import {
   Upload,
   FileText,
+  Sparkles,
   CheckCircle2,
   Loader2,
   X,
+  ArrowLeft,
+  ArrowRight,
 } from 'lucide-react';
 import type { ApiError } from '@contracts';
 import {
@@ -15,438 +18,539 @@ import {
   toApiError,
 } from '../lib/api';
 import {
-  SAMPLE_JD_TEXT,
   SAMPLE_ROLE_TITLE,
   SAMPLE_COMPANY,
+  SAMPLE_JD_TEXT,
 } from '../mocks/fixtures';
 import { ErrorBanner } from '../components/ErrorBanner';
+
+type GenerationStage = 'idle' | 'parsing' | 'generating';
 
 export const NewSessionPage: React.FC = () => {
   const navigate = useNavigate();
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   const [file, setFile] = useState<File | null>(null);
-  const [fileValidationError, setFileValidationError] = useState<string | null>(
-    null
-  );
-  const [isDragging, setIsDragging] = useState(false);
-
+  const [dragOver, setDragOver] = useState(false);
   const [roleTitle, setRoleTitle] = useState('');
   const [company, setCompany] = useState('');
   const [jdText, setJdText] = useState('');
 
-  const [prepStep, setPrepStep] = useState<
-    'idle' | 'reading_resume' | 'writing_questions'
-  >('idle');
+  const [fileError, setFileError] = useState<string | null>(null);
+  const [jdError, setJdError] = useState<string | null>(null);
   const [apiError, setApiError] = useState<ApiError | null>(null);
+  const [stage, setStage] = useState<GenerationStage>('idle');
 
-  const jdLength = jdText.trim().length;
-  const isJdValid = jdLength >= 200;
-  const canSubmit =
-    Boolean(file) && !fileValidationError && isJdValid && prepStep === 'idle';
-
-  const validateAndSetFile = (candidate: File | null) => {
+  const validateAndSelectFile = (selected: File | null) => {
+    setFileError(null);
     setApiError(null);
-    if (!candidate) {
+    if (!selected) {
       setFile(null);
-      setFileValidationError(null);
       return;
     }
-
     const isPdf =
-      candidate.type === 'application/pdf' ||
-      candidate.name.toLowerCase().endsWith('.pdf');
+      selected.type === 'application/pdf' ||
+      selected.name.toLowerCase().endsWith('.pdf');
     if (!isPdf) {
       setFile(null);
-      setFileValidationError(
-        'Invalid file format. Please upload a PDF file (.pdf).'
-      );
+      setFileError('Only PDF files (.pdf) are supported.');
       return;
     }
-
-    if (candidate.size > 5 * 1024 * 1024) {
+    if (selected.size > 5 * 1024 * 1024) {
       setFile(null);
-      setFileValidationError(
-        'File is too large. Resume PDF must be 5 MB or smaller.'
-      );
+      setFileError('Resume PDF must be 5 MB or smaller.');
       return;
     }
-
-    setFileValidationError(null);
-    setFile(candidate);
+    setFile(selected);
   };
 
-  const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
-    e.preventDefault();
-    setIsDragging(false);
-    if (prepStep !== 'idle') return;
-    const dropped = e.dataTransfer.files?.[0] ?? null;
-    if (dropped) {
-      validateAndSetFile(dropped);
-    }
-  };
-
-  const handleFillSample = () => {
+  const handleLoadSample = () => {
+    const samplePdfContent = `%PDF-1.4\n% Sample Resume for Alex Rivera - Senior Product Analyst\n1 0 obj << /Type /Catalog >> endobj\n%%EOF`;
+    const sampleBlob = new Blob([samplePdfContent], {
+      type: 'application/pdf',
+    });
+    const sampleFile = new File(
+      [sampleBlob],
+      'Alex_Rivera_Product_Analyst_Resume.pdf',
+      { type: 'application/pdf' }
+    );
+    setFile(sampleFile);
     setRoleTitle(SAMPLE_ROLE_TITLE);
     setCompany(SAMPLE_COMPANY);
     setJdText(SAMPLE_JD_TEXT);
-    if (!file) {
-      const dummyPdfContent = new Uint8Array([
-        0x25, 0x50, 0x44, 0x46, 0x2d, 0x31, 0x2e, 0x34,
-      ]);
-      const sampleFile = new File(
-        [dummyPdfContent],
-        'alex-rivera-product-analyst-resume.pdf',
-        {
-          type: 'application/pdf',
-        }
-      );
-      validateAndSetFile(sampleFile);
-    }
+    setFileError(null);
+    setJdError(null);
+    setApiError(null);
   };
 
-  const handleGenerate = async (e?: React.FormEvent) => {
-    if (e) e.preventDefault();
-    if (!file || !isJdValid || prepStep !== 'idle') return;
+  const trimmedJdLength = jdText.trim().length;
+  const isJdValid = trimmedJdLength >= 200;
+  const canSubmit = Boolean(file) && isJdValid && stage === 'idle';
 
+  const runPipeline = async () => {
+    setFileError(null);
+    setJdError(null);
     setApiError(null);
-    setPrepStep('reading_resume');
+
+    if (!file) {
+      setFileError('Please upload your resume as a PDF file.');
+      return;
+    }
+    if (trimmedJdLength < 200) {
+      setJdError(
+        `Job description must be at least 200 characters (currently ${trimmedJdLength}).`
+      );
+      return;
+    }
 
     try {
-      const session = await createSession({
+      setStage('parsing');
+      const created = await createSession({
         file,
         jdText,
         roleTitle: roleTitle.trim() || undefined,
         company: company.trim() || undefined,
       });
 
-      await parseResume(session.id);
+      await parseResume(created.id);
 
-      setPrepStep('writing_questions');
-      await generateQuestions(session.id);
+      setStage('generating');
+      await generateQuestions(created.id);
 
-      navigate(`/session/${session.id}`);
+      navigate(`/session/${created.id}`);
     } catch (err) {
-      setPrepStep('idle');
+      setStage('idle');
       setApiError(
         toApiError(
           err,
-          'parse_failed',
-          'Could not prepare your interview session. Please try again.'
+          'llm_failed',
+          'Could not generate your interview session. Please retry.'
         )
       );
     }
   };
 
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    await runPipeline();
+  };
+
+  const isBusy = stage !== 'idle';
+
   return (
-    <main className="mx-auto max-w-3xl px-4 py-8 sm:px-6">
-      <div className="mb-6 flex flex-col justify-between gap-3 sm:flex-row sm:items-center">
-        <div>
-          <h1 className="text-[24px] font-semibold tracking-tight text-[#0a0a0a]">
-            New interview session
-          </h1>
-          <p className="mt-0.5 text-sm text-[#5a6069]">
-            Upload your resume PDF and paste the job description to generate 6 grounded questions.
-          </p>
-        </div>
-
-        <button
-          type="button"
-          onClick={handleFillSample}
-          disabled={prepStep !== 'idle'}
-          className="inline-flex min-h-[34px] items-center gap-1.5 self-start rounded-[6px] border border-[#cfd5de] bg-[#ffffff] px-3 py-1.5 text-xs font-medium text-[#0a0a0a] transition hover:bg-[#e8ecf1] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#0a0a0a] disabled:opacity-50 sm:self-auto"
-        >
-          <span>Load sample resume & JD</span>
-        </button>
-      </div>
-
-      {/* Two-step progress panel when generating */}
-      {prepStep !== 'idle' && (
-        <div
-          role="status"
-          aria-live="polite"
-          className="mb-6 rounded-[8px] border border-[#e2e5ea] bg-[#ffffff] p-5"
-        >
+    <div className="min-h-[calc(100dvh-3rem)] bg-[#f5f5f7] pb-20 text-[#1d1d1f]">
+      {/* Sticky Local Sub-Navigation with Stepper */}
+      <div className="frosted-localnav-light sticky top-12 z-30 h-[52px] w-full">
+        <div className="mx-auto flex h-full max-w-[960px] items-center justify-between px-4 sm:px-6">
           <div className="flex items-center gap-3">
-            <Loader2
-              className="h-5 w-5 animate-spin text-[#1d5fbf]"
+            <Link
+              to="/history"
+              className="inline-flex items-center gap-1 text-xs font-medium text-[#6e6e73] transition hover:text-[#1d1d1f]"
+            >
+              <ArrowLeft className="h-3.5 w-3.5" aria-hidden="true" />
+              <span className="hidden sm:inline">History</span>
+            </Link>
+            <span className="text-black/15" aria-hidden="true">
+              /
+            </span>
+            <h1 className="font-display text-sm font-bold tracking-tight text-[#1d1d1f] sm:text-base">
+              New Practice Session
+            </h1>
+          </div>
+
+          {/* 2-Step Visual Stepper */}
+          <div
+            className="flex items-center gap-2 text-xs font-medium"
+            aria-label="Session setup steps"
+          >
+            <span
+              className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 ${
+                stage === 'idle'
+                  ? 'bg-[#1d1d1f] text-white'
+                  : 'bg-[#30d158]/20 text-[#15803d]'
+              }`}
+            >
+              <span className="font-mono text-[10px] font-bold">1</span>
+              <span>Resume &amp; JD</span>
+            </span>
+            <ArrowRight
+              className="h-3 w-3 text-[#86868b]"
               aria-hidden="true"
             />
-            <div>
-              <h2 className="text-sm font-medium text-[#0a0a0a]">
-                Preparing your interview session…
-              </h2>
-              <p className="text-xs text-[#5a6069]">
-                Mapping resume evidence (R1..Rn) against job requirements (J1..Jn)
-              </p>
-            </div>
-          </div>
-
-          <div className="mt-4 grid grid-cols-1 divide-y divide-[#e2e5ea] overflow-hidden rounded-[6px] border border-[#e2e5ea] bg-[#f8f9fb] sm:grid-cols-2 sm:divide-x sm:divide-y-0">
-            <div
-              className={`flex items-center gap-3 p-3.5 ${
-                prepStep === 'reading_resume'
-                  ? 'bg-[#ffffff] text-[#0a0a0a]'
-                  : 'text-[#247b50]'
+            <span
+              className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 ${
+                stage !== 'idle'
+                  ? 'bg-[#0071e3] text-white'
+                  : 'bg-black/[0.05] text-[#6e6e73]'
               }`}
             >
-              {prepStep === 'reading_resume' ? (
-                <Loader2
-                  className="h-4 w-4 shrink-0 animate-spin text-[#1d5fbf]"
-                  aria-hidden="true"
-                />
-              ) : (
-                <CheckCircle2
-                  className="h-4 w-4 shrink-0 text-[#247b50]"
-                  aria-hidden="true"
-                />
-              )}
-              <div className="text-xs">
-                <div className="font-medium">Reading your resume…</div>
-                <div className="text-[#5a6069]">
-                  Extracting numbered lines R1..Rn and 5–10 JD requirements
-                </div>
-              </div>
-            </div>
-
-            <div
-              className={`flex items-center gap-3 p-3.5 ${
-                prepStep === 'writing_questions'
-                  ? 'bg-[#ffffff] text-[#0a0a0a]'
-                  : 'text-[#5a6069]'
-              }`}
-            >
-              {prepStep === 'writing_questions' ? (
-                <Loader2
-                  className="h-4 w-4 shrink-0 animate-spin text-[#1d5fbf]"
-                  aria-hidden="true"
-                />
-              ) : (
-                <span className="h-2 w-2 rounded-full bg-[#cfd5de]" />
-              )}
-              <div className="text-xs">
-                <div className="font-medium">Writing your questions…</div>
-                <div className="text-[#5a6069]">
-                  Building 6 mixed-type prompts with R/J citations
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
-
-      <form
-        onSubmit={handleGenerate}
-        className="space-y-5 rounded-[8px] border border-[#e2e5ea] bg-[#ffffff] p-5 sm:p-6"
-        noValidate
-      >
-        {/* Resume PDF Upload */}
-        <div>
-          <div className="flex items-baseline justify-between">
-            <label
-              htmlFor="resume-upload-input"
-              className="block text-sm font-medium text-[#0a0a0a]"
-            >
-              Resume PDF
-            </label>
-            <span className="text-xs text-[#5a6069]">
-              Required · .pdf up to 5 MB
+              <span className="font-mono text-[10px] font-bold">2</span>
+              <span>6 Questions</span>
             </span>
           </div>
+        </div>
+      </div>
 
-          <input
-            ref={fileInputRef}
-            id="resume-upload-input"
-            type="file"
-            accept=".pdf,application/pdf"
-            disabled={prepStep !== 'idle'}
-            onChange={(e) => {
-              const selected = e.target.files?.[0] ?? null;
-              validateAndSetFile(selected);
-            }}
-            className="sr-only"
-          />
+      <main className="mx-auto max-w-[820px] px-4 pt-8 sm:px-6 sm:pt-12">
+        {/* Header & Sample Fill Action */}
+        <div className="mb-8 flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
+          <div>
+            <p className="font-mono text-xs font-semibold uppercase tracking-widest text-[#0071e3]">
+              Session Configurator
+            </p>
+            <h2 className="mt-1 font-display text-3xl font-bold tracking-tight text-[#1d1d1f] sm:text-4xl">
+              Configure your interview.
+            </h2>
+            <p className="mt-1.5 text-sm text-[#6e6e73] sm:text-base">
+              Upload your PDF resume and paste the job description to generate
+              six evidence-grounded questions.
+            </p>
+          </div>
 
-          <div
-            onDragOver={(e) => {
-              e.preventDefault();
-              if (prepStep === 'idle') setIsDragging(true);
-            }}
-            onDragLeave={() => setIsDragging(false)}
-            onDrop={handleDrop}
-            className={`mt-2 flex flex-col items-center justify-center rounded-[6px] border border-dashed p-5 text-center transition ${
-              isDragging
-                ? 'border-[#1d5fbf] bg-[#1d5fbf]/5'
-                : file
-                  ? 'border-[#b7e4c7] bg-[#dcfae5]/30'
-                  : fileValidationError
-                    ? 'border-[#f5c2c0] bg-[#ffedea]/40'
-                    : 'border-[#cfd5de] bg-[#f8f9fb] hover:border-[#0a0a0a]'
-            }`}
+          <button
+            type="button"
+            onClick={handleLoadSample}
+            disabled={isBusy}
+            className="btn-pill-secondary-light min-h-[40px] shrink-0 self-start px-4 py-2 text-xs font-semibold sm:self-auto"
           >
-            {file ? (
-              <div className="flex flex-wrap items-center justify-center gap-3">
-                <FileText
-                  className="h-4 w-4 text-[#247b50]"
-                  aria-hidden="true"
-                />
-                <div className="text-left">
-                  <div className="text-sm font-medium text-[#0a0a0a]">
-                    {file.name}
+            <Sparkles
+              className="h-3.5 w-3.5 text-[#0071e3]"
+              aria-hidden="true"
+            />
+            <span>Fill sample resume &amp; JD</span>
+          </button>
+        </div>
+
+        {apiError && (
+          <div className="mb-6">
+            <ErrorBanner error={apiError} onRetry={runPipeline} />
+          </div>
+        )}
+
+        {/* Staged Progress Panel when Parsing / Generating */}
+        {isBusy && (
+          <div
+            role="status"
+            aria-live="polite"
+            className="bento-card-dark mb-8 p-6 text-[#f5f5f7] sm:p-8"
+          >
+            <div className="flex items-center gap-3">
+              <Loader2
+                className="h-5 w-5 animate-spin text-[#2997ff]"
+                aria-hidden="true"
+              />
+              <h3 className="font-display text-lg font-bold">
+                {stage === 'parsing'
+                  ? 'Reading your resume…'
+                  : 'Writing your questions…'}
+              </h3>
+            </div>
+            <p className="mt-1.5 text-xs text-[#a1a1a6] sm:text-sm">
+              Synthesizing numbered resume evidence lines (R1..Rn) and matching
+              them to role requirements (J1..Jn).
+            </p>
+
+            <div className="mt-6 grid gap-3 sm:grid-cols-2">
+              <div
+                className={`flex items-center gap-3 rounded-2xl border p-4 ${
+                  stage === 'parsing'
+                    ? 'border-[#0071e3] bg-[#0071e3]/15'
+                    : 'border-[#30d158]/40 bg-[#30d158]/10'
+                }`}
+              >
+                {stage === 'parsing' ? (
+                  <Loader2
+                    className="h-4 w-4 shrink-0 animate-spin text-[#2997ff]"
+                    aria-hidden="true"
+                  />
+                ) : (
+                  <CheckCircle2
+                    className="h-4 w-4 shrink-0 text-[#30d158]"
+                    aria-hidden="true"
+                  />
+                )}
+                <div>
+                  <p className="font-mono text-[11px] uppercase tracking-wider text-[#a1a1a6]">
+                    Step 1
+                  </p>
+                  <p className="text-sm font-semibold text-white">
+                    Reading your resume…
+                  </p>
+                </div>
+              </div>
+
+              <div
+                className={`flex items-center gap-3 rounded-2xl border p-4 ${
+                  stage === 'generating'
+                    ? 'border-[#0071e3] bg-[#0071e3]/15'
+                    : 'border-white/10 bg-white/[0.04] opacity-60'
+                }`}
+              >
+                {stage === 'generating' ? (
+                  <Loader2
+                    className="h-4 w-4 shrink-0 animate-spin text-[#2997ff]"
+                    aria-hidden="true"
+                  />
+                ) : (
+                  <span className="h-4 w-4 rounded-full border border-white/30" />
+                )}
+                <div>
+                  <p className="font-mono text-[11px] uppercase tracking-wider text-[#a1a1a6]">
+                    Step 2
+                  </p>
+                  <p className="text-sm font-semibold text-white">
+                    Writing your questions…
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        <form onSubmit={handleSubmit} className="space-y-6" noValidate>
+          {/* 1. Resume PDF Upload Bento Card */}
+          <section className="bento-card-light p-6 sm:p-8">
+            <div className="flex items-center justify-between gap-2">
+              <label
+                htmlFor="resume-upload"
+                className="font-display text-lg font-bold text-[#1d1d1f]"
+              >
+                1. Resume PDF <span className="text-[#ff453a]">*</span>
+              </label>
+              <span className="font-mono text-xs text-[#86868b]">
+                PDF only · Max 5 MB
+              </span>
+            </div>
+            <p className="mt-1 text-xs text-[#6e6e73]">
+              We extract numbered evidence lines (R1..Rn) so every interview
+              question cites your real work.
+            </p>
+
+            <input
+              ref={fileInputRef}
+              id="resume-upload"
+              type="file"
+              accept=".pdf,application/pdf"
+              disabled={isBusy}
+              onChange={(e) =>
+                validateAndSelectFile(e.target.files?.[0] ?? null)
+              }
+              className="sr-only"
+            />
+
+            {!file ? (
+              <div
+                onDragOver={(e) => {
+                  e.preventDefault();
+                  if (!isBusy) setDragOver(true);
+                }}
+                onDragLeave={() => setDragOver(false)}
+                onDrop={(e) => {
+                  e.preventDefault();
+                  setDragOver(false);
+                  if (isBusy) return;
+                  const dropped = e.dataTransfer.files?.[0] ?? null;
+                  validateAndSelectFile(dropped);
+                }}
+                onClick={() => !isBusy && fileInputRef.current?.click()}
+                role="button"
+                tabIndex={0}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    fileInputRef.current?.click();
+                  }
+                }}
+                aria-label="Upload resume PDF file"
+                className={`mt-4 flex cursor-pointer flex-col items-center justify-center rounded-[20px] border-2 border-dashed px-6 py-9 text-center transition ${
+                  dragOver
+                    ? 'border-[#0071e3] bg-[#0071e3]/[0.06]'
+                    : 'border-black/15 bg-[#f5f5f7]/70 hover:border-[#0071e3]/60 hover:bg-[#f5f5f7]'
+                }`}
+              >
+                <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#0071e3]/10 text-[#0071e3]">
+                  <Upload className="h-5 w-5" aria-hidden="true" />
+                </div>
+                <p className="mt-3 text-sm font-semibold text-[#1d1d1f]">
+                  Click to choose a PDF or drag and drop it here
+                </p>
+                <p className="mt-1 text-xs text-[#86868b]">
+                  Standard single-column or two-column PDF resumes up to 5 MB
+                </p>
+              </div>
+            ) : (
+              <div className="mt-4 flex items-center justify-between gap-3 rounded-[18px] border border-[#30d158]/40 bg-[#30d158]/[0.08] px-4 py-3.5">
+                <div className="flex min-w-0 items-center gap-3">
+                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#30d158]/20 text-[#15803d]">
+                    <FileText className="h-5 w-5" aria-hidden="true" />
                   </div>
-                  <div className="num text-xs text-[#5a6069]">
-                    {Math.max(1, Math.round(file.size / 1024))} KB · PDF verified
+                  <div className="min-w-0">
+                    <p className="truncate text-sm font-semibold text-[#1d1d1f]">
+                      {file.name}
+                    </p>
+                    <p className="font-mono text-xs text-[#6e6e73]">
+                      {Math.max(1, Math.round(file.size / 1024))} KB · Ready to
+                      parse
+                    </p>
                   </div>
                 </div>
                 <button
                   type="button"
-                  disabled={prepStep !== 'idle'}
+                  disabled={isBusy}
                   onClick={() => {
                     setFile(null);
                     if (fileInputRef.current) fileInputRef.current.value = '';
                   }}
-                  aria-label="Remove selected PDF"
-                  className="ml-2 inline-flex min-h-[28px] items-center gap-1 rounded-[4px] border border-[#cfd5de] bg-[#ffffff] px-2 py-0.5 text-xs font-medium text-[#0a0a0a] hover:bg-[#f2f4f7] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#0a0a0a]"
+                  aria-label="Remove selected resume PDF"
+                  className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-black/5 text-[#1d1d1f] transition hover:bg-black/10"
                 >
-                  <X className="h-3 w-3" aria-hidden="true" />
-                  <span>Change</span>
+                  <X className="h-4 w-4" aria-hidden="true" />
                 </button>
               </div>
-            ) : (
-              <>
-                <Upload
-                  className="h-5 w-5 text-[#5a6069]"
+            )}
+
+            {fileError && (
+              <p
+                role="alert"
+                className="mt-2.5 text-xs font-medium text-[#d70015]"
+              >
+                {fileError}
+              </p>
+            )}
+          </section>
+
+          {/* 2. Target Role & Company (Optional) */}
+          <section className="bento-card-light p-6 sm:p-8">
+            <h3 className="font-display text-lg font-bold text-[#1d1d1f]">
+              2. Target Role &amp; Company{' '}
+              <span className="font-sans text-xs font-normal text-[#86868b]">
+                (optional)
+              </span>
+            </h3>
+            <div className="mt-4 grid gap-4 sm:grid-cols-2">
+              <div>
+                <label
+                  htmlFor="role-title"
+                  className="block text-xs font-semibold text-[#1d1d1f]"
+                >
+                  Role title
+                </label>
+                <input
+                  id="role-title"
+                  type="text"
+                  disabled={isBusy}
+                  value={roleTitle}
+                  onChange={(e) => setRoleTitle(e.target.value)}
+                  placeholder="e.g. Senior Product Analyst"
+                  className="mt-1.5 block min-h-[44px] w-full rounded-2xl border border-black/15 bg-[#f5f5f7]/60 px-4 py-2.5 text-base text-[#1d1d1f] placeholder:text-[#86868b] focus:border-[#0071e3] focus:bg-white focus:outline-none"
+                />
+              </div>
+              <div>
+                <label
+                  htmlFor="company-name"
+                  className="block text-xs font-semibold text-[#1d1d1f]"
+                >
+                  Company
+                </label>
+                <input
+                  id="company-name"
+                  type="text"
+                  disabled={isBusy}
+                  value={company}
+                  onChange={(e) => setCompany(e.target.value)}
+                  placeholder="e.g. FinFlow"
+                  className="mt-1.5 block min-h-[44px] w-full rounded-2xl border border-black/15 bg-[#f5f5f7]/60 px-4 py-2.5 text-base text-[#1d1d1f] placeholder:text-[#86868b] focus:border-[#0071e3] focus:bg-white focus:outline-none"
+                />
+              </div>
+            </div>
+          </section>
+
+          {/* 3. Job Description Bento Card */}
+          <section className="bento-card-light p-6 sm:p-8">
+            <div className="flex flex-wrap items-center justify-between gap-2">
+              <label
+                htmlFor="jd-textarea"
+                className="font-display text-lg font-bold text-[#1d1d1f]"
+              >
+                3. Job Description <span className="text-[#ff453a]">*</span>
+              </label>
+              <span
+                className={`inline-flex items-center gap-1.5 rounded-full px-3 py-0.5 font-mono text-xs font-semibold ${
+                  isJdValid
+                    ? 'bg-[#30d158]/15 text-[#15803d]'
+                    : 'bg-black/[0.05] text-[#6e6e73]'
+                }`}
+              >
+                <span
+                  className={`h-1.5 w-1.5 rounded-full ${
+                    isJdValid ? 'bg-[#30d158]' : 'bg-[#86868b]'
+                  }`}
                   aria-hidden="true"
                 />
-                <div className="mt-2 text-sm text-[#0a0a0a]">
-                  Drop your resume PDF here, or{' '}
-                  <button
-                    type="button"
-                    disabled={prepStep !== 'idle'}
-                    onClick={() => fileInputRef.current?.click()}
-                    className="font-medium underline hover:text-[#1d5fbf] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#0a0a0a] rounded-[4px]"
-                  >
-                    browse files
-                  </button>
-                </div>
-                <p className="mt-1 text-xs text-[#5a6069]">
-                  Extracts numbered lines R1..Rn for evidence grounding
-                </p>
-              </>
-            )}
-          </div>
-
-          {fileValidationError && (
-            <p role="alert" className="mt-2 text-xs font-medium text-[#c4242a]">
-              {fileValidationError}
+                {trimmedJdLength} / 200+ chars
+              </span>
+            </div>
+            <p className="mt-1 text-xs text-[#6e6e73]">
+              Paste the responsibilities and requirements from the job posting
+              (minimum 200 characters).
             </p>
-          )}
-        </div>
 
-        {/* Optional Role Title & Company */}
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-          <div>
-            <label
-              htmlFor="role-title-input"
-              className="block text-xs font-medium text-[#0a0a0a]"
-            >
-              Role title <span className="font-normal text-[#5a6069]">(optional)</span>
-            </label>
-            <input
-              id="role-title-input"
-              type="text"
-              value={roleTitle}
-              onChange={(e) => setRoleTitle(e.target.value)}
-              disabled={prepStep !== 'idle'}
-              placeholder="Senior Product Analyst"
-              className="mt-1.5 min-h-[38px] w-full rounded-[6px] border border-[#cfd5de] bg-[#ffffff] px-3 py-2 text-sm text-[#0a0a0a] placeholder:text-[#5a6069] focus:border-[#0a0a0a] focus:outline-none focus:ring-1 focus:ring-[#0a0a0a] disabled:bg-[#f2f4f7]"
+            <textarea
+              id="jd-textarea"
+              rows={8}
+              disabled={isBusy}
+              value={jdText}
+              onChange={(e) => {
+                setJdText(e.target.value);
+                if (jdError) setJdError(null);
+              }}
+              placeholder="Paste the full job description here (responsibilities, qualifications, technical stack)…"
+              className="mt-4 block w-full rounded-[18px] border border-black/15 bg-[#f5f5f7]/60 p-4 text-base leading-relaxed text-[#1d1d1f] placeholder:text-[#86868b] focus:border-[#0071e3] focus:bg-white focus:outline-none"
             />
-          </div>
 
-          <div>
-            <label
-              htmlFor="company-input"
-              className="block text-xs font-medium text-[#0a0a0a]"
-            >
-              Company <span className="font-normal text-[#5a6069]">(optional)</span>
-            </label>
-            <input
-              id="company-input"
-              type="text"
-              value={company}
-              onChange={(e) => setCompany(e.target.value)}
-              disabled={prepStep !== 'idle'}
-              placeholder="FinFlow"
-              className="mt-1.5 min-h-[38px] w-full rounded-[6px] border border-[#cfd5de] bg-[#ffffff] px-3 py-2 text-sm text-[#0a0a0a] placeholder:text-[#5a6069] focus:border-[#0a0a0a] focus:outline-none focus:ring-1 focus:ring-[#0a0a0a] disabled:bg-[#f2f4f7]"
-            />
-          </div>
-        </div>
-
-        {/* Job Description */}
-        <div>
-          <div className="flex flex-wrap items-center justify-between gap-1">
-            <label
-              htmlFor="jd-textarea"
-              className="block text-sm font-medium text-[#0a0a0a]"
-            >
-              Target job description
-            </label>
-            <span
-              className={`num text-xs ${
-                jdLength > 0 && jdLength < 200
-                  ? 'text-[#92400e]'
-                  : isJdValid
-                    ? 'text-[#247b50]'
-                    : 'text-[#5a6069]'
-              }`}
-            >
-              {jdLength} chars (minimum 200)
-            </span>
-          </div>
-
-          <textarea
-            id="jd-textarea"
-            rows={8}
-            value={jdText}
-            onChange={(e) => setJdText(e.target.value)}
-            disabled={prepStep !== 'idle'}
-            placeholder="Paste the responsibilities and requirements from the job posting (at least 200 characters)..."
-            className="mt-2 w-full rounded-[6px] border border-[#cfd5de] bg-[#ffffff] p-3 text-sm leading-relaxed text-[#0a0a0a] placeholder:text-[#5a6069] focus:border-[#0a0a0a] focus:outline-none focus:ring-1 focus:ring-[#0a0a0a] disabled:bg-[#f2f4f7]"
-          />
-
-          {jdLength > 0 && jdLength < 200 && (
-            <p className="num mt-1.5 text-xs text-[#92400e]">
-              Add {200 - jdLength} more character
-              {200 - jdLength === 1 ? '' : 's'} to extract J1..Jn requirements.
-            </p>
-          )}
-        </div>
-
-        {apiError && (
-          <ErrorBanner error={apiError} onRetry={() => handleGenerate()} />
-        )}
-
-        <div className="flex items-center justify-end border-t border-[#eef0f3] pt-4">
-          <button
-            type="submit"
-            disabled={!canSubmit}
-            className="inline-flex min-h-[38px] w-full sm:w-auto items-center justify-center gap-2 rounded-[6px] bg-[#141414] px-5 py-2 text-sm font-medium text-[#ffffff] transition hover:bg-[#2a2a2a] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#0a0a0a] disabled:cursor-not-allowed disabled:opacity-40"
-          >
-            {prepStep !== 'idle' ? (
-              <>
-                <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />
-                <span>
-                  {prepStep === 'reading_resume'
-                    ? 'Reading your resume…'
-                    : 'Writing your questions…'}
-                </span>
-              </>
-            ) : (
-              <span>Generate my interview</span>
+            {jdError && (
+              <p
+                role="alert"
+                className="mt-2.5 text-xs font-medium text-[#d70015]"
+              >
+                {jdError}
+              </p>
             )}
-          </button>
-        </div>
-      </form>
-    </main>
+          </section>
+
+          {/* Submit Action Bar */}
+          <div className="flex flex-col items-center justify-between gap-4 pt-2 sm:flex-row">
+            <p className="text-xs text-[#6e6e73]">
+              Generates 6 tailored questions (2 behavioral, 2 technical/role, 2
+              resume-probe).
+            </p>
+            <button
+              type="submit"
+              disabled={!canSubmit}
+              className="btn-pill-primary min-h-[48px] w-full px-8 py-3 text-sm font-semibold shadow-sm disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto"
+            >
+              {isBusy ? (
+                <>
+                  <Loader2
+                    className="h-4 w-4 animate-spin"
+                    aria-hidden="true"
+                  />
+                  <span>
+                    {stage === 'parsing'
+                      ? 'Reading your resume…'
+                      : 'Writing your questions…'}
+                  </span>
+                </>
+              ) : (
+                <>
+                  <span>Generate 6 tailored questions</span>
+                  <ArrowRight className="h-4 w-4" aria-hidden="true" />
+                </>
+              )}
+            </button>
+          </div>
+        </form>
+      </main>
+    </div>
   );
 };

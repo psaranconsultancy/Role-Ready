@@ -22,7 +22,30 @@ import {
 
 export type AppUser = MockUser;
 
-const isMockMode = (): boolean => import.meta.env.VITE_USE_MOCKS === 'true';
+let hasWarnedMockFallback = false;
+
+export function isMockMode(): boolean {
+  if (import.meta.env.VITE_USE_MOCKS === 'true') {
+    return true;
+  }
+  const supabaseUrl = (import.meta.env.VITE_SUPABASE_URL ?? '').trim();
+  const supabaseAnonKey = (import.meta.env.VITE_SUPABASE_ANON_KEY ?? '').trim();
+  const isUnconfigured =
+    !supabaseUrl ||
+    supabaseUrl.includes('placeholder') ||
+    !supabaseAnonKey ||
+    supabaseAnonKey.includes('placeholder');
+
+  if (isUnconfigured) {
+    if (!hasWarnedMockFallback) {
+      hasWarnedMockFallback = true;
+      console.warn('RoleReady: Supabase not configured, running on mock data.');
+    }
+    return true;
+  }
+
+  return false;
+}
 
 /**
  * Simulated 600–1500 ms delay required by AGENTS.md when VITE_USE_MOCKS is "true".
@@ -133,6 +156,25 @@ export async function signIn(email: string, password: string): Promise<AppUser> 
     throw toApiError(error, 'unauthorized', error?.message || 'Invalid email or password.');
   }
   return { id: data.user.id, email: data.user.email ?? email.trim() };
+}
+
+export async function signInAsDemo(): Promise<AppUser> {
+  if (!isMockMode()) {
+    const err: ApiError = {
+      error: {
+        code: 'bad_request',
+        message: 'Demo sign-in is only available in mock mode.',
+      },
+    };
+    throw err;
+  }
+  await fakeDelay(600, 950);
+  const demoUser: AppUser = {
+    id: 'user-demo',
+    email: 'demo@roleready.app',
+  };
+  setMockUser(demoUser);
+  return demoUser;
 }
 
 export async function signOut(): Promise<void> {
@@ -444,4 +486,3 @@ export async function listSessions(): Promise<Session[]> {
   }
   return (data ?? []) as Session[];
 }
-

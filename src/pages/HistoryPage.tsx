@@ -1,10 +1,18 @@
 import React, { useEffect, useState, useCallback } from 'react';
-import { Link } from 'react-router-dom';
-import { Plus, ArrowRight, Loader2 } from 'lucide-react';
+import { Link, useSearchParams } from 'react-router-dom';
+import {
+  Plus,
+  ArrowRight,
+  Sparkles,
+  Calendar,
+  FileText,
+  FolderOpen,
+} from 'lucide-react';
 import type { Session, ApiError } from '@contracts';
 import { listSessions, toApiError } from '../lib/api';
 import { ErrorBanner } from '../components/ErrorBanner';
 import { getScoreBand } from '../components/FeedbackPanel';
+import { ScoreRing } from '../components/ScoreRing';
 
 const STATUS_BADGE: Record<
   Session['status'],
@@ -12,19 +20,19 @@ const STATUS_BADGE: Record<
 > = {
   draft: {
     label: 'Draft',
-    className: 'border-[#cfd5de] bg-[#eaecef] text-[#383c42]',
+    className: 'border-black/15 bg-black/[0.05] text-[#6e6e73]',
   },
   ready: {
     label: 'Ready',
-    className: 'border-[#cfd5de] bg-[#eaecef] text-[#383c42]',
+    className: 'border-[#0071e3]/30 bg-[#0071e3]/10 text-[#0071e3]',
   },
   in_progress: {
     label: 'In progress',
-    className: 'border-[#fde68a] bg-[#fffbeb] text-[#92400e]',
+    className: 'border-[#ff9f0a]/35 bg-[#ff9f0a]/15 text-[#b45309]',
   },
   completed: {
     label: 'Completed',
-    className: 'border-[#b7e4c7] bg-[#dcfae5] text-[#04250e]',
+    className: 'border-[#30d158]/35 bg-[#30d158]/15 text-[#15803d]',
   },
 };
 
@@ -41,6 +49,9 @@ function formatDate(iso: string): string {
 }
 
 export const HistoryPage: React.FC = () => {
+  const [searchParams] = useSearchParams();
+  const forceEmpty = searchParams.get('empty') === '1';
+
   const [sessions, setSessions] = useState<Session[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<ApiError | null>(null);
@@ -50,7 +61,7 @@ export const HistoryPage: React.FC = () => {
     setError(null);
     try {
       const data = await listSessions();
-      setSessions(data);
+      setSessions(forceEmpty ? [] : data);
     } catch (err) {
       setError(
         toApiError(
@@ -62,13 +73,12 @@ export const HistoryPage: React.FC = () => {
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [forceEmpty]);
 
   useEffect(() => {
     fetchHistory();
   }, [fetchHistory]);
 
-  // Compute summary metrics from rows (achromatic-ledger rule: totals computed from rows)
   const totalSessions = sessions.length;
   const completedSessions = sessions.filter(
     (s) => s.status === 'completed' && s.overall_score !== null
@@ -87,223 +97,217 @@ export const HistoryPage: React.FC = () => {
       : null;
 
   return (
-    <main className="mx-auto max-w-4xl space-y-5 px-4 py-8 sm:px-6">
-      {/* Title Row */}
-      <div className="flex flex-wrap items-center justify-between gap-4">
-        <div>
-          <h1 className="text-[24px] font-semibold tracking-tight text-[#0a0a0a]">
-            Sessions
-          </h1>
-          <p className="mt-0.5 text-sm text-[#5a6069]">
-            {completedSessions.length > 0 && avgScore !== null
-              ? `${completedSessions.length} completed (${avgScore}/100 avg) · ${inProgressCount} in progress`
-              : 'Reopen past mock interviews or start a new role-specific session.'}
-          </p>
+    <div className="min-h-[calc(100dvh-3rem)] bg-[#f5f5f7] pb-20 text-[#1d1d1f]">
+      {/* Sticky Local Sub-Nav */}
+      <div className="frosted-localnav-light sticky top-12 z-30 h-[52px] w-full">
+        <div className="mx-auto flex h-full max-w-[1024px] items-center justify-between px-4 sm:px-6">
+          <span className="font-display text-base font-bold tracking-tight text-[#1d1d1f]">
+            Practice History
+          </span>
+          <Link
+            to="/new"
+            className="btn-pill-primary px-4 py-1.5 text-xs font-semibold"
+          >
+            <Plus className="h-3.5 w-3.5" aria-hidden="true" />
+            <span>New practice</span>
+          </Link>
         </div>
-
-        <Link
-          to="/new"
-          className="inline-flex min-h-[36px] items-center gap-1.5 rounded-[6px] bg-[#141414] px-3.5 py-2 text-xs font-medium text-[#ffffff] transition hover:bg-[#2a2a2a] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#0a0a0a]"
-        >
-          <Plus className="h-4 w-4" aria-hidden="true" />
-          <span>New session</span>
-        </Link>
       </div>
 
-      {/* Divided KPI strip (1 container split by 1px hairlines, achromatic-ledger rule) */}
-      {!loading && totalSessions > 0 && (
-        <div className="grid grid-cols-3 divide-x divide-[#e2e5ea] overflow-hidden rounded-[8px] border border-[#e2e5ea] bg-[#ffffff]">
-          <div className="p-4">
-            <div className="text-xs font-medium text-[#5a6069]">
-              Total sessions
-            </div>
-            <div className="num mt-1 text-2xl font-normal text-[#0a0a0a]">
-              {totalSessions}
-            </div>
+      <main className="mx-auto max-w-[1024px] space-y-6 px-4 pt-8 sm:px-6 sm:pt-10">
+        {/* Hero Header */}
+        <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
+          <div>
+            <p className="font-mono text-xs font-semibold uppercase tracking-widest text-[#0071e3]">
+              Interview Archive
+            </p>
+            <h1 className="mt-1 font-display text-3xl font-bold tracking-tight text-[#1d1d1f] sm:text-4xl">
+              Your practice sessions.
+            </h1>
+            <p className="mt-1 text-sm text-[#6e6e73]">
+              Reopen any completed session to review your scored answers or
+              continue where you left off.
+            </p>
           </div>
+        </div>
 
-          <div className="p-4">
-            <div className="text-xs font-medium text-[#5a6069]">Completed</div>
-            <div className="num mt-1 text-2xl font-normal text-[#0a0a0a]">
-              {completedSessions.length}
-              <span className="ml-1 text-xs text-[#5a6069]">
-                of {totalSessions}
-              </span>
+        {/* 3-Column Bento KPI Strip */}
+        {!loading && totalSessions > 0 && (
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+            <div className="bento-card-light p-5">
+              <p className="font-mono text-xs uppercase tracking-wider text-[#86868b]">
+                Total Sessions
+              </p>
+              <p className="mt-2 font-display text-3xl font-bold tabular-nums text-[#1d1d1f]">
+                {totalSessions}
+              </p>
+              <p className="mt-1 text-xs text-[#6e6e73]">
+                {inProgressCount} active · {completedSessions.length} completed
+              </p>
             </div>
-          </div>
 
-          <div className="p-4">
-            <div className="text-xs font-medium text-[#5a6069]">
-              Average score
+            <div className="bento-card-light p-5">
+              <p className="font-mono text-xs uppercase tracking-wider text-[#86868b]">
+                Completed Interviews
+              </p>
+              <p className="mt-2 font-display text-3xl font-bold tabular-nums text-[#1d1d1f]">
+                {completedSessions.length}
+                <span className="ml-1.5 font-sans text-sm font-normal text-[#86868b]">
+                  of {totalSessions}
+                </span>
+              </p>
+              <p className="mt-1 text-xs text-[#15803d]">
+                All 6 grounded prompts answered
+              </p>
             </div>
-            <div className="num mt-1 text-2xl font-normal text-[#0a0a0a]">
-              {avgScore !== null ? (
-                <>
-                  {avgScore}
-                  <span className="ml-1 text-xs text-[#5a6069]">/100</span>
-                </>
-              ) : (
-                <span className="text-base text-[#5a6069]">—</span>
+
+            <div className="bento-card-light flex items-center justify-between p-5">
+              <div>
+                <p className="font-mono text-xs uppercase tracking-wider text-[#86868b]">
+                  Average Readiness
+                </p>
+                <p className="mt-2 font-display text-3xl font-bold tabular-nums text-[#1d1d1f]">
+                  {avgScore !== null ? `${avgScore}/100` : '—'}
+                </p>
+                <p className="mt-1 text-xs text-[#6e6e73]">
+                  Across completed sessions
+                </p>
+              </div>
+              {avgScore !== null && (
+                <ScoreRing score={avgScore} size="sm" theme="light" />
               )}
             </div>
           </div>
-        </div>
-      )}
+        )}
 
-      {error && <ErrorBanner error={error} onRetry={fetchHistory} />}
+        {error && <ErrorBanner error={error} onRetry={fetchHistory} />}
 
-      {loading ? (
-        <div className="rounded-[8px] border border-[#e2e5ea] bg-[#ffffff] py-16 text-center">
-          <Loader2
-            className="mx-auto h-6 w-6 animate-spin text-[#1d5fbf]"
-            aria-hidden="true"
-          />
-          <p className="mt-2.5 text-sm text-[#5a6069]">
-            Loading interview sessions…
-          </p>
-        </div>
-      ) : sessions.length === 0 ? (
-        <div className="rounded-[8px] border border-dashed border-[#cfd5de] bg-[#ffffff] p-8 text-center">
-          <h2 className="text-sm font-medium text-[#0a0a0a]">
-            No interview sessions yet
-          </h2>
-          <p className="mx-auto mt-1 max-w-md text-xs text-[#5a6069]">
-            Upload your resume PDF and paste a target job description to generate 6 tailored questions grounded in R1..Rn and J1..Jn.
-          </p>
-          <div className="mt-4">
-            <Link
-              to="/new"
-              className="inline-flex min-h-[36px] items-center gap-1.5 rounded-[6px] bg-[#141414] px-4 py-2 text-xs font-medium text-[#ffffff] transition hover:bg-[#2a2a2a] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#0a0a0a]"
-            >
-              <Plus className="h-4 w-4" aria-hidden="true" />
-              <span>Start your first session</span>
-            </Link>
+        {/* Loading Skeletons (3 Shimmer Rows) */}
+        {loading ? (
+          <div
+            role="status"
+            aria-label="Loading interview sessions"
+            className="space-y-4"
+          >
+            {[1, 2, 3].map((n) => (
+              <div
+                key={n}
+                className="bento-card-light flex h-24 animate-pulse items-center justify-between p-6"
+              >
+                <div className="space-y-2.5">
+                  <div className="h-4 w-48 rounded-full bg-black/10" />
+                  <div className="h-3 w-32 rounded-full bg-black/[0.06]" />
+                </div>
+                <div className="h-10 w-24 rounded-full bg-black/[0.08]" />
+              </div>
+            ))}
           </div>
-        </div>
-      ) : (
-        <div className="overflow-hidden rounded-[8px] border border-[#e2e5ea] bg-[#ffffff]">
-          {/* Desktop table header (sentence-case grey, no fill band, right-aligned numeric columns) */}
-          <div className="hidden border-b border-[#e2e5ea] px-4 py-2.5 text-xs text-[#5a6069] sm:grid sm:grid-cols-12 sm:items-center">
-            <div className="col-span-5">Role & company</div>
-            <div className="col-span-2">Status</div>
-            <div className="col-span-2 text-right">Created</div>
-            <div className="col-span-2 text-right">Overall score</div>
-            <div className="col-span-1 text-right">Action</div>
+        ) : sessions.length === 0 ? (
+          /* Designed EmptyState */
+          <div className="bento-card-light p-10 text-center sm:p-14">
+            <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-[#0071e3]/10 text-[#0071e3]">
+              <FolderOpen className="h-7 w-7" aria-hidden="true" />
+            </div>
+            <h2 className="mt-4 font-display text-xl font-bold text-[#1d1d1f]">
+              No practice sessions yet — start your first one
+            </h2>
+            <p className="mx-auto mt-2 max-w-md text-sm text-[#6e6e73]">
+              Upload your resume PDF and paste a job description to generate six
+              tailored interview questions grounded in your experience.
+            </p>
+            <div className="mt-6">
+              <Link
+                to="/new"
+                className="btn-pill-primary min-h-[44px] px-7 py-2.5 text-sm font-semibold"
+              >
+                <Sparkles className="h-4 w-4" aria-hidden="true" />
+                <span>New practice</span>
+              </Link>
+            </div>
           </div>
-
-          <div className="divide-y divide-[#eef0f3]">
+        ) : (
+          /* Session Bento List */
+          <div className="space-y-3.5">
             {sessions.map((s) => {
               const statusMeta = STATUS_BADGE[s.status] ?? STATUS_BADGE.ready;
               const scoreBand =
-                s.overall_score !== null ? getScoreBand(s.overall_score) : null;
+                s.overall_score !== null
+                  ? getScoreBand(s.overall_score)
+                  : null;
+              const isCompleted = s.status === 'completed';
 
               return (
                 <Link
                   key={s.id}
                   to={`/session/${s.id}`}
-                  className="group block px-4 py-3.5 transition hover:bg-[#f8f9fb] focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[#0a0a0a]"
+                  className="bento-card-light bento-card-light-interactive group flex flex-col justify-between gap-4 p-5 sm:flex-row sm:items-center sm:p-6"
                 >
-                  {/* Desktop Row */}
-                  <div className="hidden sm:grid sm:grid-cols-12 sm:items-center sm:gap-2">
-                    <div className="col-span-5 pr-3">
-                      <div className="truncate text-sm font-medium text-[#0a0a0a] group-hover:text-[#1d5fbf]">
-                        {s.role_title || 'Target Role Interview'}
-                      </div>
-                      <div className="truncate text-xs text-[#5a6069]">
-                        {s.company || '—'} ·{' '}
-                        <span className="font-mono text-[11px]">
-                          {s.resume_lines ? `${s.resume_lines.length} R-lines` : 'PDF'}
-                        </span>
-                      </div>
-                    </div>
-
-                    <div className="col-span-2">
+                  <div className="min-w-0 space-y-1.5">
+                    <div className="flex flex-wrap items-center gap-2">
                       <span
-                        className={`inline-flex items-center rounded-[4px] border px-2 py-0.5 text-xs font-medium ${statusMeta.className}`}
+                        className={`inline-flex items-center rounded-full border px-2.5 py-0.5 text-[11px] font-semibold ${statusMeta.className}`}
                       >
                         {statusMeta.label}
                       </span>
-                    </div>
-
-                    <div className="num col-span-2 text-right text-xs text-[#5a6069]">
-                      {formatDate(s.created_at)}
-                    </div>
-
-                    <div className="num col-span-2 text-right">
-                      {s.overall_score !== null && scoreBand ? (
-                        <div className="inline-flex flex-col items-end">
-                          <span className="text-sm font-medium text-[#0a0a0a]">
-                            {s.overall_score}
-                            <span className="text-xs font-normal text-[#5a6069]">
-                              /100
-                            </span>
-                          </span>
-                          <div className="mt-1 h-1 w-16 overflow-hidden rounded-[2px] bg-[#eaecef]">
-                            <div
-                              className="h-full bg-[#1d5fbf]"
-                              style={{ width: `${s.overall_score}%` }}
-                            />
-                          </div>
-                        </div>
-                      ) : (
-                        <span className="text-xs text-[#5a6069]">—</span>
+                      <span className="inline-flex items-center gap-1 font-mono text-xs text-[#86868b]">
+                        <Calendar className="h-3 w-3" aria-hidden="true" />
+                        {formatDate(s.created_at)}
+                      </span>
+                      {s.resume_lines && (
+                        <span className="inline-flex items-center gap-1 font-mono text-xs text-[#0071e3]">
+                          <FileText className="h-3 w-3" aria-hidden="true" />
+                          {s.resume_lines.length} resume lines cited
+                        </span>
                       )}
                     </div>
 
-                    <div className="col-span-1 flex justify-end">
-                      <span className="inline-flex items-center gap-1 text-xs font-medium text-[#0a0a0a] group-hover:text-[#1d5fbf]">
-                        <span>Open</span>
-                        <ArrowRight className="h-3.5 w-3.5" aria-hidden="true" />
-                      </span>
-                    </div>
+                    <h2 className="truncate font-display text-lg font-bold text-[#1d1d1f] transition-colors group-hover:text-[#0071e3] sm:text-xl">
+                      {s.role_title || 'Target Role Interview'}
+                      {s.company ? (
+                        <span className="font-normal text-[#6e6e73]">
+                          {' '}
+                          · {s.company}
+                        </span>
+                      ) : null}
+                    </h2>
                   </div>
 
-                  {/* Mobile 2-line Row (< 640px) */}
-                  <div className="flex flex-col gap-2 sm:hidden">
-                    <div className="flex items-baseline justify-between gap-2">
-                      <div className="truncate text-sm font-medium text-[#0a0a0a]">
-                        {s.role_title || 'Target Role Interview'}
-                      </div>
-                      <div className="num shrink-0 text-sm font-medium text-[#0a0a0a]">
-                        {s.overall_score !== null ? (
-                          <>
-                            {s.overall_score}
-                            <span className="text-xs font-normal text-[#5a6069]">
-                              /100
-                            </span>
-                          </>
-                        ) : (
-                          <span className="text-xs font-normal text-[#5a6069]">
-                            —
+                  <div className="flex items-center justify-between gap-5 border-t border-black/[0.06] pt-3 sm:border-t-0 sm:pt-0">
+                    {s.overall_score !== null && scoreBand ? (
+                      <div className="flex items-center gap-3">
+                        <div className="text-right">
+                          <span className="block font-mono text-[11px] uppercase text-[#86868b]">
+                            Overall
                           </span>
-                        )}
+                          <span
+                            className={`text-xs font-semibold ${scoreBand.textSignalClass}`}
+                          >
+                            {scoreBand.label}
+                          </span>
+                        </div>
+                        <ScoreRing
+                          score={s.overall_score}
+                          size="sm"
+                          theme="light"
+                        />
                       </div>
-                    </div>
-
-                    <div className="flex items-center justify-between text-xs text-[#5a6069]">
-                      <div className="flex items-center gap-2">
-                        <span>{s.company || '—'}</span>
-                        <span>·</span>
-                        <span className="num">{formatDate(s.created_at)}</span>
-                        <span
-                          className={`inline-flex items-center rounded-[4px] border px-1.5 py-0.5 text-[11px] font-medium ${statusMeta.className}`}
-                        >
-                          {statusMeta.label}
-                        </span>
-                      </div>
-
-                      <span className="inline-flex items-center gap-1 font-medium text-[#0a0a0a]">
-                        <span>Open</span>
-                        <ArrowRight className="h-3 w-3" aria-hidden="true" />
+                    ) : (
+                      <span className="font-mono text-xs text-[#86868b]">
+                        6 questions ready
                       </span>
-                    </div>
+                    )}
+
+                    <span className="inline-flex min-h-[36px] items-center gap-1.5 rounded-full bg-[#f5f5f7] px-4 py-1.5 text-xs font-semibold text-[#1d1d1f] transition group-hover:bg-[#0071e3] group-hover:text-white">
+                      <span>{isCompleted ? 'Review' : 'Resume'}</span>
+                      <ArrowRight className="h-3.5 w-3.5" aria-hidden="true" />
+                    </span>
                   </div>
                 </Link>
               );
             })}
           </div>
-        </div>
-      )}
-    </main>
+        )}
+      </main>
+    </div>
   );
 };

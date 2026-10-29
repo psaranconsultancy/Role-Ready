@@ -3,6 +3,7 @@ import { Routes, Route, Navigate } from 'react-router-dom';
 import { Loader2 } from 'lucide-react';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { Header } from './components/Header';
+import { LandingPage } from './pages/LandingPage';
 import { LoginPage } from './pages/LoginPage';
 import { NewSessionPage } from './pages/NewSessionPage';
 import { SessionPage } from './pages/SessionPage';
@@ -15,9 +16,9 @@ const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({
 
   if (loading) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-[#f2f4f7]">
+      <div className="flex min-h-[calc(100dvh-3rem)] items-center justify-center bg-[#f5f5f7]">
         <Loader2
-          className="h-6 w-6 animate-spin text-[#1d5fbf]"
+          className="h-6 w-6 animate-spin text-[#0071e3]"
           aria-hidden="true"
         />
         <span className="sr-only">Checking authentication…</span>
@@ -34,10 +35,12 @@ const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({
 
 const AppRoutes: React.FC = () => {
   return (
-    <div className="min-h-screen bg-[#f2f4f7] text-[#0a0a0a]">
+    <div className="min-h-screen bg-[#f5f5f7] text-[#1d1d1f]">
       <Header />
       <Routes>
+        <Route path="/" element={<LandingPage />} />
         <Route path="/login" element={<LoginPage />} />
+        <Route path="/app" element={<Navigate to="/history" replace />} />
         <Route
           path="/history"
           element={
@@ -62,8 +65,7 @@ const AppRoutes: React.FC = () => {
             </ProtectedRoute>
           }
         />
-        <Route path="/" element={<Navigate to="/history" replace />} />
-        <Route path="*" element={<Navigate to="/history" replace />} />
+        <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </div>
   );
