@@ -12,14 +12,14 @@ const CODE_LABELS: Record<ApiError['error']['code'], string> = {
   bad_request: 'Invalid input',
   unauthorized: 'Authentication required',
   not_found: 'Not found',
-  llm_failed: 'AI service unavailable',
-  parse_failed: 'Resume parsing failed',
+  llm_failed: 'Scoring service error',
+  parse_failed: 'Resume parse failed',
 };
 
 export const ErrorBanner: React.FC<ErrorBannerProps> = ({
   error,
   onRetry,
-  retryLabel = 'Try again',
+  retryLabel = 'Retry',
 }) => {
   if (!error) return null;
 
@@ -29,21 +29,21 @@ export const ErrorBanner: React.FC<ErrorBannerProps> = ({
   return (
     <div
       role="alert"
-      className="rounded-xl border border-red-200 bg-red-50 p-4 text-red-900 shadow-sm"
+      className="rounded-[8px] border border-[#f5c2c0] bg-[#ffedea] p-3.5 text-[#831c1e]"
     >
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <div className="flex items-start gap-3">
+        <div className="flex items-start gap-2.5">
           <AlertCircle
-            className="mt-0.5 h-5 w-5 shrink-0 text-red-600"
+            className="mt-0.5 h-4 w-4 shrink-0 text-[#c4242a]"
             aria-hidden="true"
           />
           <div className="text-sm">
             {code && (
-              <span className="mr-2 inline-block rounded bg-red-100 px-1.5 py-0.5 text-xs font-semibold uppercase tracking-wide text-red-800">
+              <span className="mr-2 inline-block rounded-[4px] border border-[#e5a4a1] bg-[#ffffff] px-1.5 py-0.5 text-xs font-medium text-[#831c1e]">
                 {CODE_LABELS[code] || code}
               </span>
             )}
-            <span className="font-medium">{message}</span>
+            <span>{message}</span>
           </div>
         </div>
 
@@ -51,7 +51,7 @@ export const ErrorBanner: React.FC<ErrorBannerProps> = ({
           <button
             type="button"
             onClick={onRetry}
-            className="inline-flex shrink-0 items-center justify-center gap-1.5 self-start rounded-lg border border-red-300 bg-white px-3 py-1.5 text-xs font-semibold text-red-700 shadow-sm transition hover:bg-red-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-red-600 sm:self-center"
+            className="inline-flex min-h-[34px] shrink-0 items-center justify-center gap-1.5 self-start rounded-[6px] border border-[#d6918e] bg-[#ffffff] px-3 py-1 text-xs font-medium text-[#831c1e] transition hover:bg-[#fff6f5] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#831c1e] sm:self-center"
           >
             <RotateCcw className="h-3.5 w-3.5" aria-hidden="true" />
             <span>{retryLabel}</span>
@@ -61,4 +61,3 @@ export const ErrorBanner: React.FC<ErrorBannerProps> = ({
     </div>
   );
 };
-

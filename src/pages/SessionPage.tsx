@@ -2,10 +2,6 @@ import React, { useEffect, useState, useCallback } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import {
   ArrowLeft,
-  Building2,
-  CheckCircle2,
-  Clock,
-  FileText,
   Loader2,
   ChevronDown,
   ChevronUp,
@@ -22,19 +18,19 @@ const STATUS_BADGE: Record<
 > = {
   draft: {
     label: 'Draft',
-    className: 'border-slate-300 bg-slate-100 text-slate-700',
+    className: 'border-[#cfd5de] bg-[#eaecef] text-[#383c42]',
   },
   ready: {
     label: 'Ready',
-    className: 'border-indigo-200 bg-indigo-50 text-indigo-800',
+    className: 'border-[#cfd5de] bg-[#eaecef] text-[#383c42]',
   },
   in_progress: {
     label: 'In progress',
-    className: 'border-amber-300 bg-amber-50 text-amber-900',
+    className: 'border-[#fde68a] bg-[#fffbeb] text-[#92400e]',
   },
   completed: {
     label: 'Completed',
-    className: 'border-emerald-300 bg-emerald-50 text-emerald-900',
+    className: 'border-[#b7e4c7] bg-[#dcfae5] text-[#04250e]',
   },
 };
 
@@ -106,13 +102,13 @@ export const SessionPage: React.FC = () => {
   if (loading) {
     return (
       <main className="mx-auto max-w-4xl px-4 py-16 text-center sm:px-6">
-        <div className="inline-flex flex-col items-center gap-3">
+        <div className="inline-flex flex-col items-center gap-2.5">
           <Loader2
-            className="h-8 w-8 animate-spin text-indigo-600"
+            className="h-6 w-6 animate-spin text-[#1d5fbf]"
             aria-hidden="true"
           />
-          <p className="text-sm font-medium text-slate-600">
-            Loading your interview session…
+          <p className="text-sm text-[#5a6069]">
+            Loading interview session…
           </p>
         </div>
       </main>
@@ -126,7 +122,7 @@ export const SessionPage: React.FC = () => {
         <div className="mt-4">
           <Link
             to="/history"
-            className="inline-flex items-center gap-1.5 text-xs font-semibold text-indigo-600 hover:text-indigo-700"
+            className="inline-flex items-center gap-1.5 text-xs font-medium text-[#0a0a0a] hover:underline"
           >
             <ArrowLeft className="h-3.5 w-3.5" aria-hidden="true" />
             <span>Back to History</span>
@@ -159,61 +155,49 @@ export const SessionPage: React.FC = () => {
   const jdRequirements = session.jd_requirements ?? [];
 
   return (
-    <main className="mx-auto max-w-4xl space-y-6 px-4 py-6 sm:px-6 sm:py-8">
-      {/* Top back link */}
-      <div>
-        <Link
-          to="/history"
-          className="inline-flex items-center gap-1.5 rounded-lg text-xs font-semibold text-slate-600 hover:text-slate-900 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-600"
-        >
-          <ArrowLeft className="h-3.5 w-3.5" aria-hidden="true" />
-          <span>Back to History</span>
-        </Link>
-      </div>
-
-      {/* Session Header Card */}
-      <header className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
-        <div className="flex flex-wrap items-start justify-between gap-4">
+    <main className="mx-auto max-w-4xl space-y-4 px-4 py-6 sm:px-6 sm:py-8">
+      {/* Breadcrumb + Title Header */}
+      <header className="rounded-[8px] border border-[#e2e5ea] bg-[#ffffff] p-5">
+        <div className="flex flex-wrap items-center justify-between gap-4">
           <div>
-            <div className="flex flex-wrap items-center gap-2">
+            <div className="flex flex-wrap items-center gap-2 text-xs text-[#5a6069]">
+              <Link
+                to="/history"
+                className="inline-flex items-center gap-1 font-medium text-[#5a6069] hover:text-[#0a0a0a] focus:outline-none focus-visible:underline"
+              >
+                <ArrowLeft className="h-3.5 w-3.5" aria-hidden="true" />
+                <span>History</span>
+              </Link>
+              <span>/</span>
+              <span>{session.company || 'Interview session'}</span>
               <span
-                className={`inline-flex items-center rounded-md border px-2.5 py-0.5 text-xs font-semibold ${statusMeta.className}`}
+                className={`inline-flex items-center rounded-[4px] border px-2 py-0.5 text-xs font-medium ${statusMeta.className}`}
               >
                 {statusMeta.label}
               </span>
-              <span className="inline-flex items-center gap-1 text-xs font-medium text-slate-500">
-                <Clock className="h-3.5 w-3.5" aria-hidden="true" />
-                <span>
-                  {answeredCount} of {totalQuestions} answered
-                </span>
-              </span>
             </div>
 
-            <h1 className="mt-2 text-xl font-bold tracking-tight text-slate-900 sm:text-2xl">
+            <h1 className="mt-1.5 text-[24px] font-semibold tracking-tight text-[#0a0a0a]">
               {session.role_title || 'Target Role Interview'}
+              {session.company ? (
+                <span className="font-normal text-[#5a6069]">
+                  {' '}
+                  · {session.company}
+                </span>
+              ) : null}
             </h1>
-
-            {session.company && (
-              <div className="mt-1 flex items-center gap-1.5 text-sm font-medium text-slate-600">
-                <Building2 className="h-4 w-4 text-slate-400" aria-hidden="true" />
-                <span>{session.company}</span>
-              </div>
-            )}
           </div>
 
-          {/* Progress bar widget */}
-          <div className="w-full sm:w-56 rounded-xl border border-slate-200 bg-slate-50 p-3">
-            <div className="flex items-center justify-between text-xs font-semibold text-slate-700">
-              <span>Session progress</span>
-              <span className="inline-flex items-center gap-1 text-indigo-700">
-                <CheckCircle2 className="h-3.5 w-3.5" aria-hidden="true" />
-                <span>
-                  {answeredCount} / {totalQuestions}
-                </span>
+          {/* Progress strip */}
+          <div className="w-full sm:w-52">
+            <div className="flex items-baseline justify-between text-xs">
+              <span className="text-[#5a6069]">Answered</span>
+              <span className="num font-medium text-[#0a0a0a]">
+                {answeredCount} of {totalQuestions}
               </span>
             </div>
             <div
-              className="mt-2 h-2 w-full overflow-hidden rounded-full bg-slate-200"
+              className="mt-1.5 h-1.5 w-full overflow-hidden rounded-[2px] bg-[#eaecef]"
               role="progressbar"
               aria-valuenow={answeredCount}
               aria-valuemin={0}
@@ -221,7 +205,7 @@ export const SessionPage: React.FC = () => {
               aria-label={`${answeredCount} of ${totalQuestions} questions answered`}
             >
               <div
-                className="h-full rounded-full bg-indigo-600 transition-all"
+                className="h-full bg-[#1d5fbf]"
                 style={{
                   width: `${Math.round((answeredCount / totalQuestions) * 100)}%`,
                 }}
@@ -230,20 +214,19 @@ export const SessionPage: React.FC = () => {
           </div>
         </div>
 
-        {/* Collapsible parsed Resume Lines & JD Requirements reference drawer */}
+        {/* Collapsible parsed Resume Lines & JD Requirements ledger */}
         {(resumeLines.length > 0 || jdRequirements.length > 0) && (
-          <div className="mt-4 border-t border-slate-100 pt-3">
+          <div className="mt-4 border-t border-[#eef0f3] pt-3">
             <button
               type="button"
               onClick={() => setShowReferences((prev) => !prev)}
               aria-expanded={showReferences}
-              className="inline-flex items-center gap-1.5 text-xs font-semibold text-indigo-600 hover:text-indigo-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-600 rounded"
+              className="inline-flex items-center gap-1.5 text-xs font-medium text-[#5a6069] hover:text-[#0a0a0a] focus:outline-none focus-visible:underline"
             >
-              <FileText className="h-3.5 w-3.5" aria-hidden="true" />
-              <span>
+              <span className="num">
                 {showReferences
                   ? 'Hide extracted resume lines & JD requirements'
-                  : `View all extracted resume lines (${resumeLines.length}) & JD requirements (${jdRequirements.length})`}
+                  : `Inspect extracted resume lines (R1..R${resumeLines.length}) & JD requirements (J1..J${jdRequirements.length})`}
               </span>
               {showReferences ? (
                 <ChevronUp className="h-3.5 w-3.5" aria-hidden="true" />
@@ -253,34 +236,34 @@ export const SessionPage: React.FC = () => {
             </button>
 
             {showReferences && (
-              <div className="mt-3 grid grid-cols-1 gap-4 rounded-xl border border-slate-200 bg-slate-50 p-4 text-xs sm:grid-cols-2">
-                <div>
-                  <h2 className="font-bold text-slate-900">
+              <div className="mt-3 grid grid-cols-1 divide-y divide-[#e2e5ea] rounded-[6px] border border-[#e2e5ea] bg-[#f8f9fb] text-xs sm:grid-cols-2 sm:divide-x sm:divide-y-0">
+                <div className="p-3.5">
+                  <div className="font-medium text-[#0a0a0a]">
                     Resume Lines (R1..R{resumeLines.length})
-                  </h2>
-                  <ul className="mt-2 space-y-1.5 text-slate-700">
+                  </div>
+                  <ul className="mt-2 space-y-1.5 text-[#5a6069]">
                     {resumeLines.map((r) => (
                       <li key={r.id} className="leading-relaxed">
-                        <span className="mr-1.5 inline-block rounded bg-indigo-100 px-1.5 py-0.5 font-mono text-[11px] font-bold text-indigo-900">
+                        <span className="mr-1.5 inline-block rounded-[4px] border border-[#1d5fbf]/35 bg-[#1d5fbf]/10 px-1.5 py-0.5 font-mono text-[11px] font-medium text-[#1d5fbf]">
                           {r.id}
                         </span>
-                        <span>{r.text}</span>
+                        <span className="text-[#0a0a0a]">{r.text}</span>
                       </li>
                     ))}
                   </ul>
                 </div>
 
-                <div>
-                  <h2 className="font-bold text-slate-900">
+                <div className="p-3.5">
+                  <div className="font-medium text-[#0a0a0a]">
                     JD Requirements (J1..J{jdRequirements.length})
-                  </h2>
-                  <ul className="mt-2 space-y-1.5 text-slate-700">
+                  </div>
+                  <ul className="mt-2 space-y-1.5 text-[#5a6069]">
                     {jdRequirements.map((j) => (
                       <li key={j.id} className="leading-relaxed">
-                        <span className="mr-1.5 inline-block rounded bg-slate-200 px-1.5 py-0.5 font-mono text-[11px] font-bold text-slate-900">
+                        <span className="mr-1.5 inline-block rounded-[4px] border border-[#cfd5de] bg-[#eaecef] px-1.5 py-0.5 font-mono text-[11px] font-medium text-[#383c42]">
                           {j.id}
                         </span>
-                        <span>{j.text}</span>
+                        <span className="text-[#0a0a0a]">{j.text}</span>
                       </li>
                     ))}
                   </ul>
@@ -301,7 +284,7 @@ export const SessionPage: React.FC = () => {
       )}
 
       {/* 6 Question Cards */}
-      <div className="space-y-5">
+      <div className="space-y-4">
         {questions.map((q) => (
           <QuestionCard
             key={q.id}
@@ -316,4 +299,3 @@ export const SessionPage: React.FC = () => {
     </main>
   );
 };
-

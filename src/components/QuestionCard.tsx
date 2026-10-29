@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Send, Loader2, HelpCircle, CheckCircle2 } from 'lucide-react';
+import { Loader2 } from 'lucide-react';
 import type {
   Question,
   Feedback,
@@ -9,7 +9,7 @@ import type {
 } from '@contracts';
 import { scoreAnswer, toApiError } from '../lib/api';
 import { ReferenceChip } from './ReferenceChip';
-import { FeedbackPanel } from './FeedbackPanel';
+import { FeedbackPanel, getScoreBand } from './FeedbackPanel';
 import { ErrorBanner } from './ErrorBanner';
 
 interface QuestionCardProps {
@@ -24,26 +24,11 @@ interface QuestionCardProps {
   ) => void;
 }
 
-const QUESTION_TYPE_STYLES: Record<
-  Question['type'],
-  { label: string; className: string }
-> = {
-  behavioural: {
-    label: 'Behavioural',
-    className: 'bg-indigo-50 text-indigo-800 border-indigo-200',
-  },
-  technical: {
-    label: 'Technical',
-    className: 'bg-sky-50 text-sky-800 border-sky-200',
-  },
-  role_fit: {
-    label: 'Role fit',
-    className: 'bg-purple-50 text-purple-800 border-purple-200',
-  },
-  situational: {
-    label: 'Situational',
-    className: 'bg-teal-50 text-teal-800 border-teal-200',
-  },
+const QUESTION_TYPE_LABELS: Record<Question['type'], string> = {
+  behavioural: 'Behavioural',
+  technical: 'Technical',
+  role_fit: 'Role fit',
+  situational: 'Situational',
 };
 
 export const QuestionCard: React.FC<QuestionCardProps> = ({
@@ -75,10 +60,7 @@ export const QuestionCard: React.FC<QuestionCardProps> = ({
     .split(/\s+/)
     .filter(Boolean).length;
   const isValidLength = charCount >= 20 && charCount <= 4000;
-  const typeMeta = QUESTION_TYPE_STYLES[question.type] ?? {
-    label: question.type,
-    className: 'bg-slate-100 text-slate-800 border-slate-200',
-  };
+  const typeLabel = QUESTION_TYPE_LABELS[question.type] ?? question.type;
 
   const resolveResumeText = (refId: string): string => {
     const found = resumeLines.find((r) => r.id === refId);
@@ -120,61 +102,59 @@ export const QuestionCard: React.FC<QuestionCardProps> = ({
   };
 
   const textareaId = `answer-input-${question.id}`;
+  const scoreBand = existingFeedback
+    ? getScoreBand(existingFeedback.overall)
+    : null;
 
   return (
     <section
       id={`question-${question.position}`}
       aria-labelledby={`question-heading-${question.position}`}
-      className="scroll-mt-24 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition sm:p-6"
+      className="scroll-mt-20 rounded-[8px] border border-[#e2e5ea] bg-[#ffffff] p-5"
     >
-      {/* Question Header: Position, Type Badge, Answered Status */}
+      {/* Question Header: Position, Type tag, Scored status */}
       <div className="flex flex-wrap items-center justify-between gap-2">
-        <div className="flex items-center gap-2.5">
-          <span className="flex h-7 w-7 items-center justify-center rounded-full bg-indigo-600 text-xs font-bold text-white">
-            {question.position}
+        <div className="flex items-center gap-2">
+          <span className="num inline-flex h-6 items-center rounded-[4px] bg-[#141414] px-2 font-mono text-xs font-medium text-[#ffffff]">
+            Q{question.position}
           </span>
-          <span
-            className={`inline-flex items-center rounded-md border px-2.5 py-0.5 text-xs font-semibold ${typeMeta.className}`}
-          >
-            {typeMeta.label}
+          <span className="inline-flex items-center rounded-[4px] bg-[#eaecef] px-2 py-0.5 text-xs font-medium text-[#383c42]">
+            {typeLabel}
           </span>
         </div>
 
-        {existingFeedback && !isEditing && (
-          <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2.5 py-0.5 text-xs font-semibold text-emerald-800 border border-emerald-200">
-            <CheckCircle2 className="h-3.5 w-3.5 text-emerald-600" aria-hidden="true" />
-            <span>Scored ({existingFeedback.overall}/100)</span>
-          </span>
+        {existingFeedback && !isEditing && scoreBand && (
+          <div className="flex items-center gap-2">
+            <span
+              className={`inline-flex items-center rounded-[4px] border px-2 py-0.5 text-xs font-medium ${scoreBand.badgeClass}`}
+            >
+              {scoreBand.label}
+            </span>
+            <span className="num text-sm font-medium text-[#0a0a0a]">
+              {existingFeedback.overall}
+              <span className="text-xs font-normal text-[#5a6069]">/100</span>
+            </span>
+          </div>
         )}
       </div>
 
       {/* Question Text */}
       <h2
         id={`question-heading-${question.position}`}
-        className="mt-3.5 text-base font-semibold leading-snug text-slate-900 sm:text-lg"
+        className="mt-3 text-base font-medium leading-snug text-[#0a0a0a]"
       >
         {question.text}
       </h2>
 
       {/* Why we're asking + Grounding Chips */}
-      <div className="mt-3 rounded-xl border border-slate-200/80 bg-slate-50 p-3.5">
-        <div className="flex items-start gap-2 text-xs text-slate-700">
-          <HelpCircle
-            className="mt-0.5 h-4 w-4 shrink-0 text-indigo-600"
-            aria-hidden="true"
-          />
-          <div>
-            <span className="font-semibold text-slate-900">
-              Why we’re asking:{' '}
-            </span>
-            <span>{question.why_asking}</span>
-          </div>
-        </div>
+      <div className="mt-3 rounded-[6px] border border-[#e2e5ea] bg-[#f8f9fb] p-3">
+        <p className="text-xs leading-relaxed text-[#5a6069]">
+          <span className="font-medium text-[#0a0a0a]">Why we’re asking: </span>
+          {question.why_asking}
+        </p>
 
-        <div className="mt-2.5 flex flex-wrap items-center gap-1.5 pt-1">
-          <span className="mr-1 text-[11px] font-medium text-slate-500">
-            Citations (hover or focus to inspect):
-          </span>
+        <div className="mt-2.5 flex flex-wrap items-center gap-1.5">
+          <span className="mr-1 text-xs text-[#5a6069]">Evidence cited:</span>
           {question.resume_refs.map((rId) => (
             <ReferenceChip
               key={rId}
@@ -201,17 +181,17 @@ export const QuestionCard: React.FC<QuestionCardProps> = ({
             <div className="mb-1.5 flex flex-wrap items-center justify-between gap-1">
               <label
                 htmlFor={textareaId}
-                className="text-xs font-semibold text-slate-700"
+                className="text-xs font-medium text-[#0a0a0a]"
               >
-                Your Answer (STAR format · 60+ words & concrete metrics recommended)
+                Your answer (STAR structure · 60+ words with resume metrics)
               </label>
               <span
-                className={`text-xs font-medium ${
+                className={`num text-xs ${
                   charCount > 0 && (charCount < 20 || charCount > 4000)
-                    ? 'text-amber-700'
+                    ? 'text-[#92400e]'
                     : wordCount >= 60
-                      ? 'text-emerald-700'
-                      : 'text-slate-500'
+                      ? 'text-[#247b50]'
+                      : 'text-[#5a6069]'
                 }`}
               >
                 {wordCount} words · {charCount} / 4,000 chars (min 20)
@@ -224,8 +204,8 @@ export const QuestionCard: React.FC<QuestionCardProps> = ({
               value={answerText}
               onChange={(e) => setAnswerText(e.target.value)}
               disabled={submitting}
-              placeholder="Describe the Situation, Task, Action, and quantified Result from your resume..."
-              className="w-full rounded-xl border border-slate-300 bg-white p-3.5 text-sm leading-relaxed text-slate-900 placeholder:text-slate-400 focus:border-indigo-600 focus:outline-none focus:ring-2 focus:ring-indigo-600/20 disabled:bg-slate-50"
+              placeholder="State the Situation and Task, the Actions you took, and the quantified Result from your resume..."
+              className="w-full rounded-[6px] border border-[#cfd5de] bg-[#ffffff] p-3 text-sm leading-relaxed text-[#0a0a0a] placeholder:text-[#5a6069] focus:border-[#0a0a0a] focus:outline-none focus:ring-1 focus:ring-[#0a0a0a] disabled:bg-[#f2f4f7]"
             />
           </div>
 
@@ -234,14 +214,14 @@ export const QuestionCard: React.FC<QuestionCardProps> = ({
           )}
 
           <div className="flex flex-wrap items-center justify-between gap-2 pt-1">
-            <p className="text-xs text-slate-500">
+            <p className="num text-xs text-[#5a6069]">
               {charCount < 20
-                ? `${20 - charCount} more character${20 - charCount === 1 ? '' : 's'} needed to submit`
+                ? `${20 - charCount} more character${20 - charCount === 1 ? '' : 's'} required`
                 : charCount > 4000
                   ? `${charCount - 4000} characters over the 4,000 limit`
                   : wordCount < 60
-                    ? `Tip: Aim for 60+ words (${60 - wordCount} more) for full STAR structure points`
-                    : 'Strong length — ready to score against your resume evidence'}
+                    ? `Add ${60 - wordCount} more words to reach the 60-word STAR depth threshold`
+                    : 'Meets 60-word depth threshold'}
             </p>
 
             <div className="flex items-center gap-2">
@@ -254,7 +234,7 @@ export const QuestionCard: React.FC<QuestionCardProps> = ({
                     setIsEditing(false);
                   }}
                   disabled={submitting}
-                  className="rounded-xl border border-slate-300 bg-white px-3.5 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-600"
+                  className="min-h-[36px] rounded-[6px] border border-[#cfd5de] bg-[#ffffff] px-3.5 py-1.5 text-xs font-medium text-[#0a0a0a] hover:bg-[#f2f4f7] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#0a0a0a]"
                 >
                   Cancel
                 </button>
@@ -263,18 +243,15 @@ export const QuestionCard: React.FC<QuestionCardProps> = ({
               <button
                 type="submit"
                 disabled={!isValidLength || submitting}
-                className="inline-flex items-center gap-2 rounded-xl bg-indigo-600 px-4 py-2 text-xs font-semibold text-white shadow-sm transition hover:bg-indigo-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-600 disabled:cursor-not-allowed disabled:opacity-50"
+                className="inline-flex min-h-[36px] items-center gap-2 rounded-[6px] bg-[#141414] px-4 py-1.5 text-xs font-medium text-[#ffffff] transition hover:bg-[#2a2a2a] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#0a0a0a] disabled:cursor-not-allowed disabled:opacity-40"
               >
                 {submitting ? (
                   <>
-                    <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />
+                    <Loader2 className="h-3.5 w-3.5 animate-spin" aria-hidden="true" />
                     <span>Scoring answer…</span>
                   </>
                 ) : (
-                  <>
-                    <Send className="h-3.5 w-3.5" aria-hidden="true" />
-                    <span>Get feedback</span>
-                  </>
+                  <span>Get feedback</span>
                 )}
               </button>
             </div>

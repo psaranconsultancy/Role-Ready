@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import {
   CheckCircle2,
   Wrench,
-  Sparkles,
   Copy,
   Check,
   AlertTriangle,
@@ -19,25 +18,29 @@ export function getScoreBand(score: number): {
   label: string;
   badgeClass: string;
   barClass: string;
+  textSignalClass: string;
 } {
   if (score >= 75) {
     return {
       label: 'Strong',
-      badgeClass: 'border-emerald-300 bg-emerald-50 text-emerald-900',
-      barClass: 'bg-emerald-600',
+      badgeClass: 'border-[#b7e4c7] bg-[#dcfae5] text-[#04250e]',
+      barClass: 'bg-[#1d5fbf]',
+      textSignalClass: 'text-[#247b50]',
     };
   }
   if (score >= 50) {
     return {
       label: 'Solid start',
-      badgeClass: 'border-amber-300 bg-amber-50 text-amber-900',
-      barClass: 'bg-amber-500',
+      badgeClass: 'border-[#fde68a] bg-[#fffbeb] text-[#92400e]',
+      barClass: 'bg-[#141414]',
+      textSignalClass: 'text-[#92400e]',
     };
   }
   return {
     label: 'Needs work',
-    badgeClass: 'border-red-300 bg-red-50 text-red-900',
-    barClass: 'bg-red-600',
+    badgeClass: 'border-[#f5c2c0] bg-[#ffedea] text-[#831c1e]',
+    barClass: 'bg-[#c4242a]',
+    textSignalClass: 'text-[#c4242a]',
   };
 }
 
@@ -54,12 +57,12 @@ const CRITERIA_LABELS: Array<{
   {
     key: 'evidence',
     label: 'Evidence',
-    description: 'Uses real facts from your resume',
+    description: 'Uses verified facts from your resume',
   },
   {
     key: 'structure',
     label: 'Structure',
-    description: 'Clear STAR-style story',
+    description: 'Clear STAR story (Situation, Task, Action, Result)',
   },
   {
     key: 'impact',
@@ -86,75 +89,62 @@ export const FeedbackPanel: React.FC<FeedbackPanelProps> = ({
   };
 
   return (
-    <div className="mt-5 space-y-5 rounded-xl border border-slate-200 bg-slate-50/80 p-4 sm:p-5">
-      {/* Top row: overall score badge + Try again button */}
-      <div className="flex flex-wrap items-center justify-between gap-4 border-b border-slate-200 pb-4">
-        <div className="flex items-center gap-3.5">
+    <div className="mt-5 space-y-4 rounded-[8px] border border-[#e2e5ea] bg-[#f8f9fb] p-4 sm:p-5">
+      {/* Top row: overall score + Try again */}
+      <div className="flex flex-wrap items-center justify-between gap-4 border-b border-[#e2e5ea] pb-4">
+        <div className="flex items-baseline gap-3">
           <div
-            className={`flex h-16 w-16 flex-col items-center justify-center rounded-xl border-2 font-bold shadow-sm ${band.badgeClass}`}
+            className="flex items-baseline gap-1"
             aria-label={`Overall score ${feedback.overall} out of 100 (${band.label})`}
           >
-            <span className="text-2xl leading-none">{feedback.overall}</span>
-            <span className="mt-0.5 text-[10px] font-semibold uppercase tracking-wider opacity-80">
-              / 100
+            <span className="num text-[30px] font-normal leading-none tracking-tight text-[#0a0a0a]">
+              {feedback.overall}
             </span>
+            <span className="num text-xs text-[#5a6069]">/100</span>
           </div>
-          <div>
-            <div className="flex items-center gap-2">
-              <span className="text-sm font-semibold text-slate-900">
-                Overall Feedback Score
-              </span>
-              <span
-                className={`inline-flex items-center rounded-md border px-2 py-0.5 text-xs font-semibold ${band.badgeClass}`}
-              >
-                {band.label}
-              </span>
-            </div>
-            <p className="mt-0.5 text-xs text-slate-600">
-              Grounded against your cited resume lines and JD requirements
-            </p>
-          </div>
+
+          <span
+            className={`inline-flex items-center rounded-[4px] border px-2 py-0.5 text-xs font-medium ${band.badgeClass}`}
+          >
+            {band.label}
+          </span>
+
+          <span className="hidden sm:inline-block text-xs text-[#5a6069]">
+            Checked against cited resume lines and JD requirements
+          </span>
         </div>
 
         <button
           type="button"
           onClick={onTryAgain}
-          className="inline-flex items-center gap-1.5 rounded-lg border border-slate-300 bg-white px-3 py-1.5 text-xs font-semibold text-slate-700 shadow-sm transition hover:bg-slate-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-600"
+          className="inline-flex min-h-[34px] items-center gap-1.5 rounded-[6px] border border-[#cfd5de] bg-[#ffffff] px-3 py-1 text-xs font-medium text-[#0a0a0a] transition hover:bg-[#f2f4f7] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#0a0a0a]"
         >
-          <RotateCcw className="h-3.5 w-3.5" aria-hidden="true" />
+          <RotateCcw className="h-3.5 w-3.5 text-[#5a6069]" aria-hidden="true" />
           <span>Try again</span>
         </button>
       </div>
 
-      {/* Submitted answer preview */}
-      <div className="rounded-lg border border-slate-200 bg-white p-3.5">
-        <div className="mb-1 text-xs font-semibold uppercase tracking-wider text-slate-500">
-          Your Answer
-        </div>
-        <p className="whitespace-pre-line text-sm text-slate-800">
-          {feedback.answer_text}
-        </p>
-      </div>
-
-      {/* Four 1-5 bars */}
-      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-        {CRITERIA_LABELS.map(({ key, label, description }) => {
+      {/* Four 1-5 criterion strip split by 1px hairlines (achromatic-ledger style) */}
+      <div className="grid grid-cols-2 divide-y divide-[#e2e5ea] overflow-hidden rounded-[8px] border border-[#e2e5ea] bg-[#ffffff] sm:grid-cols-4 sm:divide-x sm:divide-y-0">
+        {CRITERIA_LABELS.map(({ key, label, description }, idx) => {
           const val = feedback.scores[key];
           const pct = Math.max(0, Math.min(100, (val / 5) * 100));
           return (
             <div
               key={key}
-              className="rounded-lg border border-slate-200 bg-white p-3"
+              className={`p-3.5 ${idx % 2 === 1 ? 'border-l border-[#e2e5ea] sm:border-l-0' : ''}`}
             >
-              <div className="flex items-center justify-between text-xs font-semibold text-slate-900">
-                <span>{label}</span>
-                <span className="rounded bg-slate-100 px-1.5 py-0.5 font-mono text-slate-800">
-                  {val} / 5
+              <div className="flex items-baseline justify-between gap-2">
+                <span className="text-xs font-medium text-[#5a6069]">
+                  {label}
+                </span>
+                <span className="num text-sm font-medium text-[#0a0a0a]">
+                  {val}
+                  <span className="text-xs font-normal text-[#5a6069]">/5</span>
                 </span>
               </div>
-              <p className="mt-0.5 text-[11px] text-slate-500">{description}</p>
               <div
-                className="mt-2 flex h-2 w-full overflow-hidden rounded-full bg-slate-100"
+                className="mt-2 flex h-1.5 w-full overflow-hidden rounded-[2px] bg-[#eaecef]"
                 role="progressbar"
                 aria-valuenow={val}
                 aria-valuemin={1}
@@ -162,16 +152,19 @@ export const FeedbackPanel: React.FC<FeedbackPanelProps> = ({
                 aria-label={`${label}: ${val} out of 5`}
               >
                 <div
-                  className={`h-full rounded-full transition-all ${
+                  className={`h-full ${
                     val >= 4
-                      ? 'bg-emerald-600'
+                      ? 'bg-[#1d5fbf]'
                       : val === 3
-                        ? 'bg-amber-500'
-                        : 'bg-red-600'
+                        ? 'bg-[#141414]'
+                        : 'bg-[#c4242a]'
                   }`}
                   style={{ width: `${pct}%` }}
                 />
               </div>
+              <p className="mt-1.5 text-xs leading-snug text-[#5a6069]">
+                {description}
+              </p>
             </div>
           );
         })}
@@ -182,21 +175,21 @@ export const FeedbackPanel: React.FC<FeedbackPanelProps> = ({
         <div
           role="region"
           aria-label="Unsupported claims warning"
-          className="rounded-xl border border-amber-300 bg-amber-50 p-4 text-amber-950"
+          className="rounded-[8px] border border-[#fde68a] bg-[#fffbeb] p-3.5 text-[#92400e]"
         >
           <div className="flex items-start gap-2.5">
             <AlertTriangle
-              className="mt-0.5 h-5 w-5 shrink-0 text-amber-700"
+              className="mt-0.5 h-4 w-4 shrink-0 text-[#92400e]"
               aria-hidden="true"
             />
-            <div className="space-y-1.5 text-sm">
-              <div className="font-semibold text-amber-900">
-                Unsupported claims detected (not backed by your resume)
+            <div className="space-y-1 text-sm">
+              <div className="font-medium text-[#92400e]">
+                Claims not backed by your resume
               </div>
-              <p className="text-xs text-amber-800">
-                Interviewers probe specifics—avoid stating metrics or scope that aren’t on your resume:
+              <p className="text-xs text-[#92400e]">
+                Hiring managers probe metrics and team scope. Remove claims that do not appear in R1..Rn:
               </p>
-              <ul className="list-disc space-y-1 pl-5 text-xs font-medium text-amber-950">
+              <ul className="list-disc space-y-1 pl-5 text-xs font-medium text-[#92400e]">
                 {feedback.unsupported_claims.map((claim, idx) => (
                   <li key={idx}>“{claim}”</li>
                 ))}
@@ -208,57 +201,65 @@ export const FeedbackPanel: React.FC<FeedbackPanelProps> = ({
 
       {/* What worked & One fix */}
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-        <div className="rounded-xl border border-emerald-200 bg-white p-3.5">
-          <div className="mb-1.5 flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wide text-emerald-800">
-            <CheckCircle2 className="h-4 w-4 text-emerald-600" aria-hidden="true" />
+        <div className="rounded-[8px] border border-[#e2e5ea] bg-[#ffffff] p-3.5">
+          <div className="mb-1.5 flex items-center gap-1.5 text-xs font-medium text-[#247b50]">
+            <CheckCircle2 className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
             <span>What worked</span>
           </div>
-          <p className="text-sm leading-relaxed text-slate-700">
+          <p className="text-sm leading-relaxed text-[#0a0a0a]">
             {feedback.what_worked}
           </p>
         </div>
 
-        <div className="rounded-xl border border-indigo-200 bg-white p-3.5">
-          <div className="mb-1.5 flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wide text-indigo-800">
-            <Wrench className="h-4 w-4 text-indigo-600" aria-hidden="true" />
+        <div className="rounded-[8px] border border-[#e2e5ea] bg-[#ffffff] p-3.5">
+          <div className="mb-1.5 flex items-center gap-1.5 text-xs font-medium text-[#1d5fbf]">
+            <Wrench className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
             <span>One fix</span>
           </div>
-          <p className="text-sm leading-relaxed text-slate-700">
+          <p className="text-sm leading-relaxed text-[#0a0a0a]">
             {feedback.one_fix}
           </p>
         </div>
       </div>
 
       {/* Stronger answer with copy button */}
-      <div className="rounded-xl border border-indigo-200 bg-indigo-50/50 p-4">
+      <div className="rounded-[8px] border border-[#e2e5ea] bg-[#ffffff] p-4">
         <div className="mb-2 flex flex-wrap items-center justify-between gap-2">
-          <div className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wide text-indigo-900">
-            <Sparkles className="h-4 w-4 text-indigo-600" aria-hidden="true" />
-            <span>Stronger answer (built from your resume facts)</span>
+          <div className="text-xs font-medium text-[#5a6069]">
+            Stronger answer (built strictly from your resume facts)
           </div>
           <button
             type="button"
             onClick={handleCopyStronger}
-            className="inline-flex items-center gap-1.5 rounded-lg border border-indigo-200 bg-white px-2.5 py-1 text-xs font-semibold text-indigo-700 shadow-sm transition hover:bg-indigo-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-600"
+            className="inline-flex min-h-[30px] items-center gap-1.5 rounded-[6px] border border-[#cfd5de] bg-[#ffffff] px-2.5 py-1 text-xs font-medium text-[#0a0a0a] transition hover:bg-[#f2f4f7] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#0a0a0a]"
           >
             {copied ? (
               <>
-                <Check className="h-3.5 w-3.5 text-emerald-600" aria-hidden="true" />
+                <Check className="h-3.5 w-3.5 text-[#247b50]" aria-hidden="true" />
                 <span>Copied</span>
               </>
             ) : (
               <>
-                <Copy className="h-3.5 w-3.5" aria-hidden="true" />
+                <Copy className="h-3.5 w-3.5 text-[#5a6069]" aria-hidden="true" />
                 <span>Copy answer</span>
               </>
             )}
           </button>
         </div>
-        <p className="text-sm leading-relaxed text-slate-800">
+        <p className="text-sm leading-relaxed text-[#0a0a0a]">
           {feedback.stronger_answer}
+        </p>
+      </div>
+
+      {/* Submitted answer */}
+      <div className="rounded-[8px] border border-[#e2e5ea] bg-[#ffffff] p-3.5">
+        <div className="mb-1 text-xs font-medium text-[#5a6069]">
+          Your submitted answer
+        </div>
+        <p className="whitespace-pre-line text-sm text-[#5a6069]">
+          {feedback.answer_text}
         </p>
       </div>
     </div>
   );
 };
-

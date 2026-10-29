@@ -174,7 +174,7 @@ function buildStrongerAnswerForQuestion(
     case 5:
       return `First, I would coordinate with the 5 checkout engineers (R2) to isolate the broken client release and quarantine malformed payloads in dbt staging so executive Looker dashboards remain accurate. Longer term, drawing on my PayPulse audit of 85 frontend events in Segment and Amplitude—where I raised schema compliance from 64% to 97% (R7)—I would enforce an automated tracking plan check in CI before checkout PRs merge.`;
     case 6:
-      return `In my first 30 days on FinFlow's Core Payments & Retention squad (R1), I would audit the dbt/BigQuery billing models and Stripe event pipelines, applying lessons from my Stripe Webhook migration that closed a 6% Finance discrepancy (R6). In days 31–60, I would roll out a Looker retention dashboard modelled on my PayPulse workflow that cut logo churn 14% (R4) and scope high-leverage onboarding and payment recovery tests building on my 41%-to-54% activation lift (R2).`;
+      return `In my first 30 days on FinFlow's Core Payments & Retention squad (R1), I would audit the dbt/BigQuery billing models and Stripe event pipelines, applying lessons from my Stripe Webhook migration that closed a 6% Finance discrepancy (R6). In days 31 to 60, I would roll out a Looker retention dashboard modelled on my PayPulse workflow that cut logo churn 14% (R4) and scope high-impact onboarding and payment recovery tests building on my 41%-to-54% activation lift (R2).`;
     default:
       return `Drawing directly on my background—specifically: ${refsText}—I approached this by defining clear baseline metrics, aligning cross-functional stakeholders, executing iteratively, and measuring the concrete business impact.`;
   }

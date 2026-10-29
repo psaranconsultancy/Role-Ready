@@ -15,9 +15,9 @@ const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({
 
   if (loading) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-slate-50">
+      <div className="flex min-h-screen items-center justify-center bg-[#f2f4f7]">
         <Loader2
-          className="h-8 w-8 animate-spin text-indigo-600"
+          className="h-6 w-6 animate-spin text-[#1d5fbf]"
           aria-hidden="true"
         />
         <span className="sr-only">Checking authentication…</span>
@@ -34,7 +34,7 @@ const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({
 
 const AppRoutes: React.FC = () => {
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-900">
+    <div className="min-h-screen bg-[#f2f4f7] text-[#0a0a0a]">
       <Header />
       <Routes>
         <Route path="/login" element={<LoginPage />} />
@@ -78,4 +78,3 @@ export const App: React.FC = () => {
 };
 
 export default App;
-

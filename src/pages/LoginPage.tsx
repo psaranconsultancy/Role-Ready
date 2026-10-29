@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Navigate, useNavigate } from 'react-router-dom';
-import { Briefcase, Loader2, ArrowRight, CheckCircle2 } from 'lucide-react';
+import { Loader2, ArrowRight } from 'lucide-react';
 import type { ApiError } from '@contracts';
 import { useAuth } from '../context/AuthContext';
 import { toApiError } from '../lib/api';
@@ -49,174 +49,207 @@ export const LoginPage: React.FC = () => {
   };
 
   return (
-    <div className="flex min-h-screen flex-col justify-center bg-slate-50 px-4 py-12 sm:px-6 lg:px-8">
-      <div className="mx-auto w-full max-w-md">
-        <div className="flex flex-col items-center text-center">
-          <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-indigo-600 text-white shadow-md">
-            <Briefcase className="h-6 w-6" aria-hidden="true" />
+    <div className="flex min-h-screen flex-col justify-center bg-[#f2f4f7] px-4 py-10 sm:px-6 lg:px-8">
+      <div className="mx-auto grid w-full max-w-4xl grid-cols-1 gap-8 lg:grid-cols-12 lg:items-center">
+        {/* Left column: Product identity + real interface preview */}
+        <div className="lg:col-span-7 space-y-5">
+          <div className="flex items-center gap-2.5">
+            <svg
+              width="28"
+              height="28"
+              viewBox="0 0 24 24"
+              fill="none"
+              aria-hidden="true"
+              className="shrink-0"
+            >
+              <rect x="1" y="1" width="22" height="22" rx="5" fill="#141414" />
+              <path
+                d="M7.5 16.5V7.5H12.2C13.9 7.5 15 8.4 15 9.9C15 11.1 14.2 11.9 13 12.2L15.3 16.5H13.3L11.2 12.4H9.3V16.5H7.5ZM9.3 10.9H12C12.8 10.9 13.2 10.5 13.2 9.9C13.2 9.3 12.8 8.9 12 8.9H9.3V10.9Z"
+                fill="#ffffff"
+              />
+              <circle cx="17.5" cy="7.5" r="2" fill="#1d5fbf" />
+            </svg>
+            <span className="text-lg font-semibold tracking-tight text-[#0a0a0a]">
+              RoleReady
+            </span>
           </div>
-          <h1 className="mt-4 text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl">
-            RoleReady
+
+          <h1 className="text-[22px] font-semibold leading-tight tracking-tight text-[#0a0a0a] sm:text-[24px]">
+            Resume-grounded interview practice
           </h1>
-          <p className="mt-1.5 text-sm text-slate-600">
-            AI interview practice that tells you exactly what to fix — grounded in your resume and target job description.
+
+          <p className="text-sm leading-relaxed text-[#5a6069]">
+            Upload your resume PDF and paste the job posting. RoleReady numbers your resume achievements (R1..Rn), extracts the role requirements (J1..Jn), and grades each typed answer against the evidence you actually have.
           </p>
-        </div>
 
-        <div className="mt-8 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8">
-          {/* Toggle tabs */}
+          {/* Real interface specimen (data-ui) showing the R/J citation ledger */}
           <div
-            role="tablist"
-            aria-label="Authentication mode"
-            className="mb-6 grid grid-cols-2 rounded-xl bg-slate-100 p-1"
+            data-ui="true"
+            className="rounded-[8px] border border-[#e2e5ea] bg-[#ffffff] p-4"
           >
-            <button
-              type="button"
-              role="tab"
-              aria-selected={mode === 'signin'}
-              onClick={() => {
-                setMode('signin');
-                setError(null);
-              }}
-              className={`rounded-lg py-2 text-xs font-semibold transition focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-600 ${
-                mode === 'signin'
-                  ? 'bg-white text-slate-900 shadow-sm'
-                  : 'text-slate-600 hover:text-slate-900'
-              }`}
-            >
-              Sign in
-            </button>
-            <button
-              type="button"
-              role="tab"
-              aria-selected={mode === 'signup'}
-              onClick={() => {
-                setMode('signup');
-                setError(null);
-              }}
-              className={`rounded-lg py-2 text-xs font-semibold transition focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-600 ${
-                mode === 'signup'
-                  ? 'bg-white text-slate-900 shadow-sm'
-                  : 'text-slate-600 hover:text-slate-900'
-              }`}
-            >
-              Create account
-            </button>
-          </div>
-
-          <form onSubmit={handleSubmit} className="space-y-4" noValidate>
-            <div>
-              <label
-                htmlFor="email-input"
-                className="block text-xs font-semibold text-slate-700"
-              >
-                Email address
-              </label>
-              <input
-                id="email-input"
-                type="email"
-                autoComplete="email"
-                required
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                disabled={submitting}
-                placeholder="you@example.com"
-                className="mt-1.5 w-full rounded-xl border border-slate-300 bg-white px-3.5 py-2.5 text-sm text-slate-900 placeholder:text-slate-400 focus:border-indigo-600 focus:outline-none focus:ring-2 focus:ring-indigo-600/20 disabled:bg-slate-50"
-              />
+            <div className="flex items-center justify-between border-b border-[#eef0f3] pb-2.5 text-xs">
+              <div className="flex items-center gap-2">
+                <span className="font-mono font-medium text-[#0a0a0a]">Q1</span>
+                <span className="rounded-[4px] bg-[#eaecef] px-2 py-0.5 text-[#383c42]">
+                  Behavioural
+                </span>
+              </div>
+              <span className="num font-medium text-[#04250e] bg-[#dcfae5] border border-[#b7e4c7] rounded-[4px] px-2 py-0.5">
+                94 / 100 · Strong
+              </span>
             </div>
 
-            <div>
-              <label
-                htmlFor="password-input"
-                className="block text-xs font-semibold text-slate-700"
-              >
-                Password (min 6 characters)
-              </label>
-              <input
-                id="password-input"
-                type="password"
-                autoComplete={
-                  mode === 'signin' ? 'current-password' : 'new-password'
-                }
-                required
-                minLength={6}
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                disabled={submitting}
-                placeholder="••••••••"
-                className="mt-1.5 w-full rounded-xl border border-slate-300 bg-white px-3.5 py-2.5 text-sm text-slate-900 placeholder:text-slate-400 focus:border-indigo-600 focus:outline-none focus:ring-2 focus:ring-indigo-600/20 disabled:bg-slate-50"
-              />
+            <p className="mt-2.5 text-sm font-medium leading-relaxed text-[#0a0a0a]">
+              “Walk me through how you built the Looker churn-risk dashboard for those 40 account managers at PayPulse. How did you decide which signals to include?”
+            </p>
+
+            <div className="mt-2.5 flex flex-wrap items-center gap-1.5 text-xs">
+              <span className="text-[#5a6069]">Citations:</span>
+              <span className="rounded-[4px] border border-[#1d5fbf]/35 bg-[#1d5fbf]/10 px-1.5 py-0.5 font-mono text-[#1d5fbf]">
+                R4 · Looker churn dashboard (-14% churn)
+              </span>
+              <span className="rounded-[4px] border border-[#cfd5de] bg-[#eaecef] px-1.5 py-0.5 font-mono text-[#383c42]">
+                J4 · Commercial BI adoption
+              </span>
             </div>
-
-            {error && (
-              <ErrorBanner error={error} onRetry={() => handleSubmit()} />
-            )}
-
-            <button
-              type="submit"
-              disabled={submitting}
-              className="mt-2 inline-flex w-full items-center justify-center gap-2 rounded-xl bg-indigo-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-indigo-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-600 disabled:cursor-not-allowed disabled:opacity-60"
-            >
-              {submitting ? (
-                <>
-                  <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />
-                  <span>
-                    {mode === 'signin'
-                      ? 'Signing in…'
-                      : 'Creating account…'}
-                  </span>
-                </>
-              ) : (
-                <>
-                  <span>
-                    {mode === 'signin' ? 'Sign in' : 'Create account'}
-                  </span>
-                  <ArrowRight className="h-4 w-4" aria-hidden="true" />
-                </>
-              )}
-            </button>
-          </form>
-
-          <div className="mt-6 border-t border-slate-100 pt-5 text-center">
-            <button
-              type="button"
-              onClick={() => {
-                setMode(mode === 'signin' ? 'signup' : 'signin');
-                setError(null);
-              }}
-              className="text-xs font-medium text-indigo-600 hover:text-indigo-700 focus:outline-none focus-visible:underline"
-            >
-              {mode === 'signin'
-                ? "Don't have an account? Create one"
-                : 'Already have an account? Sign in'}
-            </button>
           </div>
         </div>
 
-        {/* Highlights */}
-        <ul className="mt-6 space-y-2 text-xs text-slate-600">
-          <li className="flex items-center gap-2">
-            <CheckCircle2
-              className="h-4 w-4 shrink-0 text-indigo-600"
-              aria-hidden="true"
-            />
-            <span>Every question cites your resume lines (R1..Rn) & JD requirements (J1..Jn)</span>
-          </li>
-          <li className="flex items-center gap-2">
-            <CheckCircle2
-              className="h-4 w-4 shrink-0 text-indigo-600"
-              aria-hidden="true"
-            />
-            <span>Scored like a hiring manager: 0–100 verdict, what to fix next, & stronger rewrite</span>
-          </li>
-          <li className="flex items-center gap-2">
-            <CheckCircle2
-              className="h-4 w-4 shrink-0 text-indigo-600"
-              aria-hidden="true"
-            />
-            <span>Automatic evidence check flags claims not backed by your resume</span>
-          </li>
-        </ul>
+        {/* Right column: Sign in / Create account card */}
+        <div className="lg:col-span-5">
+          <div className="rounded-[8px] border border-[#e2e5ea] bg-[#ffffff] p-6">
+            {/* Segmented control */}
+            <div
+              role="tablist"
+              aria-label="Authentication mode"
+              className="mb-5 grid grid-cols-2 rounded-[6px] bg-[#e8ecf1] p-1"
+            >
+              <button
+                type="button"
+                role="tab"
+                aria-selected={mode === 'signin'}
+                onClick={() => {
+                  setMode('signin');
+                  setError(null);
+                }}
+                className={`min-h-[32px] rounded-[4px] py-1.5 text-sm font-medium transition focus:outline-none focus-visible:ring-2 focus-visible:ring-[#0a0a0a] ${
+                  mode === 'signin'
+                    ? 'bg-[#ffffff] text-[#0a0a0a]'
+                    : 'text-[#5a6069] hover:text-[#0a0a0a]'
+                }`}
+              >
+                Sign in
+              </button>
+              <button
+                type="button"
+                role="tab"
+                aria-selected={mode === 'signup'}
+                onClick={() => {
+                  setMode('signup');
+                  setError(null);
+                }}
+                className={`min-h-[32px] rounded-[4px] py-1.5 text-sm font-medium transition focus:outline-none focus-visible:ring-2 focus-visible:ring-[#0a0a0a] ${
+                  mode === 'signup'
+                    ? 'bg-[#ffffff] text-[#0a0a0a]'
+                    : 'text-[#5a6069] hover:text-[#0a0a0a]'
+                }`}
+              >
+                Create account
+              </button>
+            </div>
+
+            <form onSubmit={handleSubmit} className="space-y-4" noValidate>
+              <div>
+                <label
+                  htmlFor="email-input"
+                  className="block text-sm font-medium text-[#0a0a0a]"
+                >
+                  Email address
+                </label>
+                <input
+                  id="email-input"
+                  type="email"
+                  autoComplete="email"
+                  required
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  disabled={submitting}
+                  placeholder="alex.rivera@paypulse.io"
+                  className="mt-1.5 min-h-[38px] w-full rounded-[6px] border border-[#cfd5de] bg-[#ffffff] px-3 py-2 text-sm text-[#0a0a0a] placeholder:text-[#5a6069] focus:border-[#0a0a0a] focus:outline-none focus:ring-1 focus:ring-[#0a0a0a] disabled:bg-[#f2f4f7]"
+                />
+              </div>
+
+              <div>
+                <label
+                  htmlFor="password-input"
+                  className="block text-sm font-medium text-[#0a0a0a]"
+                >
+                  Password (minimum 6 characters)
+                </label>
+                <input
+                  id="password-input"
+                  type="password"
+                  autoComplete={
+                    mode === 'signin' ? 'current-password' : 'new-password'
+                  }
+                  required
+                  minLength={6}
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  disabled={submitting}
+                  placeholder="••••••••"
+                  className="mt-1.5 min-h-[38px] w-full rounded-[6px] border border-[#cfd5de] bg-[#ffffff] px-3 py-2 text-sm text-[#0a0a0a] placeholder:text-[#5a6069] focus:border-[#0a0a0a] focus:outline-none focus:ring-1 focus:ring-[#0a0a0a] disabled:bg-[#f2f4f7]"
+                />
+              </div>
+
+              {error && (
+                <ErrorBanner error={error} onRetry={() => handleSubmit()} />
+              )}
+
+              <button
+                type="submit"
+                disabled={submitting}
+                className="mt-2 inline-flex min-h-[38px] w-full items-center justify-center gap-2 rounded-[6px] bg-[#141414] px-4 py-2 text-sm font-medium text-[#ffffff] transition hover:bg-[#2a2a2a] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#0a0a0a] disabled:cursor-not-allowed disabled:opacity-50"
+              >
+                {submitting ? (
+                  <>
+                    <Loader2
+                      className="h-4 w-4 animate-spin"
+                      aria-hidden="true"
+                    />
+                    <span>
+                      {mode === 'signin'
+                        ? 'Signing in…'
+                        : 'Creating account…'}
+                    </span>
+                  </>
+                ) : (
+                  <>
+                    <span>
+                      {mode === 'signin' ? 'Sign in' : 'Create account'}
+                    </span>
+                    <ArrowRight className="h-4 w-4" aria-hidden="true" />
+                  </>
+                )}
+              </button>
+            </form>
+
+            <div className="mt-5 border-t border-[#eef0f3] pt-4 text-center">
+              <button
+                type="button"
+                onClick={() => {
+                  setMode(mode === 'signin' ? 'signup' : 'signin');
+                  setError(null);
+                }}
+                className="text-xs font-medium text-[#5a6069] hover:text-[#0a0a0a] focus:outline-none focus-visible:underline"
+              >
+                {mode === 'signin'
+                  ? "Don't have an account? Create one"
+                  : 'Already have an account? Sign in'}
+              </button>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );

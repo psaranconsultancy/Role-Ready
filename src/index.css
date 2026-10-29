@@ -2,9 +2,72 @@
 @tailwind components;
 @tailwind utilities;
 
+:root {
+  --ground: #f2f4f7;
+  --surface: #ffffff;
+  --raised: #e8ecf1;
+  --border: #e2e5ea;
+  --rule: #eef0f3;
+  --control: #cfd5de;
+  --text: #0a0a0a;
+  --muted: #5a6069;
+  --accent: #141414;
+  --data-hue: #1d5fbf;
+  --positive: #247b50;
+  --negative: #c4242a;
+  --warning: #92400e;
+  --pill-positive-bg: #dcfae5;
+  --pill-positive-ink: #04250e;
+  --pill-negative-bg: #ffedea;
+  --pill-negative-ink: #831c1e;
+  --pill-warning-bg: #fffbeb;
+  --pill-warning-ink: #92400e;
+  --pill-neutral-bg: #eaecef;
+  --pill-neutral-ink: #383c42;
+}
+
 @layer base {
   html {
     scroll-behavior: smooth;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  * {
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  body {
+    overflow-x: hidden;
+    width: 100%;
+    position: relative;
+    background-color: var(--ground);
+    color: var(--text);
+    font-family: "Geist", Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  }
+
+  /* iOS Safari anti-zoom standard from web-design-guidelines */
+  @media (max-width: 768px) {
+    input,
+    select,
+    textarea {
+      font-size: 16px !important;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
   }
 }
 
+.num {
+  font-variant-numeric: tabular-nums;
+}

@@ -16,7 +16,7 @@ Key Responsibilities & Requirements:
 - 3+ years of experience in product analytics, data science, or business intelligence in a fast-paced SaaS or fintech environment.
 - Advanced SQL proficiency and hands-on experience building scalable data models with dbt and BigQuery or Snowflake.
 - Proven track record of designing, sizing, and analysing A/B experiments (onboarding, checkout, or pricing flows) with statistical rigour.
-- Experience building self-serve BI dashboards in Looker or Tableau that empower commercial and customer-facing teams.
+- Experience building self-serve BI dashboards in Looker or Tableau adopted by commercial and customer-facing teams.
 - Deep familiarity with subscription billing, payment recovery, and cohort retention metrics (NDR, LTV, logo churn).
 - Strong stakeholder communication skills: ability to translate noisy product telemetry into clear executive recommendations.
 - Experience partnering with engineering to define and govern event-tracking taxonomies (Segment, Amplitude, or Mixpanel).`;
