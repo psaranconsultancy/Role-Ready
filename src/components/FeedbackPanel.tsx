@@ -53,22 +53,22 @@ const CRITERIA_LABELS: Array<{
   {
     key: 'relevance',
     label: 'Relevance',
-    description: 'Answers the prompt for this role',
+    description: 'Answers the question asked for this role',
   },
   {
     key: 'evidence',
     label: 'Evidence',
-    description: 'Uses verified facts from your resume',
+    description: 'Uses facts from your resume',
   },
   {
     key: 'structure',
     label: 'Structure',
-    description: 'Clear STAR flow (Situation, Task, Action, Result)',
+    description: 'Clear Situation, Task, Action, and Result flow',
   },
   {
     key: 'impact',
     label: 'Impact',
-    description: 'Quantified outcome or business result',
+    description: 'Concrete outcome or metric',
   },
 ];
 
@@ -90,7 +90,10 @@ export const FeedbackPanel: React.FC<FeedbackPanelProps> = ({
   };
 
   return (
-    <div className="mt-6 space-y-5 rounded-[22px] border border-black/10 bg-[#f5f5f7] p-5 sm:p-6">
+    <div
+      data-ui="feedback-panel"
+      className="mt-6 space-y-5 rounded-[22px] border border-black/10 bg-[#f5f5f7] p-5 sm:p-6"
+    >
       {/* Top Row: ScoreRing + Verdict + Try Again Pill */}
       <div className="flex flex-wrap items-center justify-between gap-4 border-b border-black/10 pb-5">
         <div className="flex items-center gap-4">
@@ -102,15 +105,15 @@ export const FeedbackPanel: React.FC<FeedbackPanelProps> = ({
               >
                 {band.label}
               </span>
-              <span className="font-mono text-xs text-[#6e6e73]">
+              <span className="text-xs font-semibold tabular-nums text-[#6e6e73]">
                 {feedback.overall} / 100
               </span>
             </div>
             <p className="mt-1 font-display text-base font-bold text-[#1d1d1f]">
-              Hiring-Manager Scorecard
+              Answer scorecard
             </p>
             <p className="text-xs text-[#6e6e73]">
-              Checked against your cited resume lines and role requirements
+              Graded against your cited resume lines and the job requirements
             </p>
           </div>
         </div>
@@ -133,14 +136,14 @@ export const FeedbackPanel: React.FC<FeedbackPanelProps> = ({
           return (
             <div
               key={key}
-              className="rounded-2xl border border-black/[0.07] bg-white p-3.5 shadow-sm"
+              className="rounded-2xl border border-black/[0.07] bg-white p-3.5"
             >
               <div className="flex items-center justify-between">
                 <span className="text-xs font-semibold text-[#1d1d1f]">
                   {label}
                 </span>
                 <span
-                  className="font-mono text-xs font-bold text-[#0071e3]"
+                  className="text-xs font-bold tabular-nums text-[#0071e3]"
                   aria-label={`${label} score ${val} out of 5`}
                 >
                   {val}/5
@@ -151,11 +154,11 @@ export const FeedbackPanel: React.FC<FeedbackPanelProps> = ({
                 aria-hidden="true"
               >
                 <div
-                  className="h-full rounded-full bg-[#0071e3] transition-all duration-300"
+                  className="h-full rounded-full bg-[#0071e3] transition-[width] duration-300"
                   style={{ width: `${pct}%` }}
                 />
               </div>
-              <p className="mt-2 text-[11px] leading-snug text-[#6e6e73]">
+              <p className="mt-2 text-xs leading-snug text-[#6e6e73]">
                 {description}
               </p>
             </div>
@@ -163,7 +166,7 @@ export const FeedbackPanel: React.FC<FeedbackPanelProps> = ({
         })}
       </div>
 
-      {/* Unsupported Claims Warning (Evidence Check) */}
+      {/* Unsupported Claims Warning */}
       {feedback.unsupported_claims &&
         feedback.unsupported_claims.length > 0 && (
           <div
@@ -177,14 +180,12 @@ export const FeedbackPanel: React.FC<FeedbackPanelProps> = ({
                 aria-hidden="true"
               />
               <div>
-                <div className="flex flex-wrap items-center gap-2">
-                  <p className="font-display text-xs font-bold uppercase tracking-wider text-[#92400e]">
-                    Evidence Check · Not in your resume
-                  </p>
-                </div>
+                <p className="font-display text-sm font-bold text-[#92400e]">
+                  Claims not found in your resume
+                </p>
                 <p className="mt-1 text-xs text-[#92400e]/90">
-                  These statements in your answer could not be verified against
-                  your uploaded resume lines:
+                  These statements in your answer did not match any line in your
+                  uploaded resume:
                 </p>
                 <ul className="mt-2 list-disc space-y-1 pl-4 text-xs font-medium">
                   {feedback.unsupported_claims.map((claim, idx) => (
@@ -198,36 +199,33 @@ export const FeedbackPanel: React.FC<FeedbackPanelProps> = ({
 
       {/* What Worked & What to Fix Next */}
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-        <div className="rounded-2xl border border-black/[0.07] bg-white p-4 shadow-sm">
-          <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-[#15803d]">
+        <div className="rounded-2xl border border-black/[0.07] bg-white p-4">
+          <div className="flex items-center gap-2 text-xs font-bold text-[#15803d]">
             <CheckCircle2 className="h-4 w-4 shrink-0" aria-hidden="true" />
             <span>What worked</span>
           </div>
-          <p className="mt-3 text-sm leading-relaxed text-[#1d1d1f]">
+          <p className="mt-2.5 text-sm leading-relaxed text-[#1d1d1f]">
             {feedback.what_worked}
           </p>
         </div>
 
-        <div className="rounded-2xl border border-[#0071e3]/25 bg-white p-4 shadow-sm">
-          <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-[#0071e3]">
+        <div className="rounded-2xl border border-[#0071e3]/25 bg-white p-4">
+          <div className="flex items-center gap-2 text-xs font-bold text-[#0071e3]">
             <Wrench className="h-4 w-4 shrink-0" aria-hidden="true" />
             <span>What to fix next</span>
           </div>
-          <p className="mt-3 text-sm leading-relaxed text-[#1d1d1f]">
+          <p className="mt-2.5 text-sm leading-relaxed text-[#1d1d1f]">
             {feedback.one_fix}
           </p>
         </div>
       </div>
 
       {/* Stronger Rewrite Quote Block */}
-      <div className="rounded-2xl border border-black/10 bg-white p-5 shadow-sm">
+      <div className="rounded-2xl border border-black/10 bg-white p-5">
         <div className="flex flex-wrap items-center justify-between gap-2 border-b border-black/[0.06] pb-3">
           <div>
-            <span className="font-mono text-[11px] font-semibold uppercase tracking-wider text-[#0071e3]">
-              Stronger Rewrite
-            </span>
             <h4 className="font-display text-sm font-bold text-[#1d1d1f]">
-              Hiring-Manager Example Grounded in Your Resume
+              Stronger rewrite using your resume
             </h4>
           </div>
           <button

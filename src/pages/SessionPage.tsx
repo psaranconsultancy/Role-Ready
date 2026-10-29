@@ -114,12 +114,12 @@ export const SessionPage: React.FC = () => {
     return (
       <div className="min-h-[calc(100dvh-3rem)] bg-[#f5f5f7] px-4 py-12 sm:px-6">
         <div className="mx-auto max-w-[1080px] space-y-6">
-          <div className="bento-card-light h-28 animate-pulse p-6" />
+          <div className="bento-card-light h-28 p-6" />
           <div className="grid gap-6 lg:grid-cols-12">
-            <div className="bento-card-light hidden h-80 animate-pulse lg:col-span-3 lg:block" />
+            <div className="bento-card-light hidden h-80 lg:col-span-3 lg:block" />
             <div className="space-y-6 lg:col-span-9">
-              <div className="bento-card-light h-64 animate-pulse p-6" />
-              <div className="bento-card-light h-64 animate-pulse p-6" />
+              <div className="bento-card-light h-64 p-6" />
+              <div className="bento-card-light h-64 p-6" />
             </div>
           </div>
         </div>
@@ -148,7 +148,7 @@ export const SessionPage: React.FC = () => {
               className="btn-pill-primary min-h-[42px] px-6 py-2 text-xs font-semibold"
             >
               <ArrowLeft className="h-3.5 w-3.5" aria-hidden="true" />
-              <span>Back to Practice History</span>
+              <span>Back to practice history</span>
             </Link>
           </div>
         </div>
@@ -186,7 +186,7 @@ export const SessionPage: React.FC = () => {
           <div className="flex min-w-0 items-center gap-2.5">
             <Link
               to="/history"
-              className="inline-flex shrink-0 items-center gap-1 text-xs font-medium text-[#6e6e73] transition hover:text-[#1d1d1f]"
+              className="inline-flex shrink-0 items-center gap-1 text-xs font-medium text-[#6e6e73] transition-colors hover:text-[#1d1d1f]"
             >
               <ArrowLeft className="h-3.5 w-3.5" aria-hidden="true" />
               <span className="hidden sm:inline">History</span>
@@ -204,7 +204,7 @@ export const SessionPage: React.FC = () => {
               ) : null}
             </h1>
             <span
-              className={`hidden shrink-0 items-center rounded-full border px-2.5 py-0.5 text-[11px] font-semibold md:inline-flex ${statusMeta.className}`}
+              className={`hidden shrink-0 items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold md:inline-flex ${statusMeta.className}`}
             >
               {statusMeta.label}
             </span>
@@ -212,7 +212,7 @@ export const SessionPage: React.FC = () => {
 
           {/* Progress Indicator */}
           <div className="flex shrink-0 items-center gap-3">
-            <span className="font-mono text-xs font-semibold text-[#1d1d1f]">
+            <span className="text-xs font-semibold tabular-nums text-[#1d1d1f]">
               {answeredCount} of {totalQuestions} answered
             </span>
             <div
@@ -224,7 +224,7 @@ export const SessionPage: React.FC = () => {
               aria-label={`${answeredCount} of ${totalQuestions} questions answered`}
             >
               <div
-                className="h-full rounded-full bg-[#0071e3] transition-all duration-300"
+                className="h-full rounded-full bg-[#0071e3] transition-[width] duration-300"
                 style={{
                   width: `${Math.round((answeredCount / totalQuestions) * 100)}%`,
                 }}
@@ -244,9 +244,9 @@ export const SessionPage: React.FC = () => {
           />
         )}
 
-        {/* Extracted Evidence Drawer (R1..Rn & J1..Jn) */}
+        {/* Extracted Evidence Drawer */}
         {(resumeLines.length > 0 || jdRequirements.length > 0) && (
-          <div className="bento-card-light px-5 py-4 sm:px-6">
+          <div data-ui="evidence-drawer" className="bento-card-light px-5 py-4 sm:px-6">
             <button
               type="button"
               onClick={() => setShowReferences((prev) => !prev)}
@@ -254,18 +254,18 @@ export const SessionPage: React.FC = () => {
               className="flex w-full items-center justify-between gap-3 text-left text-xs font-semibold text-[#1d1d1f]"
             >
               <span className="flex flex-wrap items-center gap-2">
-                <span className="inline-flex items-center gap-1 rounded-full bg-[#0071e3]/10 px-2.5 py-0.5 font-mono text-[11px] text-[#0071e3]">
+                <span className="inline-flex items-center gap-1 rounded-full bg-[#0071e3]/10 px-2.5 py-0.5 text-xs text-[#0071e3]">
                   <FileText className="h-3 w-3" aria-hidden="true" />
-                  R1..R{resumeLines.length}
+                  {resumeLines.length} resume lines
                 </span>
-                <span className="inline-flex items-center gap-1 rounded-full bg-black/[0.05] px-2.5 py-0.5 font-mono text-[11px] text-[#1d1d1f]">
+                <span className="inline-flex items-center gap-1 rounded-full bg-black/[0.05] px-2.5 py-0.5 text-xs text-[#1d1d1f]">
                   <Briefcase className="h-3 w-3" aria-hidden="true" />
-                  J1..J{jdRequirements.length}
+                  {jdRequirements.length} job requirements
                 </span>
                 <span className="text-[#6e6e73]">
                   {showReferences
-                    ? 'Hide extracted resume lines & role requirements'
-                    : 'Inspect all extracted resume lines & role requirements'}
+                    ? 'Hide extracted resume lines and job requirements'
+                    : 'View all extracted resume lines and job requirements'}
                 </span>
               </span>
               {showReferences ? (
@@ -284,15 +284,15 @@ export const SessionPage: React.FC = () => {
             {showReferences && (
               <div className="mt-4 grid grid-cols-1 gap-4 border-t border-black/10 pt-4 text-xs md:grid-cols-2">
                 <div className="rounded-2xl bg-[#f5f5f7] p-4">
-                  <p className="font-display text-xs font-bold uppercase tracking-wider text-[#0071e3]">
-                    Resume Evidence Lines (R1..R{resumeLines.length})
+                  <p className="font-display text-sm font-bold text-[#0071e3]">
+                    Extracted resume lines ({resumeLines.length})
                   </p>
                   <ul className="mt-3 space-y-2 text-[#1d1d1f]">
                     {resumeLines.map((r) => (
                       <li key={r.id} className="leading-relaxed">
-                        <span className="mr-1.5 inline-block rounded-full border border-[#0071e3]/30 bg-[#0071e3]/10 px-2 py-0.5 font-mono text-[10px] font-bold text-[#0071e3]">
+                        <code className="mr-1.5 inline-block rounded-full border border-[#0071e3]/30 bg-[#0071e3]/10 px-2 py-0.5 text-xs font-bold text-[#0071e3]">
                           {r.id}
-                        </span>
+                        </code>
                         <span>{r.text}</span>
                       </li>
                     ))}
@@ -300,15 +300,15 @@ export const SessionPage: React.FC = () => {
                 </div>
 
                 <div className="rounded-2xl bg-[#f5f5f7] p-4">
-                  <p className="font-display text-xs font-bold uppercase tracking-wider text-[#1d1d1f]">
-                    Job Requirements (J1..J{jdRequirements.length})
+                  <p className="font-display text-sm font-bold text-[#1d1d1f]">
+                    Extracted job requirements ({jdRequirements.length})
                   </p>
                   <ul className="mt-3 space-y-2 text-[#1d1d1f]">
                     {jdRequirements.map((j) => (
                       <li key={j.id} className="leading-relaxed">
-                        <span className="mr-1.5 inline-block rounded-full border border-black/15 bg-white px-2 py-0.5 font-mono text-[10px] font-bold text-[#1d1d1f]">
+                        <code className="mr-1.5 inline-block rounded-full border border-black/15 bg-white px-2 py-0.5 text-xs font-bold text-[#1d1d1f]">
                           {j.id}
-                        </span>
+                        </code>
                         <span>{j.text}</span>
                       </li>
                     ))}
@@ -319,15 +319,16 @@ export const SessionPage: React.FC = () => {
           </div>
         )}
 
-        {/* Two-Column Studio Workspace: Left Rail (Desktop) + Main Questions */}
+        {/* Two-Column Workspace: Left Rail (Desktop) + Main Questions */}
         <div className="grid gap-6 lg:grid-cols-12 lg:items-start">
           {/* Desktop Sticky Question Navigator Rail */}
           <aside
+            data-ui="question-nav"
             aria-label="Question navigator"
             className="bento-card-light hidden p-4 lg:sticky lg:top-28 lg:col-span-3 lg:block"
           >
-            <p className="px-2 font-mono text-[11px] font-semibold uppercase tracking-wider text-[#86868b]">
-              6 Tailored Questions
+            <p className="px-2 text-xs font-semibold text-[#86868b]">
+              Questions in this session
             </p>
             <ul className="mt-2.5 space-y-1">
               {questions.map((q) => {
@@ -338,7 +339,7 @@ export const SessionPage: React.FC = () => {
                     <button
                       type="button"
                       onClick={() => scrollToQuestion(q.position)}
-                      className="flex w-full items-center justify-between gap-2 rounded-xl px-2.5 py-2 text-left text-xs transition hover:bg-[#f5f5f7]"
+                      className="flex w-full items-center justify-between gap-2 rounded-xl px-2.5 py-2 text-left text-xs transition-colors hover:bg-[#f5f5f7]"
                     >
                       <span className="flex items-center gap-2 font-medium text-[#1d1d1f]">
                         {isAnswered ? (
@@ -352,7 +353,7 @@ export const SessionPage: React.FC = () => {
                             aria-hidden="true"
                           />
                         )}
-                        <span className="font-mono font-bold">
+                        <span className="font-bold tabular-nums">
                           Q{q.position}
                         </span>
                         <span className="truncate capitalize text-[#6e6e73]">
@@ -361,13 +362,11 @@ export const SessionPage: React.FC = () => {
                       </span>
 
                       {ans ? (
-                        <span className="font-mono text-[11px] font-semibold text-[#15803d]">
+                        <span className="text-xs font-semibold tabular-nums text-[#15803d]">
                           {ans.overall}
                         </span>
                       ) : (
-                        <span className="font-mono text-[10px] text-[#86868b]">
-                          Open
-                        </span>
+                        <span className="text-xs text-[#86868b]">Open</span>
                       )}
                     </button>
                   </li>

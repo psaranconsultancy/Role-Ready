@@ -145,7 +145,7 @@ export const NewSessionPage: React.FC = () => {
           <div className="flex items-center gap-3">
             <Link
               to="/history"
-              className="inline-flex items-center gap-1 text-xs font-medium text-[#6e6e73] transition hover:text-[#1d1d1f]"
+              className="inline-flex items-center gap-1 text-xs font-medium text-[#6e6e73] transition-colors hover:text-[#1d1d1f]"
             >
               <ArrowLeft className="h-3.5 w-3.5" aria-hidden="true" />
               <span className="hidden sm:inline">History</span>
@@ -154,7 +154,7 @@ export const NewSessionPage: React.FC = () => {
               /
             </span>
             <h1 className="font-display text-sm font-bold tracking-tight text-[#1d1d1f] sm:text-base">
-              New Practice Session
+              New practice session
             </h1>
           </div>
 
@@ -170,7 +170,7 @@ export const NewSessionPage: React.FC = () => {
                   : 'bg-[#30d158]/20 text-[#15803d]'
               }`}
             >
-              <span className="font-mono text-[10px] font-bold">1</span>
+              <span className="font-bold tabular-nums">1</span>
               <span>Resume &amp; JD</span>
             </span>
             <ArrowRight
@@ -184,8 +184,8 @@ export const NewSessionPage: React.FC = () => {
                   : 'bg-black/[0.05] text-[#6e6e73]'
               }`}
             >
-              <span className="font-mono text-[10px] font-bold">2</span>
-              <span>6 Questions</span>
+              <span className="font-bold tabular-nums">2</span>
+              <span>6 questions</span>
             </span>
           </div>
         </div>
@@ -195,15 +195,12 @@ export const NewSessionPage: React.FC = () => {
         {/* Header & Sample Fill Action */}
         <div className="mb-8 flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
           <div>
-            <p className="font-mono text-xs font-semibold uppercase tracking-widest text-[#0071e3]">
-              Session Configurator
-            </p>
-            <h2 className="mt-1 font-display text-3xl font-bold tracking-tight text-[#1d1d1f] sm:text-4xl">
-              Configure your interview.
+            <h2 className="font-display text-3xl font-bold tracking-tight text-[#1d1d1f] sm:text-4xl">
+              Set up your interview
             </h2>
             <p className="mt-1.5 text-sm text-[#6e6e73] sm:text-base">
               Upload your PDF resume and paste the job description to generate
-              six evidence-grounded questions.
+              six questions tailored to both.
             </p>
           </div>
 
@@ -246,8 +243,8 @@ export const NewSessionPage: React.FC = () => {
               </h3>
             </div>
             <p className="mt-1.5 text-xs text-[#a1a1a6] sm:text-sm">
-              Synthesizing numbered resume evidence lines (R1..Rn) and matching
-              them to role requirements (J1..Jn).
+              Extracting numbered lines from your PDF and matching them against
+              the job requirements.
             </p>
 
             <div className="mt-6 grid gap-3 sm:grid-cols-2">
@@ -270,9 +267,7 @@ export const NewSessionPage: React.FC = () => {
                   />
                 )}
                 <div>
-                  <p className="font-mono text-[11px] uppercase tracking-wider text-[#a1a1a6]">
-                    Step 1
-                  </p>
+                  <p className="text-xs font-medium text-[#a1a1a6]">Part 1</p>
                   <p className="text-sm font-semibold text-white">
                     Reading your resume…
                   </p>
@@ -295,9 +290,7 @@ export const NewSessionPage: React.FC = () => {
                   <span className="h-4 w-4 rounded-full border border-white/30" />
                 )}
                 <div>
-                  <p className="font-mono text-[11px] uppercase tracking-wider text-[#a1a1a6]">
-                    Step 2
-                  </p>
+                  <p className="text-xs font-medium text-[#a1a1a6]">Part 2</p>
                   <p className="text-sm font-semibold text-white">
                     Writing your questions…
                   </p>
@@ -309,7 +302,10 @@ export const NewSessionPage: React.FC = () => {
 
         <form onSubmit={handleSubmit} className="space-y-6" noValidate>
           {/* 1. Resume PDF Upload Bento Card */}
-          <section className="bento-card-light p-6 sm:p-8">
+          <section
+            data-ui="upload-card"
+            className="bento-card-light p-6 sm:p-8"
+          >
             <div className="flex items-center justify-between gap-2">
               <label
                 htmlFor="resume-upload"
@@ -317,13 +313,13 @@ export const NewSessionPage: React.FC = () => {
               >
                 1. Resume PDF <span className="text-[#ff453a]">*</span>
               </label>
-              <span className="font-mono text-xs text-[#86868b]">
+              <span className="text-xs font-medium text-[#86868b]">
                 PDF only · Max 5 MB
               </span>
             </div>
             <p className="mt-1 text-xs text-[#6e6e73]">
-              We extract numbered evidence lines (R1..Rn) so every interview
-              question cites your real work.
+              We split your resume into numbered lines so each question can cite
+              the exact work you did.
             </p>
 
             <input
@@ -362,7 +358,7 @@ export const NewSessionPage: React.FC = () => {
                   }
                 }}
                 aria-label="Upload resume PDF file"
-                className={`mt-4 flex cursor-pointer flex-col items-center justify-center rounded-[20px] border-2 border-dashed px-6 py-9 text-center transition ${
+                className={`mt-4 flex cursor-pointer flex-col items-center justify-center rounded-[20px] border-2 border-dashed px-6 py-9 text-center transition-colors ${
                   dragOver
                     ? 'border-[#0071e3] bg-[#0071e3]/[0.06]'
                     : 'border-black/15 bg-[#f5f5f7]/70 hover:border-[#0071e3]/60 hover:bg-[#f5f5f7]'
@@ -375,7 +371,7 @@ export const NewSessionPage: React.FC = () => {
                   Click to choose a PDF or drag and drop it here
                 </p>
                 <p className="mt-1 text-xs text-[#86868b]">
-                  Standard single-column or two-column PDF resumes up to 5 MB
+                  Single-column or two-column PDF resumes up to 5 MB
                 </p>
               </div>
             ) : (
@@ -388,9 +384,9 @@ export const NewSessionPage: React.FC = () => {
                     <p className="truncate text-sm font-semibold text-[#1d1d1f]">
                       {file.name}
                     </p>
-                    <p className="font-mono text-xs text-[#6e6e73]">
+                    <p className="text-xs tabular-nums text-[#6e6e73]">
                       {Math.max(1, Math.round(file.size / 1024))} KB · Ready to
-                      parse
+                      read
                     </p>
                   </div>
                 </div>
@@ -402,7 +398,7 @@ export const NewSessionPage: React.FC = () => {
                     if (fileInputRef.current) fileInputRef.current.value = '';
                   }}
                   aria-label="Remove selected resume PDF"
-                  className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-black/5 text-[#1d1d1f] transition hover:bg-black/10"
+                  className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-black/5 text-[#1d1d1f] transition-colors hover:bg-black/10"
                 >
                   <X className="h-4 w-4" aria-hidden="true" />
                 </button>
@@ -422,7 +418,7 @@ export const NewSessionPage: React.FC = () => {
           {/* 2. Target Role & Company (Optional) */}
           <section className="bento-card-light p-6 sm:p-8">
             <h3 className="font-display text-lg font-bold text-[#1d1d1f]">
-              2. Target Role &amp; Company{' '}
+              2. Role and company{' '}
               <span className="font-sans text-xs font-normal text-[#86868b]">
                 (optional)
               </span>
@@ -472,10 +468,10 @@ export const NewSessionPage: React.FC = () => {
                 htmlFor="jd-textarea"
                 className="font-display text-lg font-bold text-[#1d1d1f]"
               >
-                3. Job Description <span className="text-[#ff453a]">*</span>
+                3. Job description <span className="text-[#ff453a]">*</span>
               </label>
               <span
-                className={`inline-flex items-center gap-1.5 rounded-full px-3 py-0.5 font-mono text-xs font-semibold ${
+                className={`inline-flex items-center gap-1.5 rounded-full px-3 py-0.5 text-xs font-semibold tabular-nums ${
                   isJdValid
                     ? 'bg-[#30d158]/15 text-[#15803d]'
                     : 'bg-black/[0.05] text-[#6e6e73]'
@@ -492,7 +488,7 @@ export const NewSessionPage: React.FC = () => {
             </div>
             <p className="mt-1 text-xs text-[#6e6e73]">
               Paste the responsibilities and requirements from the job posting
-              (minimum 200 characters).
+              (at least 200 characters).
             </p>
 
             <textarea
@@ -521,13 +517,13 @@ export const NewSessionPage: React.FC = () => {
           {/* Submit Action Bar */}
           <div className="flex flex-col items-center justify-between gap-4 pt-2 sm:flex-row">
             <p className="text-xs text-[#6e6e73]">
-              Generates 6 tailored questions (2 behavioral, 2 technical/role, 2
-              resume-probe).
+              Creates 6 tailored questions (2 behavioral, 2 technical, 2
+              role-specific).
             </p>
             <button
               type="submit"
               disabled={!canSubmit}
-              className="btn-pill-primary min-h-[48px] w-full px-8 py-3 text-sm font-semibold shadow-sm disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto"
+              className="btn-pill-primary min-h-[48px] w-full px-8 py-3 text-sm font-semibold disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto"
             >
               {isBusy ? (
                 <>
@@ -543,7 +539,7 @@ export const NewSessionPage: React.FC = () => {
                 </>
               ) : (
                 <>
-                  <span>Generate 6 tailored questions</span>
+                  <span>Generate 6 questions</span>
                   <ArrowRight className="h-4 w-4" aria-hidden="true" />
                 </>
               )}

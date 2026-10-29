@@ -102,7 +102,7 @@ export const HistoryPage: React.FC = () => {
       <div className="frosted-localnav-light sticky top-12 z-30 h-[52px] w-full">
         <div className="mx-auto flex h-full max-w-[1024px] items-center justify-between px-4 sm:px-6">
           <span className="font-display text-base font-bold tracking-tight text-[#1d1d1f]">
-            Practice History
+            Practice history
           </span>
           <Link
             to="/new"
@@ -115,14 +115,11 @@ export const HistoryPage: React.FC = () => {
       </div>
 
       <main className="mx-auto max-w-[1024px] space-y-6 px-4 pt-8 sm:px-6 sm:pt-10">
-        {/* Hero Header */}
+        {/* Header */}
         <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
           <div>
-            <p className="font-mono text-xs font-semibold uppercase tracking-widest text-[#0071e3]">
-              Interview Archive
-            </p>
-            <h1 className="mt-1 font-display text-3xl font-bold tracking-tight text-[#1d1d1f] sm:text-4xl">
-              Your practice sessions.
+            <h1 className="font-display text-3xl font-bold tracking-tight text-[#1d1d1f] sm:text-4xl">
+              Your practice sessions
             </h1>
             <p className="mt-1 text-sm text-[#6e6e73]">
               Reopen any completed session to review your scored answers or
@@ -133,10 +130,13 @@ export const HistoryPage: React.FC = () => {
 
         {/* 3-Column Bento KPI Strip */}
         {!loading && totalSessions > 0 && (
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+          <div
+            data-ui="history-kpi"
+            className="grid grid-cols-1 gap-4 sm:grid-cols-3"
+          >
             <div className="bento-card-light p-5">
-              <p className="font-mono text-xs uppercase tracking-wider text-[#86868b]">
-                Total Sessions
+              <p className="text-xs font-medium text-[#86868b]">
+                Total sessions
               </p>
               <p className="mt-2 font-display text-3xl font-bold tabular-nums text-[#1d1d1f]">
                 {totalSessions}
@@ -147,8 +147,8 @@ export const HistoryPage: React.FC = () => {
             </div>
 
             <div className="bento-card-light p-5">
-              <p className="font-mono text-xs uppercase tracking-wider text-[#86868b]">
-                Completed Interviews
+              <p className="text-xs font-medium text-[#86868b]">
+                Completed interviews
               </p>
               <p className="mt-2 font-display text-3xl font-bold tabular-nums text-[#1d1d1f]">
                 {completedSessions.length}
@@ -157,17 +157,17 @@ export const HistoryPage: React.FC = () => {
                 </span>
               </p>
               <p className="mt-1 text-xs text-[#15803d]">
-                All 6 grounded prompts answered
+                All 6 questions answered
               </p>
             </div>
 
             <div className="bento-card-light flex items-center justify-between p-5">
               <div>
-                <p className="font-mono text-xs uppercase tracking-wider text-[#86868b]">
-                  Average Readiness
+                <p className="text-xs font-medium text-[#86868b]">
+                  Average score
                 </p>
                 <p className="mt-2 font-display text-3xl font-bold tabular-nums text-[#1d1d1f]">
-                  {avgScore !== null ? `${avgScore}/100` : '—'}
+                  {avgScore !== null ? `${avgScore}/100` : 'None yet'}
                 </p>
                 <p className="mt-1 text-xs text-[#6e6e73]">
                   Across completed sessions
@@ -182,7 +182,7 @@ export const HistoryPage: React.FC = () => {
 
         {error && <ErrorBanner error={error} onRetry={fetchHistory} />}
 
-        {/* Loading Skeletons (3 Shimmer Rows) */}
+        {/* Loading Skeletons (3 Rows) */}
         {loading ? (
           <div
             role="status"
@@ -192,7 +192,7 @@ export const HistoryPage: React.FC = () => {
             {[1, 2, 3].map((n) => (
               <div
                 key={n}
-                className="bento-card-light flex h-24 animate-pulse items-center justify-between p-6"
+                className="bento-card-light flex h-24 items-center justify-between p-6"
               >
                 <div className="space-y-2.5">
                   <div className="h-4 w-48 rounded-full bg-black/10" />
@@ -209,11 +209,11 @@ export const HistoryPage: React.FC = () => {
               <FolderOpen className="h-7 w-7" aria-hidden="true" />
             </div>
             <h2 className="mt-4 font-display text-xl font-bold text-[#1d1d1f]">
-              No practice sessions yet — start your first one
+              No practice sessions yet
             </h2>
             <p className="mx-auto mt-2 max-w-md text-sm text-[#6e6e73]">
               Upload your resume PDF and paste a job description to generate six
-              tailored interview questions grounded in your experience.
+              tailored interview questions built from your experience.
             </p>
             <div className="mt-6">
               <Link
@@ -221,13 +221,13 @@ export const HistoryPage: React.FC = () => {
                 className="btn-pill-primary min-h-[44px] px-7 py-2.5 text-sm font-semibold"
               >
                 <Sparkles className="h-4 w-4" aria-hidden="true" />
-                <span>New practice</span>
+                <span>Start your first session</span>
               </Link>
             </div>
           </div>
         ) : (
           /* Session Bento List */
-          <div className="space-y-3.5">
+          <div data-ui="session-list" className="space-y-3.5">
             {sessions.map((s) => {
               const statusMeta = STATUS_BADGE[s.status] ?? STATUS_BADGE.ready;
               const scoreBand =
@@ -245,16 +245,16 @@ export const HistoryPage: React.FC = () => {
                   <div className="min-w-0 space-y-1.5">
                     <div className="flex flex-wrap items-center gap-2">
                       <span
-                        className={`inline-flex items-center rounded-full border px-2.5 py-0.5 text-[11px] font-semibold ${statusMeta.className}`}
+                        className={`inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold ${statusMeta.className}`}
                       >
                         {statusMeta.label}
                       </span>
-                      <span className="inline-flex items-center gap-1 font-mono text-xs text-[#86868b]">
+                      <span className="inline-flex items-center gap-1 text-xs tabular-nums text-[#86868b]">
                         <Calendar className="h-3 w-3" aria-hidden="true" />
                         {formatDate(s.created_at)}
                       </span>
                       {s.resume_lines && (
-                        <span className="inline-flex items-center gap-1 font-mono text-xs text-[#0071e3]">
+                        <span className="inline-flex items-center gap-1 text-xs tabular-nums text-[#0071e3]">
                           <FileText className="h-3 w-3" aria-hidden="true" />
                           {s.resume_lines.length} resume lines cited
                         </span>
@@ -276,7 +276,7 @@ export const HistoryPage: React.FC = () => {
                     {s.overall_score !== null && scoreBand ? (
                       <div className="flex items-center gap-3">
                         <div className="text-right">
-                          <span className="block font-mono text-[11px] uppercase text-[#86868b]">
+                          <span className="block text-xs text-[#86868b]">
                             Overall
                           </span>
                           <span
@@ -292,12 +292,12 @@ export const HistoryPage: React.FC = () => {
                         />
                       </div>
                     ) : (
-                      <span className="font-mono text-xs text-[#86868b]">
+                      <span className="text-xs text-[#86868b]">
                         6 questions ready
                       </span>
                     )}
 
-                    <span className="inline-flex min-h-[36px] items-center gap-1.5 rounded-full bg-[#f5f5f7] px-4 py-1.5 text-xs font-semibold text-[#1d1d1f] transition group-hover:bg-[#0071e3] group-hover:text-white">
+                    <span className="inline-flex min-h-[36px] items-center gap-1.5 rounded-full bg-[#f5f5f7] px-4 py-1.5 text-xs font-semibold text-[#1d1d1f] transition-colors group-hover:bg-[#0071e3] group-hover:text-white">
                       <span>{isCompleted ? 'Review' : 'Resume'}</span>
                       <ArrowRight className="h-3.5 w-3.5" aria-hidden="true" />
                     </span>

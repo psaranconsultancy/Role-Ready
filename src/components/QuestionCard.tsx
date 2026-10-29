@@ -109,23 +109,24 @@ export const QuestionCard: React.FC<QuestionCardProps> = ({
   return (
     <section
       id={`question-${question.position}`}
+      data-ui="question-card"
       aria-labelledby={`question-heading-${question.position}`}
       className="bento-card-light scroll-mt-28 p-6 sm:p-8"
     >
       {/* Question Header: Position Badge, Type Pill, Score Status */}
       <div className="flex flex-wrap items-center justify-between gap-2">
         <div className="flex items-center gap-2.5">
-          <span className="inline-flex h-7 w-7 items-center justify-center rounded-full bg-[#1d1d1f] font-mono text-xs font-bold text-white">
+          <span className="inline-flex h-7 w-7 items-center justify-center rounded-full bg-[#1d1d1f] text-xs font-bold tabular-nums text-white">
             Q{question.position}
           </span>
-          <span className="rounded-full bg-[#0071e3]/10 px-3 py-0.5 font-mono text-xs font-semibold text-[#0071e3]">
+          <span className="rounded-full bg-[#0071e3]/10 px-3 py-0.5 text-xs font-semibold text-[#0071e3]">
             {typeLabel}
           </span>
         </div>
 
         {existingFeedback && scoreBand ? (
           <span
-            className={`inline-flex items-center gap-1.5 rounded-full border px-3 py-0.5 font-mono text-xs font-semibold ${scoreBand.badgeClass}`}
+            className={`inline-flex items-center gap-1.5 rounded-full border px-3 py-0.5 text-xs font-semibold tabular-nums ${scoreBand.badgeClass}`}
           >
             <CheckCircle2 className="h-3.5 w-3.5" aria-hidden="true" />
             <span>
@@ -133,7 +134,7 @@ export const QuestionCard: React.FC<QuestionCardProps> = ({
             </span>
           </span>
         ) : (
-          <span className="rounded-full bg-black/[0.05] px-3 py-0.5 font-mono text-xs font-medium text-[#6e6e73]">
+          <span className="rounded-full bg-black/[0.05] px-3 py-0.5 text-xs font-medium text-[#6e6e73]">
             Unanswered
           </span>
         )}
@@ -147,14 +148,14 @@ export const QuestionCard: React.FC<QuestionCardProps> = ({
         {question.text}
       </h2>
 
-      {/* Citation Chips Bar (R1..Rn & J1..Jn) */}
+      {/* Citation Chips Bar */}
       {(question.resume_refs.length > 0 || question.jd_refs.length > 0) && (
         <div
           className="mt-4 flex flex-wrap items-center gap-2 rounded-2xl border border-black/[0.06] bg-[#f5f5f7] px-3.5 py-2.5"
           aria-label="Question evidence citations"
         >
-          <span className="font-mono text-[11px] font-semibold uppercase tracking-wider text-[#6e6e73]">
-            Grounded in:
+          <span className="text-xs font-semibold text-[#6e6e73]">
+            Cites:
           </span>
           {question.resume_refs.map((refId) => (
             <ReferenceChip
@@ -189,9 +190,9 @@ export const QuestionCard: React.FC<QuestionCardProps> = ({
               htmlFor={textareaId}
               className="text-xs font-semibold text-[#1d1d1f]"
             >
-              Your answer (aim forSituation, Task, Action, Result + metric)
+              Your answer (cover Situation, Task, Action, and Result with a metric)
             </label>
-            <div className="flex items-center gap-2 font-mono text-xs">
+            <div className="flex items-center gap-2 text-xs tabular-nums">
               <span
                 className={
                   wordCount >= 60
@@ -199,7 +200,7 @@ export const QuestionCard: React.FC<QuestionCardProps> = ({
                     : 'text-[#6e6e73]'
                 }
               >
-                {wordCount} words {wordCount >= 60 ? '· STAR pace ✓' : '(aim 60+)'}
+                {wordCount} words {wordCount >= 60 ? '(60+ target met)' : '(aim for 60+)'}
               </span>
               <span className="text-black/20">·</span>
               <span
@@ -222,11 +223,11 @@ export const QuestionCard: React.FC<QuestionCardProps> = ({
             disabled={submitting}
             value={answerText}
             onChange={(e) => setAnswerText(e.target.value)}
-            placeholder="Describe the Situation and Task, the specific Actions you took (referencing your resume metrics), and the measurable Result…"
+            placeholder="Describe the Situation and Task, the specific Actions you took, and the measurable Result…"
             className="mt-2 block w-full rounded-[18px] border border-black/15 bg-[#f5f5f7]/60 p-4 text-base leading-relaxed text-[#1d1d1f] placeholder:text-[#86868b] focus:border-[#0071e3] focus:bg-white focus:outline-none disabled:opacity-60"
           />
 
-          {/* Submitting Skeleton Preview */}
+          {/* Submitting State */}
           {submitting && (
             <div
               role="status"
@@ -236,15 +237,15 @@ export const QuestionCard: React.FC<QuestionCardProps> = ({
               <div className="flex items-center gap-2.5 text-xs font-semibold text-[#0071e3]">
                 <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />
                 <span>
-                  Scoring your answer against cited resume lines and role
+                  Scoring your answer against your resume lines and the job
                   requirements…
                 </span>
               </div>
               <div className="mt-3 grid grid-cols-4 gap-2">
-                <div className="h-10 animate-pulse rounded-xl bg-[#0071e3]/10" />
-                <div className="h-10 animate-pulse rounded-xl bg-[#0071e3]/10" />
-                <div className="h-10 animate-pulse rounded-xl bg-[#0071e3]/10" />
-                <div className="h-10 animate-pulse rounded-xl bg-[#0071e3]/10" />
+                <div className="h-10 rounded-xl bg-[#0071e3]/10" />
+                <div className="h-10 rounded-xl bg-[#0071e3]/10" />
+                <div className="h-10 rounded-xl bg-[#0071e3]/10" />
+                <div className="h-10 rounded-xl bg-[#0071e3]/10" />
               </div>
             </div>
           )}
@@ -255,7 +256,7 @@ export const QuestionCard: React.FC<QuestionCardProps> = ({
                 ? `Write at least ${20 - charCount} more character${
                     20 - charCount === 1 ? '' : 's'
                   } to submit.`
-                : 'Ready for hiring-manager rubric evaluation.'}
+                : 'Ready to score.'}
             </span>
 
             <div className="flex w-full items-center justify-end gap-2 sm:w-auto">
@@ -302,7 +303,7 @@ export const QuestionCard: React.FC<QuestionCardProps> = ({
             <span className="font-semibold text-[#1d1d1f]">
               Your submitted answer
             </span>
-            <span className="font-mono">{wordCount} words</span>
+            <span className="tabular-nums">{wordCount} words</span>
           </div>
           <p className="whitespace-pre-wrap text-sm leading-relaxed text-[#1d1d1f]">
             {answerText}
@@ -318,13 +319,12 @@ export const QuestionCard: React.FC<QuestionCardProps> = ({
         />
       )}
 
-      {/* Subtle hint when re-editing */}
       {existingFeedback && isEditing && (
         <p className="mt-3 flex items-center gap-1.5 text-xs text-[#0071e3]">
           <Sparkles className="h-3.5 w-3.5" aria-hidden="true" />
           <span>
-            Tip: Incorporate the “What to fix next” suggestion above and
-            resubmit to update your session score.
+            Apply the suggested fix from your scorecard and resubmit to update
+            your score.
           </span>
         </p>
       )}

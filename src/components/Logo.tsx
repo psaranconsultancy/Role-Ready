@@ -3,13 +3,11 @@ import React from 'react';
 interface LogoProps {
   theme?: 'dark' | 'light';
   size?: 'sm' | 'md' | 'lg';
-  showBadge?: boolean;
 }
 
 export const Logo: React.FC<LogoProps> = ({
   theme = 'dark',
   size = 'md',
-  showBadge = false,
 }) => {
   const iconDims =
     size === 'sm' ? 'h-5 w-5' : size === 'lg' ? 'h-8 w-8' : 'h-6 w-6';
@@ -56,17 +54,6 @@ export const Logo: React.FC<LogoProps> = ({
       >
         Role<span className="text-[#0071e3]">Ready</span>
       </span>
-      {showBadge && (
-        <span
-          className={`hidden rounded-full px-2 py-0.5 font-mono text-[10px] font-medium uppercase tracking-wider sm:inline-block ${
-            theme === 'dark'
-              ? 'bg-white/10 text-[#a1a1a6] border border-white/10'
-              : 'bg-black/5 text-[#6e6e73] border border-black/10'
-          }`}
-        >
-          Studio
-        </span>
-      )}
     </span>
   );
 };

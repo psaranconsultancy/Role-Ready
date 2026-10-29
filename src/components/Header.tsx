@@ -13,7 +13,6 @@ export const Header: React.FC = () => {
   const [startingDemo, setStartingDemo] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
-  // Close mobile drawer on route change
   useEffect(() => {
     setMobileMenuOpen(false);
   }, [location.pathname]);
@@ -62,7 +61,7 @@ export const Header: React.FC = () => {
             className="flex h-11 items-center gap-2 transition-opacity hover:opacity-90"
             aria-label="RoleReady Home"
           >
-            <Logo theme="dark" size="sm" showBadge />
+            <Logo theme="dark" size="sm" />
           </Link>
 
           {/* Desktop Navigation */}
@@ -106,7 +105,7 @@ export const Header: React.FC = () => {
                   }`}
                 >
                   <PlusCircle className="h-3.5 w-3.5" aria-hidden="true" />
-                  <span>New Practice</span>
+                  <span>New practice</span>
                 </Link>
               </>
             ) : (
@@ -115,13 +114,13 @@ export const Header: React.FC = () => {
                   href="/#how-it-works"
                   className="text-xs font-medium text-[#f5f5f7]/75 transition-colors hover:text-white"
                 >
-                  How It Works
+                  How it works
                 </a>
                 <a
                   href="/#grounded-architecture"
                   className="text-xs font-medium text-[#f5f5f7]/75 transition-colors hover:text-white"
                 >
-                  Grounded AI
+                  Why it works
                 </a>
               </>
             )}
@@ -130,12 +129,12 @@ export const Header: React.FC = () => {
           {/* Desktop Actions */}
           <div className="hidden items-center gap-3 md:flex">
             {isMockMode() && (
-              <span className="inline-flex items-center gap-1.5 rounded-full border border-white/15 bg-white/[0.06] px-2.5 py-0.5 font-mono text-[11px] text-[#a1a1a6]">
+              <span className="inline-flex items-center gap-1.5 rounded-full border border-white/15 bg-white/[0.06] px-2.5 py-0.5 text-xs text-[#a1a1a6]">
                 <span
                   className="h-1.5 w-1.5 rounded-full bg-[#30d158]"
                   aria-hidden="true"
                 />
-                Demo Mode
+                Demo mode
               </span>
             )}
 
@@ -145,10 +144,10 @@ export const Header: React.FC = () => {
                   to="/new"
                   className="btn-pill-primary px-3.5 py-1 text-xs font-semibold"
                 >
-                  New Session
+                  New session
                 </Link>
                 <span
-                  className="max-w-[150px] truncate font-mono text-xs text-[#a1a1a6]"
+                  className="max-w-[150px] truncate text-xs text-[#a1a1a6]"
                   title={user.email}
                 >
                   {user.email}
@@ -157,7 +156,7 @@ export const Header: React.FC = () => {
                   type="button"
                   onClick={handleSignOut}
                   disabled={signingOut}
-                  className="inline-flex min-h-[32px] items-center gap-1.5 rounded-full border border-white/15 bg-white/10 px-3 py-1 text-xs font-medium text-[#f5f5f7] transition hover:bg-white/20 disabled:opacity-50"
+                  className="inline-flex min-h-[32px] items-center gap-1.5 rounded-full border border-white/15 bg-white/10 px-3 py-1 text-xs font-medium text-[#f5f5f7] transition-colors hover:bg-white/20 disabled:opacity-50"
                 >
                   <LogOut className="h-3.5 w-3.5" aria-hidden="true" />
                   <span>{signingOut ? 'Signing out…' : 'Sign out'}</span>
@@ -167,7 +166,7 @@ export const Header: React.FC = () => {
               <div className="flex items-center gap-2.5">
                 <Link
                   to="/login"
-                  className="px-2.5 py-1 text-xs font-medium text-[#f5f5f7]/80 transition hover:text-white"
+                  className="px-2.5 py-1 text-xs font-medium text-[#f5f5f7]/80 transition-colors hover:text-white"
                 >
                   Sign in
                 </Link>
@@ -200,7 +199,7 @@ export const Header: React.FC = () => {
                 disabled={startingDemo}
                 className="btn-pill-primary px-3 py-1 text-xs font-semibold"
               >
-                {startingDemo ? 'Opening…' : 'Try Demo'}
+                {startingDemo ? 'Opening…' : 'Try demo'}
               </button>
             )}
 
@@ -208,7 +207,11 @@ export const Header: React.FC = () => {
               type="button"
               onClick={() => setMobileMenuOpen((prev) => !prev)}
               aria-expanded={mobileMenuOpen}
-              aria-label={mobileMenuOpen ? 'Close navigation menu' : 'Open navigation menu'}
+              aria-label={
+                mobileMenuOpen
+                  ? 'Close navigation menu'
+                  : 'Open navigation menu'
+              }
               className={`globalnav-toggle relative h-11 w-11 rounded-full ${
                 mobileMenuOpen ? 'open' : ''
               }`}
@@ -220,19 +223,19 @@ export const Header: React.FC = () => {
         </div>
       </header>
 
-      {/* Fullscreen Frosted Mobile Navigation Drawer */}
+      {/* Fullscreen Mobile Navigation Drawer */}
       {mobileMenuOpen && (
         <div
           role="dialog"
           aria-modal="true"
           aria-label="Mobile navigation"
-          className="fixed inset-x-0 bottom-0 top-12 z-40 flex flex-col justify-between overflow-y-auto bg-black/95 px-6 py-8 text-[#f5f5f7] backdrop-blur-2xl md:hidden"
+          className="fixed inset-x-0 bottom-0 top-12 z-40 flex flex-col justify-between overflow-y-auto bg-black/95 px-6 py-8 text-[#f5f5f7] md:hidden"
         >
           <div className="space-y-6">
             {isMockMode() && (
-              <div className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/[0.06] px-3 py-1 font-mono text-xs text-[#a1a1a6]">
+              <div className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/[0.06] px-3 py-1 text-xs text-[#a1a1a6]">
                 <span className="h-2 w-2 rounded-full bg-[#30d158]" />
-                Demo mode · sample data ready
+                Demo mode with sample sessions
               </div>
             )}
 
@@ -250,27 +253,25 @@ export const Header: React.FC = () => {
                     to="/history"
                     className="flex items-center justify-between py-4 font-display text-2xl font-bold tracking-tight text-[#f5f5f7] hover:text-[#2997ff]"
                   >
-                    <span>Practice History</span>
+                    <span>Practice history</span>
                     <ArrowRight className="h-5 w-5 text-[#86868b]" />
                   </Link>
                   <Link
                     to="/new"
                     className="flex items-center justify-between py-4 font-display text-2xl font-bold tracking-tight text-[#2997ff]"
                   >
-                    <span>New Practice Session</span>
+                    <span>New practice session</span>
                     <ArrowRight className="h-5 w-5" />
                   </Link>
                 </>
               ) : (
-                <>
-                  <Link
-                    to="/login"
-                    className="flex items-center justify-between py-4 font-display text-2xl font-bold tracking-tight text-[#f5f5f7] hover:text-[#2997ff]"
-                  >
-                    <span>Sign In / Create Account</span>
-                    <ArrowRight className="h-5 w-5 text-[#86868b]" />
-                  </Link>
-                </>
+                <Link
+                  to="/login"
+                  className="flex items-center justify-between py-4 font-display text-2xl font-bold tracking-tight text-[#f5f5f7] hover:text-[#2997ff]"
+                >
+                  <span>Sign in or create account</span>
+                  <ArrowRight className="h-5 w-5 text-[#86868b]" />
+                </Link>
               )}
             </nav>
           </div>
@@ -279,12 +280,10 @@ export const Header: React.FC = () => {
             {user ? (
               <div className="flex flex-col gap-4">
                 <div>
-                  <p className="text-xs uppercase tracking-wider text-[#86868b]">
+                  <p className="text-xs font-medium text-[#86868b]">
                     Signed in as
                   </p>
-                  <p className="mt-0.5 font-mono text-sm text-[#f5f5f7]">
-                    {user.email}
-                  </p>
+                  <p className="mt-0.5 text-sm text-[#f5f5f7]">{user.email}</p>
                 </div>
                 <button
                   type="button"
@@ -305,7 +304,7 @@ export const Header: React.FC = () => {
               >
                 <Sparkles className="h-4 w-4" aria-hidden="true" />
                 <span>
-                  {startingDemo ? 'Starting demo…' : 'Try the demo — no sign-up'}
+                  {startingDemo ? 'Starting demo…' : 'Try the demo'}
                 </span>
               </button>
             )}

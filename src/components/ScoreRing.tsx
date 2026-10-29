@@ -88,7 +88,7 @@ export const ScoreRing: React.FC<ScoreRingProps> = ({
             strokeLinecap="round"
             strokeDasharray={circumference}
             strokeDashoffset={dashOffset}
-            className="transition-all duration-500 ease-out"
+            className="transition-[stroke-dashoffset] duration-500 ease-out"
           />
         </svg>
         <span
@@ -99,7 +99,7 @@ export const ScoreRing: React.FC<ScoreRingProps> = ({
       </div>
       {showLabel && (
         <span
-          className={`text-[11px] font-semibold tracking-tight ${
+          className={`text-xs font-semibold tracking-tight ${
             theme === 'dark' ? band.textDark : band.textLight
           }`}
         >

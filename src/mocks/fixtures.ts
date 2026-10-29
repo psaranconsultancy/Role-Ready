@@ -110,9 +110,9 @@ export function buildQuestionsForSession(sessionId: string): Question[] {
       session_id: sessionId,
       position: 1,
       type: 'behavioural',
-      text: 'Walk me through how you built the Looker churn-risk dashboard for those 40 account managers at PayPulse—how did you decide which signals to include and drive weekly adoption?',
+      text: 'Walk me through how you built the Looker churn-risk dashboard for those 40 account managers at PayPulse. How did you decide which signals to include and drive weekly adoption?',
       why_asking:
-        'Tests whether your Looker dashboard experience (R4) directly transfers to enabling our commercial and retention teams (J4, J5).',
+        'Tests whether your Looker dashboard experience (R4) transfers to enabling our commercial and retention teams (J4, J5).',
       resume_refs: ['R4', 'R9'],
       jd_refs: ['J4', 'J5'],
     },
@@ -121,7 +121,7 @@ export function buildQuestionsForSession(sessionId: string): Question[] {
       session_id: sessionId,
       position: 2,
       type: 'technical',
-      text: 'In your 18 A/B tests on payment retry logic and dunning emails, how did you handle sample sizing, skewed revenue distributions, and Guardrail metrics before calling a winner?',
+      text: 'In your 18 A/B tests on payment retry logic and dunning emails, how did you handle sample sizing, skewed revenue distributions, and guardrail metrics before calling a winner?',
       why_asking:
         'Probes the statistical depth behind your $420K ARR payment recovery experiments (R3) against our experimentation requirement (J3, J5).',
       resume_refs: ['R3', 'R12'],
@@ -132,9 +132,9 @@ export function buildQuestionsForSession(sessionId: string): Question[] {
       session_id: sessionId,
       position: 3,
       type: 'technical',
-      text: 'When you refactored 22 legacy SQL scripts into modular dbt models on BigQuery and cut runtime by 58%, how did you structure your staging/mart layers and validate data parity?',
+      text: 'When you refactored 22 legacy SQL scripts into modular dbt models on BigQuery and cut runtime by 58%, how did you structure your staging and mart layers and validate data parity?',
       why_asking:
-        'Verifies hands-on dbt + BigQuery data modelling craftsmanship (R5, R6) required for our analytics stack (J2).',
+        'Verifies hands-on dbt and BigQuery data modelling experience (R5, R6) required for our analytics stack (J2).',
       resume_refs: ['R5', 'R6'],
       jd_refs: ['J2'],
     },
@@ -143,9 +143,9 @@ export function buildQuestionsForSession(sessionId: string): Question[] {
       session_id: sessionId,
       position: 4,
       type: 'behavioural',
-      text: 'Tell me about presenting your pricing-tier elasticity findings to the VP of Product—what pushback did you get, and how did you frame the data to land the 11% expansion lift?',
+      text: 'Tell me about presenting your pricing-tier elasticity findings to the VP of Product. What pushback did you get, and how did you frame the data to land the 11% expansion lift?',
       why_asking:
-        'Evaluates executive storytelling and influence with senior product leadership (R10) for high-stakes commercial decisions (J6).',
+        'Evaluates executive communication and influence with senior product leadership (R10) for commercial decisions (J6).',
       resume_refs: ['R10', 'R2'],
       jd_refs: ['J6'],
     },
@@ -156,7 +156,7 @@ export function buildQuestionsForSession(sessionId: string): Question[] {
       type: 'situational',
       text: 'Imagine our Core Payments squad ships a new checkout flow next Tuesday, but 30% of Segment events are firing with missing properties. Drawing on your tracking audit, how would you triage and prevent this?',
       why_asking:
-        'Connects your Segment/Amplitude schema governance work (R7) to real-world telemetry incidents with engineering (J7).',
+        'Connects your Segment and Amplitude schema governance work (R7) to real telemetry incidents with engineering (J7).',
       resume_refs: ['R7', 'R2'],
       jd_refs: ['J7'],
     },
@@ -167,7 +167,7 @@ export function buildQuestionsForSession(sessionId: string): Question[] {
       type: 'role_fit',
       text: 'Looking across your onboarding activation uplift (41% to 54%) and Stripe billing migration, what would your first 60 days as Senior Product Analyst on FinFlow’s Core Payments & Retention squad look like?',
       why_asking:
-        'Assesses how you synthesise your fintech retention and onboarding background (R1, R2, R6) into an immediate impact plan for this role (J1, J5).',
+        'Assesses how you turn your fintech retention and onboarding background (R1, R2, R6) into a concrete 60-day plan for this role (J1, J5).',
       resume_refs: ['R1', 'R2', 'R6'],
       jd_refs: ['J1', 'J5'],
     },
@@ -189,15 +189,15 @@ export function buildSeedData(userId: string): {
     {
       question_id: `${session1Id}-q1`,
       answer_text:
-        'At PayPulse, account managers were reacting to churn only after merchants cancelled. I shadowed 6 AMs to learn their workflow, then engineered a Looker dashboard combining 14-day payment failure spikes and login drops. I ran bi-weekly office hours for 40 account managers and embedded Slack alerts, which drove 88% weekly active usage and reduced logo churn by 14% over two quarters.',
+        'At PayPulse, account managers were reacting to churn only after merchants cancelled. I shadowed 6 AMs to learn their workflow, then built a Looker dashboard combining 14-day payment failure spikes and login drops. I ran bi-weekly office hours for 40 account managers and added Slack alerts, which drove 88% weekly active usage and reduced logo churn by 14% over two quarters.',
       scores: { relevance: 5, evidence: 5, structure: 4, impact: 5 },
       overall: 94,
       what_worked:
-        'Grounded directly in R4 and R9 with clear Problem-Action-Result flow and specific metrics (40 account managers, 14% logo churn reduction).',
+        'Uses your Looker dashboard and office-hours experience (R4, R9) with clear context, actions, and outcomes (40 account managers, 14% logo churn reduction).',
       one_fix:
-        'Briefly mention which specific predictor (e.g., failed payment velocity vs. seat utilisation) had the highest precision when defining the churn risk score.',
+        'Name which signal (failed payment velocity vs. seat usage) predicted churn best when you defined the risk score.',
       stronger_answer:
-        'At PayPulse, our account management team lacked early warning signals before merchants churned. I partnered with commercial leads to define a composite health score in dbt and surfaced it in an automated Looker churn-risk dashboard (R4). To ensure adoption across all 40 account managers, I paired the launch with bi-weekly Looker office hours (R9) and workflow playbooks, ultimately cutting logo churn by 14% over two quarters.',
+        'At PayPulse, our account management team lacked early warning signals before merchants churned. I worked with commercial leads to define a health score in dbt and surfaced it in an automated Looker churn-risk dashboard (R4). To get all 40 account managers using it weekly, I ran bi-weekly Looker office hours (R9) and wrote workflow playbooks, cutting logo churn by 14% over two quarters.',
       unsupported_claims: [],
     },
     {
@@ -207,25 +207,25 @@ export function buildSeedData(userId: string): {
       scores: { relevance: 5, evidence: 5, structure: 4, impact: 5 },
       overall: 94,
       what_worked:
-        'Strong technical explanation of power sizing, skewed distribution handling in Python (scipy), and the $420K ARR impact from R3.',
+        'Explains power sizing, skewed distribution handling in Python (scipy), and the $420K ARR impact from R3.',
       one_fix:
-        'Add one sentence on how you prevented overlapping retry experiments from cannibalising the same delinquent merchant cohort.',
+        'Add one sentence on how you kept overlapping retry experiments from competing for the same delinquent merchant cohort.',
       stronger_answer:
-        'Across 18 payment retry and dunning email A/B tests at PayPulse (R3), I sized each experiment in Python (scipy) using historical invoice failure baselines (R12). To handle skewed merchant ARR, I paired a primary conversion metric (7-day invoice recovery rate) with winsorized recovered revenue and a strict involuntary-to-voluntary churn guardrail, ultimately recovering $420K in annualised ARR.',
+        'Across 18 payment retry and dunning email A/B tests at PayPulse (R3), I sized each experiment in Python (scipy) using historical invoice failure baselines (R12). To handle skewed merchant ARR, I paired 7-day invoice recovery rate with winsorized recovered revenue and a strict voluntary-churn guardrail, recovering $420K in annualised ARR.',
       unsupported_claims: [],
     },
     {
       question_id: `${session1Id}-q3`,
       answer_text:
-        'Our BigQuery warehouse had 22 monolithic SQL scripts that recalculated raw Stripe and product tables from scratch each morning. I refactored them into a three-tier dbt architecture—staging views, reusable intermediate transformations, and incremental mart tables partitioned by event date. I validated row counts and revenue totals against the legacy outputs for 14 days, cutting daily pipeline runtime by 58% and warehouse compute spend by 25%.',
+        'Our BigQuery warehouse had 22 monolithic SQL scripts that recalculated raw Stripe and product tables from scratch each morning. I refactored them into a three-tier dbt setup: staging views, reusable intermediate models, and incremental mart tables partitioned by event date. I checked row counts and revenue totals against the legacy outputs for 14 days, cutting daily pipeline runtime by 58% and warehouse compute spend by 25%.',
       scores: { relevance: 5, evidence: 5, structure: 4, impact: 4 },
       overall: 88,
       what_worked:
-        'Directly cites the 22 SQL scripts, BigQuery + dbt refactoring, 58% runtime reduction, and 25% cost savings from R5.',
+        'Cites the 22 SQL scripts, BigQuery and dbt refactoring, 58% runtime cut, and 25% cost savings from R5.',
       one_fix:
-        'Tie in how you incorporated the Stripe Webhook reconciliation work (R6) into your dbt testing assertions (e.g., schema and discrepancy tests).',
+        'Mention how you used your Stripe Webhook reconciliation work (R6) inside your automated dbt schema and discrepancy tests.',
       stronger_answer:
-        'When I inherited 22 legacy SQL scripts on BigQuery at PayPulse (R5), daily builds were slow and brittle. I restructured the pipeline into modular dbt staging, intermediate, and incremental mart models, adding automated dbt tests informed by our Stripe Webhook billing migration that resolved a 6% Finance discrepancy (R6). This cut daily pipeline runtime by 58% and lowered BigQuery spend by 25%.',
+        'When I inherited 22 legacy SQL scripts on BigQuery at PayPulse (R5), daily builds were slow and fragile. I restructured the pipeline into modular dbt staging, intermediate, and incremental mart models, adding automated dbt tests informed by our Stripe Webhook billing migration that resolved a 6% Finance discrepancy (R6). This cut daily pipeline runtime by 58% and lowered BigQuery spend by 25%.',
       unsupported_claims: [],
     },
     {
@@ -235,11 +235,11 @@ export function buildSeedData(userId: string): {
       scores: { relevance: 4, evidence: 4, structure: 4, impact: 4 },
       overall: 75,
       what_worked:
-        'Connects the VP of Product elasticity presentation and 11% expansion lift (R10) with concrete stakeholder objection handling.',
+        'Connects the VP of Product elasticity presentation and 11% expansion lift (R10) with concrete pushback handling.',
       one_fix:
-        'Spell out the exact trade-off table or sensitivity scenarios you showed the VP to make the risk feel bounded.',
+        'Describe the exact sensitivity scenarios you showed the VP so the downside risk was clear.',
       stronger_answer:
-        'In my quarterly pricing-tier elasticity presentation to the VP of Product (R10), leadership worried a packaging change might slow top-of-funnel activation. I brought cohort retention data alongside evidence from our merchant onboarding redesign—where we lifted 7-day activation from 41% to 54% across 12,000 signups (R2)—to prove activation was resilient. By framing three revenue sensitivity scenarios, we aligned on a packaging update that increased expansion revenue by 11%.',
+        'In my quarterly pricing-tier elasticity presentation to the VP of Product (R10), leadership worried a packaging change might slow top-of-funnel activation. I brought cohort retention data alongside evidence from our merchant onboarding redesign, where we lifted 7-day activation from 41% to 54% across 12,000 signups (R2), to prove activation held steady. Framing three revenue sensitivity scenarios helped us agree on a packaging update that increased expansion revenue by 11%.',
       unsupported_claims: [],
     },
     {
@@ -249,11 +249,11 @@ export function buildSeedData(userId: string): {
       scores: { relevance: 4, evidence: 4, structure: 3, impact: 4 },
       overall: 69,
       what_worked:
-        'Uses real evidence from the 85-event Segment/Amplitude audit (64% to 97% compliance in R7) to ground the prevention plan.',
+        'Uses your 85-event Segment and Amplitude audit (64% to 97% compliance in R7) to back up the prevention plan.',
       one_fix:
-        'Expand the immediate triage step: explain how you would backfill or quarantine the 30% malformed events in dbt so downstream dashboards do not break.',
+        'Explain how you would quarantine or backfill the 30% malformed events in dbt so downstream Looker dashboards stay accurate.',
       stronger_answer:
-        'In the first hour, I would partner with the checkout engineers (R2) to pinpoint which client release dropped the Segment properties and apply a dbt staging filter so broken payloads do not corrupt Looker reporting. To prevent recurrence, I would apply the playbook from my PayPulse audit of 85 Segment and Amplitude events—where we lifted schema compliance from 64% to 97% (R7)—by enforcing a typed tracking plan in PR reviews.',
+        'In the first hour, I would work with the checkout engineers (R2) to find which client release dropped the Segment properties and filter broken payloads in dbt staging so Looker reporting stays clean. To stop it happening again, I would use the playbook from my PayPulse audit of 85 Segment and Amplitude events, where we raised schema compliance from 64% to 97% (R7), by adding a schema check in pull requests.',
       unsupported_claims: [],
     },
     {
@@ -263,11 +263,11 @@ export function buildSeedData(userId: string): {
       scores: { relevance: 4, evidence: 4, structure: 4, impact: 3 },
       overall: 69,
       what_worked:
-        'Synthesises R1, R3, R4, and R6 into a realistic 30/60-day onboarding plan tailored to FinFlow’s Core Payments & Retention squad.',
+        'Combines R1, R3, R4, and R6 into a practical 30/60-day onboarding plan for FinFlow’s Core Payments & Retention squad.',
       one_fix:
-        'Quantify the target outcome for your first 60 days—for example, referencing your past 41% to 54% onboarding lift (R2) or $420K ARR recovery (R3) as benchmarks for sizing your first experiment.',
+        'Set a concrete target for day 60 by citing your past 41% to 54% onboarding lift (R2) or $420K ARR recovery (R3) as a baseline for sizing your first test.',
       stronger_answer:
-        'During days 1–30, I would audit FinFlow’s BigQuery/dbt billing tables and Segment taxonomy, drawing on my Stripe Webhook migration that resolved a 6% revenue discrepancy (R6) and my 85-event schema audit (R7). In days 31–60, I would replicate the Looker churn-risk workflow that cut logo churn 14% across 40 AMs (R4) and launch prioritized payment-recovery A/B tests modelled on the 18 experiments that recovered $420K ARR at PayPulse (R3).',
+        'During days 1–30, I would audit FinFlow’s BigQuery and dbt billing tables and Segment taxonomy, drawing on my Stripe Webhook migration that resolved a 6% revenue discrepancy (R6) and my 85-event schema audit (R7). In days 31–60, I would build a Looker churn-risk workflow like the one that cut logo churn 14% across 40 AMs (R4) and launch payment-recovery A/B tests modelled on the 18 experiments that recovered $420K ARR at PayPulse (R3).',
       unsupported_claims: [],
     },
   ];
@@ -280,11 +280,11 @@ export function buildSeedData(userId: string): {
       scores: { relevance: 4, evidence: 5, structure: 3, impact: 4 },
       overall: 75,
       what_worked:
-        'Cites the exact 40 account managers and 14% churn reduction from R4 plus office hours from R9.',
+        'Cites the 40 account managers and 14% churn reduction from R4 plus office hours from R9.',
       one_fix:
-        'Flesh out the Situation and Task in STAR format—explain how account managers prioritised accounts before your dashboard existed.',
+        'Add the Situation and Task first: explain how account managers spotted at-risk accounts before your dashboard existed.',
       stronger_answer:
-        'Before my project at PayPulse, 40 account managers relied on manual spreadsheets to spot at-risk merchants. I built an automated Looker churn-risk dashboard surfacing payment failures and usage drops (R4), and ran bi-weekly office hours (R9) to embed it into their weekly prep, cutting logo churn by 14% over two quarters.',
+        'Before my project at PayPulse, 40 account managers relied on manual spreadsheets to spot at-risk merchants. I built an automated Looker churn-risk dashboard surfacing payment failures and usage drops (R4), and ran bi-weekly office hours (R9) to build it into their weekly prep, cutting logo churn by 14% over two quarters.',
       unsupported_claims: [],
     },
     {
@@ -294,11 +294,11 @@ export function buildSeedData(userId: string): {
       scores: { relevance: 4, evidence: 5, structure: 3, impact: 5 },
       overall: 81,
       what_worked:
-        'Strong use of R3 evidence (18 A/B tests, Python scipy, $420K ARR recovered) and clear guardrail awareness.',
+        'Uses R3 evidence (18 A/B tests, Python scipy, $420K ARR recovered) and names the unsubscribe guardrail.',
       one_fix:
-        'Add more detail on how you calculated minimum detectable effect and handled variance in merchant invoice sizes.',
+        'Explain how you calculated minimum detectable effect and handled variance in merchant invoice sizes.',
       stronger_answer:
-        'Across 18 payment retry and dunning A/B tests at PayPulse (R3), I used Python (scipy) and SQL (R12) to run pre-test power calculations and stratified merchants by billing tier. By testing smart retry windows against a strict unsubscribe guardrail, we recovered $420K in annualised ARR.',
+        'Across 18 payment retry and dunning A/B tests at PayPulse (R3), I used Python (scipy) and SQL (R12) to run pre-test power calculations and stratified merchants by billing tier. Testing retry windows against an unsubscribe guardrail recovered $420K in annualised ARR.',
       unsupported_claims: [],
     },
     {
@@ -308,9 +308,9 @@ export function buildSeedData(userId: string): {
       scores: { relevance: 4, evidence: 3, structure: 3, impact: 4 },
       overall: 63,
       what_worked:
-        'Accurately references the 22 SQL scripts, dbt on BigQuery, 58% faster runtime, and 25% cost reduction from R5.',
+        'References the 22 SQL scripts, dbt on BigQuery, 58% faster runtime, and 25% cost reduction from R5.',
       one_fix:
-        'Stick strictly to your verified resume scope—remove the unverified claim about leading 12 data engineers and saving $3M, and instead detail how you structured your dbt staging and mart layers.',
+        'Keep to what is on your resume: remove the unverified claim about leading 12 data engineers and saving $3M, and explain how you structured your dbt staging and mart layers.',
       stronger_answer:
         'At PayPulse, I refactored 22 legacy SQL reporting scripts into modular staging and incremental mart models in dbt on BigQuery (R5), and aligned billing definitions with our Stripe Webhook migration that closed a 6% Finance gap (R6). This cut daily pipeline runtime by 58% and reduced BigQuery spend by 25%.',
       unsupported_claims: [
@@ -356,4 +356,3 @@ export function buildSeedData(userId: string): {
     answers: [...answersSession1, ...answersSession2],
   };
 }
-

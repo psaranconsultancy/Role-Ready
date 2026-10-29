@@ -12,8 +12,8 @@ export const LoginPage: React.FC = () => {
   const navigate = useNavigate();
 
   const [mode, setMode] = useState<'signin' | 'signup'>('signin');
-  const [email, setEmail] = useState('alex.rivera@example.com');
-  const [password, setPassword] = useState('interview2025');
+  const [email, setEmail] = useState('alex.rivera@roleready.app');
+  const [password, setPassword] = useState('interview2026');
   const [submitting, setSubmitting] = useState(false);
   const [demoLoading, setDemoLoading] = useState(false);
   const [error, setError] = useState<ApiError | null>(null);
@@ -64,22 +64,16 @@ export const LoginPage: React.FC = () => {
       <div className="mx-auto grid w-full max-w-[1024px] gap-8 lg:grid-cols-12 lg:items-center">
         {/* Left Column: Studio Showcase */}
         <div className="bento-card-dark relative overflow-hidden p-7 text-[#f5f5f7] sm:p-10 lg:col-span-6">
-          <div
-            aria-hidden="true"
-            className="pointer-events-none absolute -right-20 -top-20 h-64 w-64 rounded-full bg-[#0071e3]/25 blur-3xl"
-          />
-
           <div className="relative z-10">
-            <Logo theme="dark" size="md" showBadge />
+            <Logo theme="dark" size="md" />
 
             <h1 className="mt-6 font-display text-3xl font-bold leading-[1.1] tracking-tight text-[#f5f5f7] sm:text-4xl">
-              Practise every question with your own evidence in view.
+              Practise every question with your own resume in view
             </h1>
 
             <p className="mt-3 text-sm leading-relaxed text-[#a1a1a6] sm:text-base">
-              RoleReady pairs your resume PDF with any job description to craft
-              six targeted interview questions and grade your answers like a
-              hiring manager.
+              RoleReady pairs your PDF resume with the job description to write
+              six targeted interview questions and score your answers.
             </p>
 
             <ul className="mt-7 space-y-3.5 text-sm text-[#d2d2d7]">
@@ -89,10 +83,8 @@ export const LoginPage: React.FC = () => {
                   aria-hidden="true"
                 />
                 <span>
-                  <strong className="font-semibold text-white">
-                    Verbatim citations:
-                  </strong>{' '}
-                  Every question links to <code className="font-mono text-xs text-[#2997ff]">R1..Rn</code> resume lines and <code className="font-mono text-xs text-[#30d158]">J1..Jn</code> role requirements.
+                  Every question cites the exact line from your resume and the
+                  job requirement it tests.
                 </span>
               </li>
               <li className="flex items-start gap-3">
@@ -101,10 +93,8 @@ export const LoginPage: React.FC = () => {
                   aria-hidden="true"
                 />
                 <span>
-                  <strong className="font-semibold text-white">
-                    0–100 hiring-manager rubric:
-                  </strong>{' '}
-                  Scored on Relevance, Specificity, Structure, and Evidence.
+                  Your answers get a 0–100 score across Relevance, Evidence,
+                  Structure, and Impact.
                 </span>
               </li>
               <li className="flex items-start gap-3">
@@ -113,10 +103,8 @@ export const LoginPage: React.FC = () => {
                   aria-hidden="true"
                 />
                 <span>
-                  <strong className="font-semibold text-white">
-                    Stronger rewrite &amp; claim check:
-                  </strong>{' '}
-                  Flags unverified claims and writes a tighter STAR response.
+                  Each scorecard flags claims that are not on your resume and
+                  gives you a stronger rewrite to practise.
                 </span>
               </li>
             </ul>
@@ -134,14 +122,17 @@ export const LoginPage: React.FC = () => {
         </div>
 
         {/* Right Column: Authentication Bento Card */}
-        <div className="bento-card-light p-6 sm:p-10 lg:col-span-6">
+        <div
+          data-ui="auth-card"
+          className="bento-card-light p-6 sm:p-10 lg:col-span-6"
+        >
           {mockActive && (
             <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-black/10 bg-[#f5f5f7] px-3.5 py-1.5 text-xs font-medium text-[#1d1d1f]">
               <span
                 className="h-2 w-2 rounded-full bg-[#30d158]"
                 aria-hidden="true"
               />
-              <span>Demo mode · sample data, nothing is saved to a server</span>
+              <span>Demo mode with sample data (stored in your browser)</span>
             </div>
           )}
 
@@ -151,7 +142,7 @@ export const LoginPage: React.FC = () => {
               : 'Create your RoleReady account'}
           </h2>
           <p className="mt-1 text-sm text-[#6e6e73]">
-            Access your saved interview sessions, scores, and tailored feedback.
+            Open your saved interview sessions, scores, and rewrites.
           </p>
 
           {/* One-Click Demo User Button */}
@@ -161,7 +152,7 @@ export const LoginPage: React.FC = () => {
                 type="button"
                 onClick={handleDemoSignIn}
                 disabled={demoLoading || submitting}
-                className="btn-pill-primary min-h-[46px] w-full px-6 py-3 text-sm font-semibold shadow-sm disabled:opacity-60"
+                className="btn-pill-primary min-h-[46px] w-full px-6 py-3 text-sm font-semibold disabled:opacity-60"
               >
                 {demoLoading ? (
                   <>
@@ -181,7 +172,7 @@ export const LoginPage: React.FC = () => {
 
               <div className="relative my-6 flex items-center justify-center">
                 <div className="w-full border-t border-black/10" />
-                <span className="bg-white px-3 text-xs font-medium text-[#86868b]">
+                <span className=" shrink-0 bg-white px-3 text-xs font-medium text-[#86868b]">
                   or use your email
                 </span>
                 <div className="w-full border-t border-black/10" />
@@ -203,9 +194,9 @@ export const LoginPage: React.FC = () => {
                 setMode('signin');
                 setError(null);
               }}
-              className={`min-h-[38px] rounded-full text-xs font-semibold transition ${
+              className={`min-h-[38px] rounded-full text-xs font-semibold transition-colors ${
                 mode === 'signin'
-                  ? 'bg-white text-[#1d1d1f] shadow-sm'
+                  ? 'bg-white text-[#1d1d1f]'
                   : 'text-[#6e6e73] hover:text-[#1d1d1f]'
               }`}
             >
@@ -219,9 +210,9 @@ export const LoginPage: React.FC = () => {
                 setMode('signup');
                 setError(null);
               }}
-              className={`min-h-[38px] rounded-full text-xs font-semibold transition ${
+              className={`min-h-[38px] rounded-full text-xs font-semibold transition-colors ${
                 mode === 'signup'
-                  ? 'bg-white text-[#1d1d1f] shadow-sm'
+                  ? 'bg-white text-[#1d1d1f]'
                   : 'text-[#6e6e73] hover:text-[#1d1d1f]'
               }`}
             >
@@ -280,7 +271,7 @@ export const LoginPage: React.FC = () => {
             <button
               type="submit"
               disabled={submitting || demoLoading}
-              className={`min-h-[46px] w-full rounded-full px-6 py-3 text-sm font-semibold transition disabled:opacity-60 ${
+              className={`min-h-[46px] w-full rounded-full px-6 py-3 text-sm font-semibold transition-colors disabled:opacity-60 ${
                 mockActive
                   ? 'btn-pill-secondary-light'
                   : 'btn-pill-primary'
@@ -306,7 +297,7 @@ export const LoginPage: React.FC = () => {
 
           <p className="mt-5 flex items-center justify-center gap-1.5 text-center text-xs text-[#86868b]">
             <Lock className="h-3.5 w-3.5 text-[#30d158]" aria-hidden="true" />
-            <span>Your resume and interview responses remain private.</span>
+            <span>Your resume and interview answers stay private.</span>
           </p>
         </div>
       </div>
