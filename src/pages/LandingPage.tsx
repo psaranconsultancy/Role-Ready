@@ -216,7 +216,7 @@ export const LandingPage: React.FC = () => {
                   </span>
                 </div>
                 <span className="text-xs font-medium text-[#30d158]">
-                  Hover or tap R3 and J2 to read the source text
+                  Hover or tap each source tag to read the exact quote
                 </span>
               </div>
 
@@ -235,12 +235,12 @@ export const LandingPage: React.FC = () => {
                       Cites:
                     </span>
                     <ReferenceChip
-                      id="R3"
+                      id="resume-onboarding"
                       kind="resume"
                       text="Redesigned merchant onboarding funnel using Amplitude + SQL cohort analysis, increasing 30-day activation by 18% across 14,000 SMB accounts."
                     />
                     <ReferenceChip
-                      id="J2"
+                      id="jd-checkout"
                       kind="jd"
                       text="Own end-to-end funnel diagnostics and checkout conversion experiments across B2B payment flows."
                     />
@@ -273,7 +273,7 @@ export const LandingPage: React.FC = () => {
                         Strong · Clear business impact
                       </p>
                       <p className="mt-0.5 text-xs text-[#a1a1a6]">
-                        Backed by line R3 with zero unverified claims
+                        Backed by your PayWave resume bullet with zero unverified claims
                       </p>
                     </div>
                     <ScoreRing score={84} size="md" theme="dark" />
@@ -299,7 +299,7 @@ export const LandingPage: React.FC = () => {
                       What to fix next:
                     </span>{' '}
                     Connect the 18% activation lift directly to the B2B checkout
-                    experiments in requirement J2.
+                    experiments in the job description.
                   </div>
                 </div>
               </div>
@@ -459,10 +459,10 @@ export const LandingPage: React.FC = () => {
             </div>
             <div className="mt-6 flex flex-wrap gap-2 rounded-2xl bg-[#f5f5f7] p-3.5">
               <span className="rounded-full border border-[#0071e3]/30 bg-[#0071e3]/10 px-2.5 py-0.5 text-xs font-semibold text-[#0071e3]">
-                <code>R1</code> · SQL cohort analysis
+                Resume · SQL cohort analysis
               </span>
               <span className="rounded-full border border-black/15 bg-white px-2.5 py-0.5 text-xs font-semibold text-[#1d1d1f]">
-                <code>J4</code> · Looker dashboards
+                Job post · Looker dashboards
               </span>
             </div>
           </div>
@@ -515,7 +515,7 @@ export const LandingPage: React.FC = () => {
             <div className="mt-6 rounded-2xl border border-[#ff9f0a]/30 bg-[#fffbeb] p-3.5 text-xs text-[#92400e]">
               <span className="font-semibold">Flagged claim:</span> “Managed 12
               engineers” did not match your resume, which lists partnering with
-              5 engineers on the onboarding flow (<code>R2</code>).
+              5 engineers on the onboarding flow.
             </div>
           </div>
         </div>

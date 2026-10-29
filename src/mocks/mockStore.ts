@@ -16,7 +16,7 @@ import {
 } from './fixtures';
 
 const USER_STORAGE_KEY = 'roleready_mock_user_v1';
-const STORE_STORAGE_KEY = 'roleready_mock_store_v1';
+const STORE_STORAGE_KEY = 'roleready_mock_store_v2';
 
 export interface MockUser {
   id: string;
@@ -161,20 +161,20 @@ function buildStrongerAnswerForQuestion(
   question: Question,
   citedLines: ResumeLine[]
 ): string {
-  const refsText = citedLines.map((r) => `${r.text} (${r.id})`).join(' ');
+  const refsText = citedLines.map((r) => r.text).join(' ');
   switch (question.position) {
     case 1:
-      return `At PayPulse, account managers lacked early visibility into merchant churn risk. I worked with commercial leads to build an automated Looker churn-risk dashboard used weekly by 40 account managers (R4), combining payment failure signals and login drops. Running bi-weekly Looker office hours for 25 stakeholders (R9) embedded the dashboard into weekly account reviews and reduced logo churn by 14% over two quarters.`;
+      return `At PayPulse, account managers lacked early visibility into merchant churn risk. I worked with commercial leads to build an automated Looker churn-risk dashboard used weekly by 40 account managers, combining payment failure signals and login drops. Running bi-weekly Looker office hours for 25 stakeholders embedded the dashboard into weekly account reviews and reduced logo churn by 14% over two quarters.`;
     case 2:
-      return `Across 18 A/B tests on payment retry logic and dunning emails at PayPulse (R3), I used Python (scipy) and SQL (R12) to run pre-test power calculations and size minimum detectable effects. Because merchant invoice values were right-skewed, I tracked both binary payment recovery rate and winsorized ARR per cohort while watching voluntary churn as a guardrail, recovering $420K in annualised ARR.`;
+      return `Across 18 A/B tests on payment retry logic and dunning emails at PayPulse, I used Python (scipy) and SQL to run pre-test power calculations and size minimum detectable effects. Because merchant invoice values were right-skewed, I tracked both binary payment recovery rate and winsorized ARR per cohort while watching voluntary churn as a guardrail, recovering $420K in annualised ARR.`;
     case 3:
-      return `To replace 22 legacy SQL reporting scripts at PayPulse, I built a modular dbt pipeline on BigQuery split into staging, intermediate, and incremental mart layers (R5). I checked parity against historical outputs and added schema checks from our Stripe Webhook billing migration, which resolved a 6% revenue discrepancy with Finance (R6), cutting daily pipeline runtime by 58% and lowering warehouse spend by 25%.`;
+      return `To replace 22 legacy SQL reporting scripts at PayPulse, I built a modular dbt pipeline on BigQuery split into staging, intermediate, and incremental mart layers. I checked parity against historical outputs and added schema checks from our Stripe Webhook billing migration, which resolved a 6% revenue discrepancy with Finance, cutting daily pipeline runtime by 58% and lowering warehouse spend by 25%.`;
     case 4:
-      return `When presenting my quarterly pricing-tier elasticity analysis to the VP of Product (R10), leadership asked whether higher tier thresholds might slow new merchant conversion. I paired cohort elasticity models with funnel data from our merchant onboarding redesign, which lifted 7-day activation from 41% to 54% across 12,000 signups (R2), to show top-of-funnel resilience and get approval for a packaging update that lifted expansion revenue by 11%.`;
+      return `When presenting my quarterly pricing-tier elasticity analysis to the VP of Product, leadership asked whether higher tier thresholds might slow new merchant conversion. I paired cohort elasticity models with funnel data from our merchant onboarding redesign, which lifted 7-day activation from 41% to 54% across 12,000 signups, to show top-of-funnel resilience and get approval for a packaging update that lifted expansion revenue by 11%.`;
     case 5:
-      return `First, I would work with the 5 checkout engineers (R2) to isolate the broken client release and filter malformed payloads in dbt staging so Looker dashboards stay accurate. Longer term, using the playbook from my PayPulse audit of 85 frontend events in Segment and Amplitude, where I raised schema compliance from 64% to 97% (R7), I would add an automated tracking plan check in CI before checkout PRs merge.`;
+      return `First, I would work with the 5 checkout engineers to isolate the broken client release and filter malformed payloads in dbt staging so Looker dashboards stay accurate. Longer term, using the playbook from my PayPulse audit of 85 frontend events in Segment and Amplitude, where I raised schema compliance from 64% to 97%, I would add an automated tracking plan check in CI before checkout PRs merge.`;
     case 6:
-      return `In my first 30 days on FinFlow's Core Payments & Retention squad (R1), I would audit the dbt and BigQuery billing models and Stripe event pipelines, applying lessons from my Stripe Webhook migration that closed a 6% Finance discrepancy (R6). In days 31 to 60, I would roll out a Looker retention dashboard modelled on my PayPulse workflow that cut logo churn 14% (R4) and scope onboarding and payment recovery tests building on my 41%-to-54% activation lift (R2).`;
+      return `In my first 30 days on FinFlow's Core Payments & Retention squad, I would audit the dbt and BigQuery billing models and Stripe event pipelines, applying lessons from my Stripe Webhook migration that closed a 6% Finance discrepancy. In days 31 to 60, I would roll out a Looker retention dashboard modelled on my PayPulse workflow that cut logo churn 14% and scope onboarding and payment recovery tests building on my 41%-to-54% activation lift.`;
     default:
       return `Drawing on my experience (${refsText}), I set clear baseline metrics, aligned stakeholders, shipped the changes, and measured the business result.`;
   }
@@ -321,11 +321,10 @@ export function mockScoreAnswer(
   const sumScores = scores.relevance + scores.evidence + scores.structure + scores.impact;
   const overall = Math.round(((sumScores - 4) / 16) * 100);
 
-  const citedIdsLabel = question.resume_refs.join(', ');
   const whatWorkedParts: string[] = [];
   if (matchedKeywordCount >= 2) {
     whatWorkedParts.push(
-      `Used specific facts from your resume (${citedIdsLabel})`
+      'Used specific facts and metrics from your resume'
     );
   } else {
     whatWorkedParts.push('Answered the core question directly');
@@ -342,16 +341,18 @@ export function mockScoreAnswer(
 
   let one_fix = '';
   if (unsupportedClaims.length > 0) {
-    one_fix = `Remove claims that are not on your resume (such as "${unsupportedClaims[0]}") and stick to the facts in ${citedIdsLabel}.`;
+    one_fix = `Remove claims that are not on your resume (such as "${unsupportedClaims[0]}") and stick to your verified resume experience.`;
   } else if (wordCount < 60) {
-    one_fix = `Expand your answer to 60–90 words using Situation, Task, Action, and Result, and name the outcome from ${citedIdsLabel}.`;
+    one_fix =
+      'Expand your answer to 60–90 words using Situation, Task, Action, and Result, and name the measurable outcome from your resume.';
   } else if (!hasNumbers) {
     const sampleLine = citedResumeLines[0]?.text ?? 'your resume';
-    one_fix = `Add the exact numbers from ${citedIdsLabel} (for example: "${sampleLine}").`;
+    one_fix = `Add the exact numbers from your resume (for example: "${sampleLine}").`;
   } else if (matchedKeywordCount < 3) {
-    one_fix = `Name the specific tools and context from ${citedIdsLabel} so the interviewer hears direct proof for ${question.jd_refs.join(', ')}.`;
+    one_fix =
+      'Name the specific tools and context from your resume so the interviewer hears direct proof for the job requirements.';
   } else {
-    one_fix = `Close with one sentence connecting your result in ${citedIdsLabel} to how you would approach the same problem at ${session.company ?? 'the company'}.`;
+    one_fix = `Close with one sentence connecting your past result to how you would approach the same problem at ${session.company ?? 'the company'}.`;
   }
 
   const stronger_answer = buildStrongerAnswerForQuestion(question, citedResumeLines);

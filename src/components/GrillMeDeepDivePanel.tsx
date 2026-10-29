@@ -33,6 +33,8 @@ import {
   INDUSTRY_OPTIONS,
   DEPARTMENT_OPTIONS,
   SENIORITY_OPTIONS,
+  NICHE_CATEGORY_OPTIONS,
+  CSUITE_CATEGORY_OPTIONS,
   type HeatLevel,
   type DeliveryComposureMetrics,
 } from '../lib/tiers';
@@ -376,8 +378,11 @@ export const GrillMeDeepDivePanel: React.FC<GrillMeDeepDivePanelProps> = ({
           >
             Heat {heat}/4 · {activeHeatMeta.name}
           </span>
+          <span className="rounded-full border border-[#2997ff]/30 bg-[#0071e3]/15 px-3 py-1 text-xs font-medium text-[#2997ff]">
+            Niche: {grillContext.nicheCategory}
+          </span>
           <span className="rounded-full border border-white/15 bg-white/[0.06] px-3 py-1 text-xs font-medium text-[#d2d2d7]">
-            {grillContext.seniority} · {grillContext.industry}
+            C-Suite: {grillContext.cSuiteCategory}
           </span>
         </div>
 
@@ -388,7 +393,7 @@ export const GrillMeDeepDivePanel: React.FC<GrillMeDeepDivePanelProps> = ({
             className="inline-flex items-center gap-1.5 rounded-full border border-white/15 bg-white/[0.06] px-3.5 py-1.5 text-xs font-semibold text-[#d2d2d7] transition-colors hover:bg-white/10"
           >
             <Building2 className="h-3.5 w-3.5 text-[#30d158]" aria-hidden="true" />
-            <span>Role &amp; C-Suite context</span>
+            <span>Niche &amp; C-Suite categories</span>
           </button>
           <button
             type="button"
@@ -401,17 +406,17 @@ export const GrillMeDeepDivePanel: React.FC<GrillMeDeepDivePanelProps> = ({
         </div>
       </div>
 
-      {/* Expandable Niche Role, C-Suite Level, Uploads & Links Context Drawer */}
+      {/* Expandable Niche Category, C-Suite Category, Uploads & Links Context Drawer */}
       {showContextEditor && (
         <div className="mt-5 rounded-2xl border border-white/15 bg-white/[0.04] p-5">
           <div className="flex flex-wrap items-center justify-between gap-2 border-b border-white/10 pb-3">
             <div>
               <h4 className="font-display text-sm font-bold text-white">
-                Role Details, Extra Files &amp; Shared Links
+                Niche Category, C-Suite Category, Extra Files &amp; Shared Links
               </h4>
               <p className="text-xs text-[#a1a1a6]">
-                Add your industry, seniority level, board decks, or company
-                links so your follow-up questions match the exact role.
+                Configure your Niche specialization and C-Suite seat separately,
+                or attach board decks and company links.
               </p>
             </div>
             <button
@@ -478,7 +483,7 @@ export const GrillMeDeepDivePanel: React.FC<GrillMeDeepDivePanelProps> = ({
                 htmlFor={`seniority-select-${question.id}`}
                 className="block text-xs font-semibold text-[#d2d2d7]"
               >
-                Seniority &amp; C-Suite Level
+                Seniority Band
               </label>
               <select
                 id={`seniority-select-${question.id}`}
@@ -500,12 +505,67 @@ export const GrillMeDeepDivePanel: React.FC<GrillMeDeepDivePanelProps> = ({
             </div>
           </div>
 
+          {/* Separate Niche Category & Separate C-Suite Category */}
+          <div className="mt-4 grid gap-4 sm:grid-cols-2">
+            <div className="rounded-xl border border-[#2997ff]/30 bg-[#0071e3]/10 p-3.5">
+              <label
+                htmlFor={`niche-cat-select-${question.id}`}
+                className="block text-xs font-bold text-[#2997ff]"
+              >
+                Niche Category (Specialist Domain)
+              </label>
+              <select
+                id={`niche-cat-select-${question.id}`}
+                value={grillContext.nicheCategory}
+                onChange={(e) =>
+                  updateGrillContext({
+                    ...grillContext,
+                    nicheCategory: e.target.value,
+                  })
+                }
+                className="mt-1.5 block min-h-[40px] w-full rounded-xl border border-white/15 bg-[#161617] px-3 py-2 text-xs text-white focus:border-[#2997ff] focus:outline-none"
+              >
+                {NICHE_CATEGORY_OPTIONS.map((opt) => (
+                  <option key={opt} value={opt}>
+                    {opt}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div className="rounded-xl border border-white/15 bg-black/50 p-3.5">
+              <label
+                htmlFor={`csuite-cat-select-${question.id}`}
+                className="block text-xs font-bold text-white"
+              >
+                C-Suite Category (Executive &amp; Board Seat)
+              </label>
+              <select
+                id={`csuite-cat-select-${question.id}`}
+                value={grillContext.cSuiteCategory}
+                onChange={(e) =>
+                  updateGrillContext({
+                    ...grillContext,
+                    cSuiteCategory: e.target.value,
+                  })
+                }
+                className="mt-1.5 block min-h-[40px] w-full rounded-xl border border-white/15 bg-[#161617] px-3 py-2 text-xs text-white focus:border-[#2997ff] focus:outline-none"
+              >
+                {CSUITE_CATEGORY_OPTIONS.map((opt) => (
+                  <option key={opt} value={opt}>
+                    {opt}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>
+
           <div className="mt-4">
             <label
               htmlFor={`niche-input-${question.id}`}
               className="block text-xs font-semibold text-[#d2d2d7]"
             >
-              Niche mandate / Board priority
+              Specific niche focus / 90-day board priority
             </label>
             <input
               id={`niche-input-${question.id}`}

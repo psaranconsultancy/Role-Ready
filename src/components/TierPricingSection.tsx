@@ -21,7 +21,13 @@ interface TierPricingSectionProps {
   onTierSelected?: (level: TierLevel) => void;
 }
 
-const FRAMEWORK_ORDER: TierFrameworkId[] = ['outcome', 'ambition', 'competitive'];
+const FRAMEWORK_ORDER: TierFrameworkId[] = [
+  'outcome',
+  'ambition',
+  'competitive',
+  'niche',
+  'csuite',
+];
 
 export const TierPricingSection: React.FC<TierPricingSectionProps> = ({
   mode = 'section',
@@ -50,16 +56,18 @@ export const TierPricingSection: React.FC<TierPricingSectionProps> = ({
           <span>Grill Me Deep-Dive Questioning &amp; Tier Plans</span>
         </div>
         <h2 className="font-display text-3xl font-bold tracking-tight text-[#1d1d1f] sm:text-4xl">
-          How prepared do you want to be when the panel pushes back?
+          {activeFramework.headline}
         </h2>
         <p className="mt-3 text-sm leading-relaxed text-[#6e6e73] sm:text-base">
-          Final-round panels push two or three questions deep into your numbers,
-          trade-offs, and mistakes. Choose the level of practice that matches
-          the stakes of your role.
+          {activeFramework.subheadline}
         </p>
 
-        {/* 3 Psychological Framing Switcher Pills */}
-        <div className="mt-6 inline-flex flex-wrap items-center justify-center gap-1.5 rounded-2xl border border-black/10 bg-white p-1.5">
+        {/* 5 Framing & Category Switcher Pills (Outcome, Ambition, Competitive, Niche, C-Suite) */}
+        <div
+          role="tablist"
+          aria-label="Select interview preparation category and tier framing"
+          className="mt-6 inline-flex flex-wrap items-center justify-center gap-1.5 rounded-2xl border border-black/10 bg-white p-1.5"
+        >
           {FRAMEWORK_ORDER.map((fwId) => {
             const fw = TIER_FRAMEWORKS[fwId];
             const active = framework === fwId;
@@ -67,6 +75,8 @@ export const TierPricingSection: React.FC<TierPricingSectionProps> = ({
               <button
                 key={fwId}
                 type="button"
+                role="tab"
+                aria-selected={active}
                 onClick={() => setFramework(fwId)}
                 className={`min-h-[36px] rounded-xl px-3.5 py-1.5 text-xs font-semibold transition-colors ${
                   active
@@ -79,39 +89,33 @@ export const TierPricingSection: React.FC<TierPricingSectionProps> = ({
             );
           })}
         </div>
-        <p className="mt-2 text-xs text-[#86868b]">{activeFramework.tagline}</p>
+
+        {/* Dynamic Tagline Banner directly below the buttons */}
+        <div className="mx-auto mt-3 max-w-2xl rounded-xl border border-[#0071e3]/20 bg-[#0071e3]/[0.06] px-4 py-2 text-xs font-semibold text-[#0071e3] sm:text-sm">
+          {activeFramework.tagline}
+        </div>
       </div>
 
-      {/* 3 Pillars of the Repositioned Grill Me Job Interview Skill */}
-      <div className="mt-8 grid gap-4 rounded-[24px] border border-black/10 bg-white p-5 sm:grid-cols-3 sm:p-6">
-        <div className="rounded-2xl bg-[#f5f5f7] p-4">
-          <p className="font-display text-sm font-bold text-[#1d1d1f]">
-            1. Niche C-Suite context, uploads &amp; links
-          </p>
-          <p className="mt-1 text-xs leading-relaxed text-[#6e6e73]">
-            Upload board decks, 10-Ks, or case studies, share company links, and
-            set your exact industry, department, and level up to C-Suite.
-          </p>
-        </div>
-        <div className="rounded-2xl bg-[#f5f5f7] p-4">
-          <p className="font-display text-sm font-bold text-[#1d1d1f]">
-            2. AI Voice Interviewer &amp; Roast Heat Dial
-          </p>
-          <p className="mt-1 text-xs leading-relaxed text-[#6e6e73]">
-            Choose a Male or Female AI voice interviewer and turn the Heat Dial
-            up to Executive Roast or down to Warm Rehearsal as you practise.
-          </p>
-        </div>
-        <div className="rounded-2xl bg-[#f5f5f7] p-4">
-          <p className="font-display text-sm font-bold text-[#1d1d1f]">
-            3. Voice timing and calm under pressure
-          </p>
-          <p className="mt-1 text-xs leading-relaxed text-[#6e6e73]">
-            Scores how quickly you start speaking, your pace in words per
-            minute, filler words, and how steady you sound under a countdown
-            clock.
-          </p>
-        </div>
+      {/* Dynamic 4-Pillar Context Box (changes when switching between Outcome, Ambition, Competitive, Niche, and C-Suite) */}
+      <div className="mt-8 grid gap-4 rounded-[24px] border border-black/10 bg-white p-5 sm:grid-cols-2 lg:grid-cols-4 sm:p-6">
+        {activeFramework.pillars.map((pillar, idx) => (
+          <div
+            key={`${activeFramework.id}-pillar-${idx}`}
+            className="flex flex-col justify-between rounded-2xl bg-[#f5f5f7] p-4"
+          >
+            <div>
+              <span className="inline-block rounded-full border border-[#0071e3]/25 bg-[#0071e3]/10 px-2.5 py-0.5 text-xs font-semibold text-[#0071e3]">
+                {pillar.categoryTag}
+              </span>
+              <p className="mt-2.5 font-display text-sm font-bold text-[#1d1d1f]">
+                {pillar.title}
+              </p>
+              <p className="mt-1.5 text-xs leading-relaxed text-[#6e6e73]">
+                {pillar.description}
+              </p>
+            </div>
+          </div>
+        ))}
       </div>
 
       {/* 3-Tier Cards Grid */}
@@ -124,7 +128,7 @@ export const TierPricingSection: React.FC<TierPricingSectionProps> = ({
 
           return (
             <div
-              key={item.level}
+              key={`${activeFramework.id}-${item.level}`}
               className={`relative flex flex-col justify-between rounded-[26px] p-6 transition-colors sm:p-7 ${
                 isTier3
                   ? 'border-2 border-[#0071e3] bg-[#161617] text-[#f5f5f7]'
@@ -142,7 +146,7 @@ export const TierPricingSection: React.FC<TierPricingSectionProps> = ({
               )}
               {isTier2 && (
                 <div className="mb-4 inline-flex w-fit items-center gap-1.5 rounded-full bg-black/[0.06] px-3 py-1 text-xs font-semibold text-[#1d1d1f]">
-                  <span>Standard Shortlist Baseline</span>
+                  <span>{item.badgeLabel}</span>
                 </div>
               )}
               {isTier1 && (

@@ -173,3 +173,4 @@ export const AmbientHeroCanvas: React.FC<AmbientHeroCanvasProps> = ({
     </div>
   );
 };
+

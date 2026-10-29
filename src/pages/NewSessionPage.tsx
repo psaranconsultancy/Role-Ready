@@ -24,6 +24,8 @@ import {
   INDUSTRY_OPTIONS,
   DEPARTMENT_OPTIONS,
   SENIORITY_OPTIONS,
+  NICHE_CATEGORY_OPTIONS,
+  CSUITE_CATEGORY_OPTIONS,
 } from '../lib/tiers';
 import {
   SAMPLE_ROLE_TITLE,
@@ -558,19 +560,24 @@ export const NewSessionPage: React.FC = () => {
           >
             <div className="flex flex-wrap items-center justify-between gap-2">
               <h3 className="font-display text-lg font-bold text-[#1d1d1f]">
-                4. Niche role context, uploads &amp; links{' '}
+                4. Role context: Niche category, C-Suite category, uploads &amp; links{' '}
                 <span className="font-sans text-xs font-normal text-[#86868b]">
                   (powers Grill Me deep-dive questioning)
                 </span>
               </h3>
-              <span className="rounded-full bg-[#0071e3]/10 px-3 py-0.5 text-xs font-semibold text-[#0071e3]">
-                Individual contributor to C-Suite
-              </span>
+              <div className="flex flex-wrap gap-1.5">
+                <span className="rounded-full bg-[#0071e3]/10 px-3 py-0.5 text-xs font-semibold text-[#0071e3]">
+                  Niche Category
+                </span>
+                <span className="rounded-full bg-[#1d1d1f] px-3 py-0.5 text-xs font-semibold text-white">
+                  C-Suite Category
+                </span>
+              </div>
             </div>
             <p className="mt-1 text-xs text-[#6e6e73]">
-              Specify your industry, department, and seniority level, or attach
-              board decks, case studies, and company URLs so your follow-up
-              grilling matches the exact niche of the role.
+              Select your Industry, Department, Seniority, dedicated Niche
+              category, and C-Suite seat, or attach board decks, case studies,
+              and company URLs so your follow-up grilling matches the exact role.
             </p>
 
             <div className="mt-4 grid gap-4 sm:grid-cols-3">
@@ -633,7 +640,7 @@ export const NewSessionPage: React.FC = () => {
                   htmlFor="new-seniority-select"
                   className="block text-xs font-semibold text-[#1d1d1f]"
                 >
-                  Level (up to C-Suite)
+                  Seniority Band
                 </label>
                 <select
                   id="new-seniority-select"
@@ -656,12 +663,69 @@ export const NewSessionPage: React.FC = () => {
               </div>
             </div>
 
+            {/* Dedicated Niche Category & Dedicated C-Suite Category */}
+            <div className="mt-4 grid gap-4 sm:grid-cols-2">
+              <div className="rounded-2xl border border-[#0071e3]/20 bg-[#0071e3]/[0.04] p-4">
+                <label
+                  htmlFor="new-niche-category-select"
+                  className="block text-xs font-bold text-[#0071e3]"
+                >
+                  Niche Category (Specialist Domain)
+                </label>
+                <select
+                  id="new-niche-category-select"
+                  disabled={isBusy}
+                  value={grillContext.nicheCategory}
+                  onChange={(e) =>
+                    updateGrillContext({
+                      ...grillContext,
+                      nicheCategory: e.target.value,
+                    })
+                  }
+                  className="mt-1.5 block min-h-[44px] w-full rounded-xl border border-black/15 bg-white px-3.5 py-2 text-sm text-[#1d1d1f] focus:border-[#0071e3] focus:outline-none"
+                >
+                  {NICHE_CATEGORY_OPTIONS.map((opt) => (
+                    <option key={opt} value={opt}>
+                      {opt}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div className="rounded-2xl border border-black/15 bg-[#f5f5f7] p-4">
+                <label
+                  htmlFor="new-csuite-category-select"
+                  className="block text-xs font-bold text-[#1d1d1f]"
+                >
+                  C-Suite Category (Executive &amp; Board Seat)
+                </label>
+                <select
+                  id="new-csuite-category-select"
+                  disabled={isBusy}
+                  value={grillContext.cSuiteCategory}
+                  onChange={(e) =>
+                    updateGrillContext({
+                      ...grillContext,
+                      cSuiteCategory: e.target.value,
+                    })
+                  }
+                  className="mt-1.5 block min-h-[44px] w-full rounded-xl border border-black/15 bg-white px-3.5 py-2 text-sm text-[#1d1d1f] focus:border-[#0071e3] focus:outline-none"
+                >
+                  {CSUITE_CATEGORY_OPTIONS.map((opt) => (
+                    <option key={opt} value={opt}>
+                      {opt}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </div>
+
             <div className="mt-4">
               <label
                 htmlFor="new-niche-focus"
                 className="block text-xs font-semibold text-[#1d1d1f]"
               >
-                Niche focus or board mandate
+                Specific niche focus or 90-day board mandate
               </label>
               <input
                 id="new-niche-focus"

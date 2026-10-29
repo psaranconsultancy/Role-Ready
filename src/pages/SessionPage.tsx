@@ -288,11 +288,11 @@ export const SessionPage: React.FC = () => {
                     Extracted resume lines ({resumeLines.length})
                   </p>
                   <ul className="mt-3 space-y-2 text-[#1d1d1f]">
-                    {resumeLines.map((r) => (
+                    {resumeLines.map((r, idx) => (
                       <li key={r.id} className="leading-relaxed">
-                        <code className="mr-1.5 inline-block rounded-full border border-[#0071e3]/30 bg-[#0071e3]/10 px-2 py-0.5 text-xs font-bold text-[#0071e3]">
-                          {r.id}
-                        </code>
+                        <span className="mr-1.5 inline-block rounded-full border border-[#0071e3]/30 bg-[#0071e3]/10 px-2 py-0.5 text-xs font-bold text-[#0071e3]">
+                          Line {idx + 1}
+                        </span>
                         <span>{r.text}</span>
                       </li>
                     ))}
@@ -304,11 +304,11 @@ export const SessionPage: React.FC = () => {
                     Extracted job requirements ({jdRequirements.length})
                   </p>
                   <ul className="mt-3 space-y-2 text-[#1d1d1f]">
-                    {jdRequirements.map((j) => (
+                    {jdRequirements.map((j, idx) => (
                       <li key={j.id} className="leading-relaxed">
-                        <code className="mr-1.5 inline-block rounded-full border border-black/15 bg-white px-2 py-0.5 text-xs font-bold text-[#1d1d1f]">
-                          {j.id}
-                        </code>
+                        <span className="mr-1.5 inline-block rounded-full border border-black/15 bg-white px-2 py-0.5 text-xs font-bold text-[#1d1d1f]">
+                          Req {idx + 1}
+                        </span>
                         <span>{j.text}</span>
                       </li>
                     ))}

@@ -44,7 +44,9 @@ If the goal is unclear, ask what the reader should think, feel, or do after read
 
 ## Words to cut
 
-Banned outright: delve, foster, leverage, utilize, facilitate, empower, streamline, robust, cutting-edge, paradigm shift, game changer, this is huge, this changes everything, tapestry, realm, beacon, multifaceted, meticulous, intricate, paramount, transformative, elevate, embark, supercharge, harness, ever-evolving, seamless, seamlessly.
+Banned outright: delve, foster, leverage, utilize, facilitate, empower, streamline, robust, cutting-edge, paradigm shift, game changer, this is huge, this changes everything, tapestry, realm, beacon, multifaceted, meticulous, intricate, paramount, transformative, elevate, embark, supercharge, harness, ever-evolving, seamless, seamlessly, unlock, unleash, telemetry, calibration, counterfactuals, gravitas.
+
+Banned internal tokens & symbols in customer-facing UI/copy: Never expose raw prompt or database reference IDs (`R1`, `R2`, `R3`, `J1`, `J2`, `J4`, `R1..Rn`, `J1..Jn`), code-prefixed chip labels (`R1 · SQL cohort analysis`, `J4 · Looker dashboards`), parenthetical reference codes (`(R2)`, `(J4)`), or fake trademark symbols (`™`) to a user. Always replace internal reference tokens with human labels or actual quoted text (`Resume · SQL cohort analysis`, `Job post · Looker dashboards`, `your PayWave resume bullet`, `the job description`).
 
 Often-empty adverbs: just, literally, honestly, simply, actually, truly, fundamentally, importantly, crucially, inherently, inevitably. Cut them when they add nothing. Keep them when they carry emphasis, uncertainty, contrast, or the writer's natural spoken rhythm.
 
@@ -84,7 +86,7 @@ Often-empty phrases: it's worth noting, it's important to note, at the end of th
 
 **Summary-recap endings.** "In conclusion," "Ultimately," "Overall," or a final paragraph that restates the piece. The reader was just there. End on the last concrete point, takeaway, or next action instead.
 
-**Formatting slop.** Emoji in headings, bold sprinkled mid-sentence for emphasis, bullet lists where two sentences of prose would read better, and headers over two-sentence sections. Format should follow the content, not decorate it.
+**Formatting slop.** Emoji in headings, bold sprinkled mid-sentence for emphasis, bullet lists where two sentences of prose would read better, headers over two-sentence sections, and raw system or prompt shorthand (`R1`, `J2`, `R1..Rn`, `J1..Jn`, `™`) leaked into customer-facing interfaces. Format should follow the content, not decorate it, and internal data keys must stay invisible to the reader.
 
 **Em dashes.** Do not use them as a default rhythm crutch. In short copy, use none. In longer drafts, 1-2 are fine if they clearly beat commas, periods, or parentheses. Remove clusters and decorative dashes.
 

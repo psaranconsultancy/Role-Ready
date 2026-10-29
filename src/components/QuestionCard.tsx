@@ -69,12 +69,12 @@ export const QuestionCard: React.FC<QuestionCardProps> = ({
 
   const resolveResumeText = (refId: string): string => {
     const found = resumeLines.find((r) => r.id === refId);
-    return found ? found.text : `Referenced resume item ${refId}`;
+    return found ? found.text : 'Referenced resume line from your uploaded CV';
   };
 
   const resolveJdText = (refId: string): string => {
     const found = jdRequirements.find((j) => j.id === refId);
-    return found ? found.text : `Referenced JD requirement ${refId}`;
+    return found ? found.text : 'Referenced requirement from the job description';
   };
 
   const handleSubmit = async (e?: React.FormEvent) => {
