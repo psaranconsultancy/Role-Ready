@@ -384,6 +384,8 @@ export const SessionPage: React.FC = () => {
                 existingFeedback={answersByQuestionId[q.id]}
                 resumeLines={resumeLines}
                 jdRequirements={jdRequirements}
+                roleTitle={session.role_title}
+                company={session.company}
                 onScored={handleQuestionScored}
               />
             ))}

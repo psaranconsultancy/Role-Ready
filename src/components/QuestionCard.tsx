@@ -11,12 +11,15 @@ import { scoreAnswer, toApiError } from '../lib/api';
 import { ReferenceChip } from './ReferenceChip';
 import { FeedbackPanel, getScoreBand } from './FeedbackPanel';
 import { ErrorBanner } from './ErrorBanner';
+import { GrillMeDeepDivePanel } from './GrillMeDeepDivePanel';
 
 interface QuestionCardProps {
   question: Question;
   existingFeedback?: Feedback;
   resumeLines: ResumeLine[];
   jdRequirements: JdRequirement[];
+  roleTitle?: string | null;
+  company?: string | null;
   onScored: (
     feedback: Feedback,
     sessionCompleted: boolean,
@@ -36,6 +39,8 @@ export const QuestionCard: React.FC<QuestionCardProps> = ({
   existingFeedback,
   resumeLines,
   jdRequirements,
+  roleTitle,
+  company,
   onScored,
 }) => {
   const [answerText, setAnswerText] = useState(
@@ -328,6 +333,16 @@ export const QuestionCard: React.FC<QuestionCardProps> = ({
           </span>
         </p>
       )}
+
+      {/* Grill Me Deep-Dive Stress Test (Tier 3 Premium Feature + Upgrade Nudge) */}
+      <GrillMeDeepDivePanel
+        question={question}
+        resumeLines={resumeLines}
+        jdItems={jdRequirements}
+        feedback={existingFeedback}
+        roleTitle={roleTitle}
+        company={company}
+      />
     </section>
   );
 };

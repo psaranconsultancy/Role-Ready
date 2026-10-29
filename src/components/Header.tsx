@@ -1,17 +1,21 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { PlusCircle, Clock, LogOut, Sparkles, ArrowRight } from 'lucide-react';
+import { PlusCircle, Clock, LogOut, Sparkles, ArrowRight, Flame } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { isMockMode } from '../lib/api';
+import { useSubscriptionTier } from '../lib/tiers';
+import { TierPricingSection } from './TierPricingSection';
 import { Logo } from './Logo';
 
 export const Header: React.FC = () => {
   const { user, signOut, signInDemo } = useAuth();
+  const { currentTierDef, isTier3Unlocked } = useSubscriptionTier();
   const location = useLocation();
   const navigate = useNavigate();
   const [signingOut, setSigningOut] = useState(false);
   const [startingDemo, setStartingDemo] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [showPricingModal, setShowPricingModal] = useState(false);
 
   useEffect(() => {
     setMobileMenuOpen(false);
@@ -128,6 +132,24 @@ export const Header: React.FC = () => {
 
           {/* Desktop Actions */}
           <div className="hidden items-center gap-3 md:flex">
+            <button
+              type="button"
+              onClick={() => setShowPricingModal(true)}
+              className={`inline-flex items-center gap-1.5 rounded-full border px-2.5 py-0.5 text-xs font-medium transition-colors ${
+                isTier3Unlocked
+                  ? 'border-[#30d158]/40 bg-[#30d158]/15 text-[#30d158]'
+                  : 'border-[#2997ff]/35 bg-[#0071e3]/15 text-[#2997ff] hover:bg-[#0071e3]/25'
+              }`}
+              title="Compare plans and Grill Me deep-dive questioning"
+            >
+              <Flame className="h-3 w-3" aria-hidden="true" />
+              <span>
+                {isTier3Unlocked
+                  ? currentTierDef.name
+                  : `${currentTierDef.name} · Upgrade`}
+              </span>
+            </button>
+
             {isMockMode() && (
               <span className="inline-flex items-center gap-1.5 rounded-full border border-white/15 bg-white/[0.06] px-2.5 py-0.5 text-xs text-[#a1a1a6]">
                 <span
@@ -310,6 +332,13 @@ export const Header: React.FC = () => {
             )}
           </div>
         </div>
+      )}
+
+      {showPricingModal && (
+        <TierPricingSection
+          mode="modal"
+          onCloseModal={() => setShowPricingModal(false)}
+        />
       )}
     </>
   );

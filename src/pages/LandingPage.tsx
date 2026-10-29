@@ -17,6 +17,7 @@ import { ScoreRing } from '../components/ScoreRing';
 import { ReferenceChip } from '../components/ReferenceChip';
 import { Logo } from '../components/Logo';
 import { AmbientHeroCanvas } from '../components/AmbientHeroCanvas';
+import { TierPricingSection } from '../components/TierPricingSection';
 
 export const LandingPage: React.FC = () => {
   const { user, signInDemo } = useAuth();
@@ -61,6 +62,12 @@ export const LandingPage: React.FC = () => {
               className="hidden text-xs text-[#f5f5f7]/75 transition-colors hover:text-white sm:inline"
             >
               Why it works
+            </a>
+            <a
+              href="#pricing-tiers"
+              className="hidden text-xs text-[#f5f5f7]/75 transition-colors hover:text-white sm:inline"
+            >
+              Plans &amp; Grill Me™
             </a>
             {user ? (
               <Link
@@ -514,7 +521,15 @@ export const LandingPage: React.FC = () => {
         </div>
       </section>
 
-      {/* 4. Closing Dark Flagship CTA Band with Ambient Canvas */}
+      {/* 4. 3-Tier Psychological Pricing & Grill Me Deep-Dive Section */}
+      <section
+        id="pricing-tiers"
+        className="border-t border-black/[0.06] bg-white/60 px-4 py-16 sm:px-6 sm:py-24"
+      >
+        <TierPricingSection mode="section" />
+      </section>
+
+      {/* 5. Closing Dark Flagship CTA Band with Ambient Canvas */}
       <section className="relative overflow-hidden bg-black px-4 py-16 text-center text-[#f5f5f7] sm:px-6 sm:py-24">
         <AmbientHeroCanvas
           backdropImage="/assets/img/feature-ready-mindset.jpg"
