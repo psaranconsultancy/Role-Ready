@@ -47,14 +47,15 @@ export const TierPricingSection: React.FC<TierPricingSectionProps> = ({
       <div className="mx-auto max-w-3xl text-center">
         <div className="mb-3 inline-flex items-center gap-2 rounded-full border border-[#0071e3]/25 bg-[#0071e3]/10 px-3.5 py-1 text-xs font-semibold text-[#0071e3]">
           <Flame className="h-3.5 w-3.5" aria-hidden="true" />
-          <span>Grill Me™ Deep-Dive Questioning &amp; Tier Plans</span>
+          <span>Grill Me Deep-Dive Questioning &amp; Tier Plans</span>
         </div>
         <h2 className="font-display text-3xl font-bold tracking-tight text-[#1d1d1f] sm:text-4xl">
           How prepared do you want to be when the panel pushes back?
         </h2>
         <p className="mt-3 text-sm leading-relaxed text-[#6e6e73] sm:text-base">
-          First-round interviews ask what is on your resume. Final-round panels
-          test every assumption, trade-off, and metric two layers deeper.
+          Final-round panels push two or three questions deep into your numbers,
+          trade-offs, and mistakes. Choose the level of practice that matches
+          the stakes of your role.
         </p>
 
         {/* 3 Psychological Framing Switcher Pills */}
@@ -103,11 +104,12 @@ export const TierPricingSection: React.FC<TierPricingSectionProps> = ({
         </div>
         <div className="rounded-2xl bg-[#f5f5f7] p-4">
           <p className="font-display text-sm font-bold text-[#1d1d1f]">
-            3. Timing &amp; calm-under-pressure telemetry
+            3. Voice timing and calm under pressure
           </p>
           <p className="mt-1 text-xs leading-relaxed text-[#6e6e73]">
-            Scores your response latency, speaking pace (WPM), filler-word
-            discipline, and vocal composure under a live countdown clock.
+            Scores how quickly you start speaking, your pace in words per
+            minute, filler words, and how steady you sound under a countdown
+            clock.
           </p>
         </div>
       </div>

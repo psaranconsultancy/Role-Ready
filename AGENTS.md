@@ -27,11 +27,13 @@ Full spec: `docs/PRD.md`. Hackathon MVP, 3 days, must-haves only. Do not add fea
 - Every async action shows a loading state and handles `ApiError` with a friendly message and a retry button.
 - Keep the UI accessible: labels on inputs, buttons reachable by keyboard, colour is never the only signal.
 - Responsive down to 375 px wide.
+- **No AI Slop (Mandatory & Automatic for All Customer-Facing Text)**: Automatically run every customer-facing string, prompt, question, feedback item, and UI label through `.agents/skills/no-ai-slop/SKILL.md` and `lint.mjs` before finishing any task. Never put AI slop in front of a user: no banned buzzwords (`leverage`, `delve`, `foster`, `utilize`, `empower`, `streamline`, `robust`, `cutting-edge`, `seamless`, `elevate`, `unlock`, `supercharge`), no fake trademark symbols (`™`), no binary contrasts (`"This is not X. It's Y."`), no colon reveals, no corporate jargon (`telemetry`, `calibration`, `counterfactuals`, `gravitas`), and no raw developer notation (`R1..Rn`).
 
 ## Verify before you say "done"
-1. `npm run build` passes with no TypeScript errors.
-2. `npm run lint` passes (if configured).
-3. Run `npm run dev` and walk the whole flow in the browser on mocks: sign in → new session → 6 questions → answer one → feedback → finish all 6 → History → reopen.
+1. Automatically audit all customer-facing copy with `.agents/skills/no-ai-slop/SKILL.md` and verify `node "C:\Users\PSara\OneDrive\Desktop\Skills for Websites\.agents\skills\design-taste-frontend\scripts\lint.mjs" index.html src --app` passes with `0 FAIL` and zero `[copy]` warnings.
+2. `npm run build` passes with no TypeScript errors.
+3. `npm run lint` passes (if configured).
+4. Run `npm run dev` and walk the whole flow in the browser on mocks: sign in → new session → 6 questions → answer one → feedback → finish all 6 → History → reopen.
 Report what you checked and anything that failed.
 
 ## Git

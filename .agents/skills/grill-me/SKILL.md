@@ -40,3 +40,10 @@ Feedback evaluates not only *what* the candidate said, but *how* they delivered 
 - **Pacing & Cadence (Words Per Minute)**: Targets the 130–160 WPM executive authority zone (flagging nervous rushing >180 WPM or stalling <100 WPM).
 - **Filler-Word Discipline**: Counts hedging and filler tokens (*"um"*, *"uh"*, *"sort of"*, *"basically"*, *"I think maybe"*) that erode C-suite authority.
 - **Calm-Under-Pressure Score (0–100)**: Combines pacing stability, time-box adherence, filler discipline, and directness into an actionable composure readout alongside the content scorecard.
+
+## 5. Mandatory Anti-Slop Gate (`no-ai-slop`)
+
+Before showing any question, rebuttal, or feedback to the candidate, automatically apply `.agents/skills/no-ai-slop/SKILL.md`:
+- Cut banned buzzwords (`leverage`, `delve`, `foster`, `utilize`, `empower`, `streamline`, `robust`, `cutting-edge`, `seamless`, `elevate`, `unlock`, `supercharge`).
+- Cut binary contrasts (`"This is not X. It's Y."`), throat-clearing openers, and abstract corporate filler (`telemetry`, `calibration`, `counterfactuals`, `gravitas`).
+- Use plain, direct, human English anchored in concrete numbers, resume facts, and role requirements.

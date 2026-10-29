@@ -560,11 +560,11 @@ export const NewSessionPage: React.FC = () => {
               <h3 className="font-display text-lg font-bold text-[#1d1d1f]">
                 4. Niche role context, uploads &amp; links{' '}
                 <span className="font-sans text-xs font-normal text-[#86868b]">
-                  (powers Grill Me™ deep-dive questioning)
+                  (powers Grill Me deep-dive questioning)
                 </span>
               </h3>
               <span className="rounded-full bg-[#0071e3]/10 px-3 py-0.5 text-xs font-semibold text-[#0071e3]">
-                IC to C-Suite calibration
+                Individual contributor to C-Suite
               </span>
             </div>
             <p className="mt-1 text-xs text-[#6e6e73]">
@@ -684,7 +684,7 @@ export const NewSessionPage: React.FC = () => {
               <div className="rounded-2xl border border-black/10 bg-[#f5f5f7]/70 p-4">
                 <div className="flex items-center justify-between gap-2">
                   <span className="text-xs font-semibold text-[#1d1d1f]">
-                    Supplemental files (Decks, RFCs, 10-K)
+                    Extra files (Decks, RFCs, 10-K)
                   </span>
                   <input
                     ref={extraContextFileRef}

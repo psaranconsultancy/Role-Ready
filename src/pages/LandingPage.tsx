@@ -67,7 +67,7 @@ export const LandingPage: React.FC = () => {
               href="#pricing-tiers"
               className="hidden text-xs text-[#f5f5f7]/75 transition-colors hover:text-white sm:inline"
             >
-              Plans &amp; Grill Me™
+              Plans &amp; Grill Me
             </a>
             {user ? (
               <Link

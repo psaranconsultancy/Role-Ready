@@ -369,7 +369,7 @@ export const GrillMeDeepDivePanel: React.FC<GrillMeDeepDivePanelProps> = ({
         <div className="flex flex-wrap items-center gap-2">
           <span className="inline-flex items-center gap-1.5 rounded-full bg-[#0071e3] px-3 py-1 text-xs font-semibold text-white">
             <Flame className="h-3.5 w-3.5" aria-hidden="true" />
-            <span>Grill Me™ AI Voice &amp; Decision-Tree Stress Test</span>
+            <span>Grill Me · Voice &amp; Follow-Up Stress Test</span>
           </span>
           <span
             className={`rounded-full border px-3 py-1 text-xs font-semibold ${activeHeatMeta.badgeClass}`}
@@ -407,11 +407,11 @@ export const GrillMeDeepDivePanel: React.FC<GrillMeDeepDivePanelProps> = ({
           <div className="flex flex-wrap items-center justify-between gap-2 border-b border-white/10 pb-3">
             <div>
               <h4 className="font-display text-sm font-bold text-white">
-                Deep Context &amp; Niche Role Calibration
+                Role Details, Extra Files &amp; Shared Links
               </h4>
               <p className="text-xs text-[#a1a1a6]">
-                The more industry, seniority, and document context you provide,
-                the sharper your Grill Me™ questions become.
+                Add your industry, seniority level, board decks, or company
+                links so your follow-up questions match the exact role.
               </p>
             </div>
             <button
@@ -529,7 +529,7 @@ export const GrillMeDeepDivePanel: React.FC<GrillMeDeepDivePanelProps> = ({
               <div className="flex items-center justify-between gap-2">
                 <span className="flex items-center gap-1.5 text-xs font-semibold text-white">
                   <Upload className="h-3.5 w-3.5 text-[#2997ff]" aria-hidden="true" />
-                  <span>Supplemental files (Decks, 10-K, Case Studies)</span>
+                  <span>Extra files (Decks, 10-K, Case Studies)</span>
                 </span>
                 <input
                   ref={contextFileInputRef}
@@ -619,7 +619,7 @@ export const GrillMeDeepDivePanel: React.FC<GrillMeDeepDivePanelProps> = ({
           <div className="grid gap-5 lg:grid-cols-12 lg:items-center">
             <div className="space-y-2.5 lg:col-span-8">
               <h3 className="font-display text-xl font-bold text-white sm:text-2xl">
-                First-pass answers clear screening. Voice grilling wins the offer.
+                Practise the follow-up questions panels ask when they press on your numbers
               </h3>
               <p className="text-xs leading-relaxed text-[#d2d2d7] sm:text-sm">
                 {currentTierDef.psychologicalNudge} Switch to{' '}
@@ -1024,7 +1024,7 @@ export const GrillMeDeepDivePanel: React.FC<GrillMeDeepDivePanelProps> = ({
                         <span className="flex items-center gap-1.5 text-xs font-bold text-[#30d158]">
                           <Gauge className="h-4 w-4" aria-hidden="true" />
                           <span>
-                            Timing &amp; Calm-Under-Pressure Telemetry ·{' '}
+                            Voice Timing &amp; Calm Under Pressure ·{' '}
                             {composure.calmScore}/100 ({composure.calmLabel})
                           </span>
                         </span>
@@ -1108,7 +1108,7 @@ export const GrillMeDeepDivePanel: React.FC<GrillMeDeepDivePanelProps> = ({
                   <span>{plan.negotiationScript.anchorHeadline}</span>
                 </span>
                 <p className="mt-0.5 text-xs text-[#a1a1a6]">
-                  {plan.negotiationScript.leveragePoint}
+                  {plan.negotiationScript.proofSummary}
                 </p>
               </div>
               <button
