@@ -81,6 +81,37 @@ export const TierPricingSection: React.FC<TierPricingSectionProps> = ({
         <p className="mt-2 text-xs text-[#86868b]">{activeFramework.tagline}</p>
       </div>
 
+      {/* 3 Pillars of the Repositioned Grill Me Job Interview Skill */}
+      <div className="mt-8 grid gap-4 rounded-[24px] border border-black/10 bg-white p-5 sm:grid-cols-3 sm:p-6">
+        <div className="rounded-2xl bg-[#f5f5f7] p-4">
+          <p className="font-display text-sm font-bold text-[#1d1d1f]">
+            1. Decision-tree questioning
+          </p>
+          <p className="mt-1 text-xs leading-relaxed text-[#6e6e73]">
+            Walks through every branch of your answer (ownership, trade-offs,
+            counterfactuals, and failure modes) until no weak spots remain.
+          </p>
+        </div>
+        <div className="rounded-2xl bg-[#f5f5f7] p-4">
+          <p className="font-display text-sm font-bold text-[#1d1d1f]">
+            2. Automatic resume cross-check
+          </p>
+          <p className="mt-1 text-xs leading-relaxed text-[#6e6e73]">
+            Automatically cross-examines your parsed resume lines and the job
+            description in context, cutting out generic filler questions.
+          </p>
+        </div>
+        <div className="rounded-2xl bg-[#f5f5f7] p-4">
+          <p className="font-display text-sm font-bold text-[#1d1d1f]">
+            3. Built for final-round panels
+          </p>
+          <p className="mt-1 text-xs leading-relaxed text-[#6e6e73]">
+            Designed for bar-raiser loops, executive panels, and salary
+            negotiations where pre-interview stress-testing secures the offer.
+          </p>
+        </div>
+      </div>
+
       {/* 3-Tier Cards Grid */}
       <div className="mt-10 grid gap-6 lg:grid-cols-3 lg:items-stretch">
         {activeFramework.tiers.map((item) => {

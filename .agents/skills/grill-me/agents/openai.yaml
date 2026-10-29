@@ -1,5 +1,5 @@
 interface:
-  display_name: "Grill Me"
-  short_description: "Sharpen a plan through interview"
+  display_name: "Grill Me — Job Interview Stress Test"
+  short_description: "Relentless decision-tree interview grilling grounded in your resume and target job description"
 policy:
-  allow_implicit_invocation: false
+  allow_implicit_invocation: true
