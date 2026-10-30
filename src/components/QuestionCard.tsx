@@ -1,5 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { Loader2, Send, CheckCircle2, Sparkles } from 'lucide-react';
+import {
+  Loader2,
+  Send,
+  CheckCircle2,
+  Sparkles,
+  Mic,
+  Square,
+} from 'lucide-react';
 import type {
   Question,
   Feedback,
@@ -12,6 +19,7 @@ import { ReferenceChip } from './ReferenceChip';
 import { FeedbackPanel, getScoreBand } from './FeedbackPanel';
 import { ErrorBanner } from './ErrorBanner';
 import { GrillMeDeepDivePanel } from './GrillMeDeepDivePanel';
+import { useSpeechToText } from '../lib/useSpeechToText';
 
 interface QuestionCardProps {
   question: Question;
@@ -49,6 +57,9 @@ export const QuestionCard: React.FC<QuestionCardProps> = ({
   const [isEditing, setIsEditing] = useState(!existingFeedback);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<ApiError | null>(null);
+  const speech = useSpeechToText((text) =>
+    setAnswerText((prev) => (prev.trim() ? `${prev.trimEnd()} ${text}` : text))
+  );
 
   useEffect(() => {
     if (existingFeedback) {
@@ -80,6 +91,7 @@ export const QuestionCard: React.FC<QuestionCardProps> = ({
   const handleSubmit = async (e?: React.FormEvent) => {
     if (e) e.preventDefault();
     if (!isValidLength || submitting) return;
+    speech.stop();
 
     setSubmitting(true);
     setError(null);
@@ -222,6 +234,54 @@ export const QuestionCard: React.FC<QuestionCardProps> = ({
             </div>
           </div>
 
+          {speech.supported && (
+            <div className="mt-2 flex flex-wrap items-center gap-2.5">
+              <button
+                type="button"
+                disabled={submitting}
+                onClick={speech.listening ? speech.stop : speech.start}
+                aria-pressed={speech.listening}
+                className={`inline-flex min-h-[38px] items-center gap-1.5 rounded-full border px-4 py-1.5 text-xs font-semibold transition-colors disabled:opacity-50 ${
+                  speech.listening
+                    ? 'border-[#d70015]/40 bg-[#d70015]/10 text-[#d70015] hover:bg-[#d70015]/15'
+                    : 'border-[#0071e3]/30 bg-[#0071e3]/[0.06] text-[#0071e3] hover:bg-[#0071e3]/10'
+                }`}
+              >
+                {speech.listening ? (
+                  <>
+                    <Square className="h-3.5 w-3.5" aria-hidden="true" />
+                    <span>Stop recording</span>
+                  </>
+                ) : (
+                  <>
+                    <Mic className="h-3.5 w-3.5" aria-hidden="true" />
+                    <span>Speak your answer</span>
+                  </>
+                )}
+              </button>
+              <span className="text-xs text-[#6e6e73]" aria-live="polite">
+                {speech.listening ? (
+                  <span className="inline-flex items-center gap-1.5">
+                    <span
+                      className="h-2 w-2 animate-pulse rounded-full bg-[#d70015]"
+                      aria-hidden="true"
+                    />
+                    Listening. Your words appear in the box below, and you can
+                    edit them before you submit.
+                  </span>
+                ) : (
+                  'Practise saying it out loud. We type it up for you.'
+                )}
+              </span>
+            </div>
+          )}
+
+          {speech.error && (
+            <p role="alert" className="mt-2 text-xs font-medium text-[#d70015]">
+              {speech.error}
+            </p>
+          )}
+
           <textarea
             id={textareaId}
             rows={5}
@@ -231,6 +291,12 @@ export const QuestionCard: React.FC<QuestionCardProps> = ({
             placeholder="Describe the Situation and Task, the specific Actions you took, and the measurable Result…"
             className="mt-2 block w-full rounded-[18px] border border-black/15 bg-[#f5f5f7]/60 p-4 text-base leading-relaxed text-[#1d1d1f] placeholder:text-[#86868b] focus:border-[#0071e3] focus:bg-white focus:outline-none disabled:opacity-60"
           />
+
+          {speech.listening && speech.interim && (
+            <p className="mt-1.5 text-xs italic text-[#6e6e73]">
+              Hearing: {speech.interim}
+            </p>
+          )}
 
           {/* Submitting State */}
           {submitting && (
@@ -269,6 +335,7 @@ export const QuestionCard: React.FC<QuestionCardProps> = ({
                 <button
                   type="button"
                   onClick={() => {
+                    speech.stop();
                     setAnswerText(existingFeedback.answer_text);
                     setIsEditing(false);
                     setError(null);

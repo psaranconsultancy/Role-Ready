@@ -167,8 +167,8 @@ export const LoginPage: React.FC = () => {
             Open your saved interview sessions, scores, and rewrites.
           </p>
 
-          {/* One-Click Demo User Button */}
-          {mockActive && (
+          {/* One-Click Demo User Button (mock user, or anonymous Supabase user) */}
+          {(
             <div className="mt-6">
               <button
                 type="button"
