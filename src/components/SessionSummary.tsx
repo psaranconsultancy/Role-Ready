@@ -1,21 +1,32 @@
 import React from 'react';
-import { RotateCcw, Award } from 'lucide-react';
-import type { Question, Feedback } from '@contracts';
+import { RotateCcw, Award, FileDown, Mail } from 'lucide-react';
+import type { Question, Feedback, Session } from '@contracts';
 import { getScoreBand } from './FeedbackPanel';
 import { ScoreRing } from './ScoreRing';
+import { buildReportMailto, openReport } from '../lib/sessionReport';
+import { useAuth } from '../context/AuthContext';
 
 interface SessionSummaryProps {
+  session: Session;
   overallScore: number;
   questions: Question[];
   answersByQuestionId: Record<string, Feedback>;
 }
 
 export const SessionSummary: React.FC<SessionSummaryProps> = ({
+  session,
   overallScore,
   questions,
   answersByQuestionId,
 }) => {
   const band = getScoreBand(overallScore);
+  const { user } = useAuth();
+  const reportInput = { session, questions, answersByQuestionId, overallScore };
+  // Demo accounts have no real inbox, so leave "To" empty for them.
+  const mailTo =
+    user?.email?.includes('@') && !user.email.endsWith('@roleready.app')
+      ? user.email
+      : '';
 
   const weakestQuestion = [...questions].sort((a, b) => {
     const scoreA = answersByQuestionId[a.id]?.overall ?? 100;
@@ -67,6 +78,28 @@ export const SessionSummary: React.FC<SessionSummaryProps> = ({
             </span>
           </button>
         )}
+      </div>
+
+      {/* Session report: printable page (save as PDF) or the user's own mail app */}
+      <div className="mt-5 flex flex-wrap items-center gap-2.5">
+        <button
+          type="button"
+          onClick={() => openReport(reportInput)}
+          className="inline-flex min-h-[40px] items-center gap-1.5 rounded-full border border-white/20 bg-white/[0.08] px-4 py-2 text-xs font-semibold text-white transition-colors hover:bg-white/15"
+        >
+          <FileDown className="h-3.5 w-3.5" aria-hidden="true" />
+          <span>Download report (PDF)</span>
+        </button>
+        <a
+          href={buildReportMailto(reportInput, mailTo)}
+          className="inline-flex min-h-[40px] items-center gap-1.5 rounded-full border border-white/20 bg-white/[0.08] px-4 py-2 text-xs font-semibold text-white transition-colors hover:bg-white/15"
+        >
+          <Mail className="h-3.5 w-3.5" aria-hidden="true" />
+          <span>Email it to me</span>
+        </a>
+        <span className="text-xs text-[#a1a1a6]">
+          The PDF has every score, fix and stronger answer. The email has your scores and fixes.
+        </span>
       </div>
 
       {/* 6-Question Score Tiles */}
