@@ -85,6 +85,15 @@ export interface ScoreAnswerResponse extends Feedback {
   session_completed: boolean;
   session_overall: number | null;
 }
+// When the "answer" is really the candidate asking what the question means
+// ("I don't understand, can you rephrase?"), score-answer returns this instead:
+// nothing is scored or saved, and the UI shows the clearer wording.
+export interface ScoreAnswerClarification {
+  clarification: {
+    rephrased_question: string;        // same question in plainer words
+    hint: string;                      // one sentence on what a good answer covers
+  };
+}
 
 // 4. grill-followup  (added 30 Oct for Grill Me, after the must-haves)
 // Needs a scored answer for the question. Nothing is saved: the follow-up and
