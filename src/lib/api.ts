@@ -92,6 +92,35 @@ export function toApiError(
   };
 }
 
+/**
+ * Extracts structured ApiError from Supabase functions.invoke HTTP error context if available.
+ */
+export async function extractFunctionApiError(
+  err: unknown,
+  fallbackCode: ApiError['error']['code'] = 'bad_request',
+  fallbackMessage = 'Something went wrong. Please try again.'
+): Promise<ApiError> {
+  if (isApiError(err)) {
+    return err;
+  }
+  if (err && typeof err === 'object' && 'context' in err) {
+    const ctx = (err as { context?: unknown }).context;
+    if (ctx && typeof ctx === 'object') {
+      try {
+        if (typeof (ctx as Response).clone === 'function') {
+          const body = await (ctx as Response).clone().json();
+          if (isApiError(body)) {
+            return body;
+          }
+        }
+      } catch {
+        // ignore JSON extraction failure
+      }
+    }
+  }
+  return toApiError(err, fallbackCode, fallbackMessage);
+}
+
 function validateAuthInput(email: string, password: string): void {
   const trimmedEmail = email.trim();
   if (!trimmedEmail || !trimmedEmail.includes('@')) {
@@ -332,7 +361,11 @@ export async function parseResume(sessionId: string): Promise<ParseResumeRespons
     }
   );
   if (error || !data) {
-    throw toApiError(error, 'parse_failed', 'Could not extract text from the uploaded PDF.');
+    throw await extractFunctionApiError(
+      error,
+      'parse_failed',
+      'Could not extract text from the uploaded PDF.'
+    );
   }
   return data;
 }
@@ -364,7 +397,11 @@ export async function generateQuestions(
     }
   );
   if (error || !data) {
-    throw toApiError(error, 'llm_failed', 'Failed to generate tailored questions.');
+    throw await extractFunctionApiError(
+      error,
+      'llm_failed',
+      'Failed to generate tailored questions.'
+    );
   }
   return data;
 }
@@ -408,7 +445,11 @@ export async function scoreAnswer(
     }
   );
   if (error || !data) {
-    throw toApiError(error, 'llm_failed', 'Could not score your answer. Please retry.');
+    throw await extractFunctionApiError(
+      error,
+      'llm_failed',
+      'Could not score your answer. Please retry.'
+    );
   }
   return data;
 }
