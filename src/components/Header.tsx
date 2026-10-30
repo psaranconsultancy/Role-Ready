@@ -3,13 +3,11 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { PlusCircle, Clock, LogOut, Sparkles, ArrowRight, Flame } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { isMockMode } from '../lib/api';
-import { useSubscriptionTier } from '../lib/tiers';
 import { TierPricingSection } from './TierPricingSection';
 import { Logo } from './Logo';
 
 export const Header: React.FC = () => {
   const { user, signOut, signInDemo } = useAuth();
-  const { currentTierDef, isTier3Unlocked } = useSubscriptionTier();
   const location = useLocation();
   const navigate = useNavigate();
   const [signingOut, setSigningOut] = useState(false);
@@ -130,7 +128,7 @@ export const Header: React.FC = () => {
                   href="/#pricing-tiers"
                   className="whitespace-nowrap text-xs font-medium text-[#f5f5f7]/75 transition-colors hover:text-white"
                 >
-                  Plans &amp; Grill Me
+                  Roadmap
                 </a>
               </>
             )}
@@ -141,19 +139,11 @@ export const Header: React.FC = () => {
             <button
               type="button"
               onClick={() => setShowPricingModal(true)}
-              className={`inline-flex items-center gap-1.5 whitespace-nowrap rounded-full border px-2.5 py-0.5 text-xs font-medium transition-colors ${
-                isTier3Unlocked
-                  ? 'border-[#30d158]/40 bg-[#30d158]/15 text-[#30d158]'
-                  : 'border-[#2997ff]/35 bg-[#0071e3]/15 text-[#2997ff] hover:bg-[#0071e3]/25'
-              }`}
-              title="Compare plans and Grill Me deep-dive questioning"
+              className="inline-flex items-center gap-1.5 whitespace-nowrap rounded-full border border-[#ff9f0a]/35 bg-[#ff9f0a]/10 px-2.5 py-0.5 text-xs font-medium text-[#ff9f0a] transition-colors hover:bg-[#ff9f0a]/20"
+              title="See what's coming next: Grill Me voice practice, Heat Dial, Niche & C-Suite sets and salary scripts"
             >
               <Flame className="h-3 w-3" aria-hidden="true" />
-              <span>
-                {isTier3Unlocked
-                  ? currentTierDef.name
-                  : `${currentTierDef.name} · Upgrade`}
-              </span>
+              <span>Coming soon</span>
             </button>
 
             {isMockMode() && (
@@ -297,7 +287,7 @@ export const Header: React.FC = () => {
                   {[
                     { href: '/#how-it-works', label: 'How it works' },
                     { href: '/#grounded-architecture', label: 'Why it works' },
-                    { href: '/#pricing-tiers', label: 'Plans & Grill Me' },
+                    { href: '/#pricing-tiers', label: 'Roadmap' },
                   ].map((item) => (
                     <a
                       key={item.href}
