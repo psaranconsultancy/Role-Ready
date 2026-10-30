@@ -38,11 +38,11 @@ export const ComingNextSection: React.FC<ComingNextSectionProps> = ({
   const content = (
     <div className="mx-auto max-w-[1080px]" data-ui="coming-next">
       <div className="mx-auto max-w-2xl text-center">
-        <span className="inline-flex items-center gap-1.5 rounded-full border border-[#0071e3]/25 bg-[#0071e3]/10 px-3 py-1 text-xs font-semibold text-[#0071e3]">
+        <span className="inline-flex items-center gap-1.5 rounded-full border border-[#0284c7]/25 bg-[#0284c7]/10 px-3 py-1 text-xs font-semibold text-[#0369a1]">
           <Flame className="h-3.5 w-3.5" aria-hidden="true" />
           Roadmap
         </span>
-        <h2 className="mt-3 font-display text-3xl font-bold tracking-tight text-[#1d1d1f] sm:text-4xl">
+        <h2 className="mt-3 font-display text-3xl font-bold tracking-tight text-[#0f172a] sm:text-4xl">
           What’s coming next
         </h2>
         <p className="mt-3 text-base text-[#6e6e73] sm:text-lg">
@@ -57,10 +57,10 @@ export const ComingNextSection: React.FC<ComingNextSectionProps> = ({
             key={title}
             className="flex flex-col rounded-[22px] border border-black/[0.06] bg-white p-5"
           >
-            <span className="inline-flex h-10 w-10 items-center justify-center rounded-2xl bg-[#0071e3]/10 text-[#0071e3]">
+            <span className="inline-flex h-10 w-10 items-center justify-center rounded-2xl bg-[#0284c7]/10 text-[#0369a1]">
               <Icon className="h-5 w-5" aria-hidden="true" />
             </span>
-            <h3 className="mt-4 font-display text-base font-bold text-[#1d1d1f]">
+            <h3 className="mt-4 font-display text-base font-bold text-[#0f172a]">
               {title}
             </h3>
             <p className="mt-1.5 text-sm leading-relaxed text-[#6e6e73]">
@@ -86,7 +86,7 @@ export const ComingNextSection: React.FC<ComingNextSectionProps> = ({
         onClick={onCloseModal}
       >
         <div
-          className="relative max-h-[92vh] w-full max-w-[1120px] overflow-y-auto rounded-[30px] bg-[#f5f5f7] p-6 sm:p-10"
+          className="relative max-h-[92vh] w-full max-w-[1120px] overflow-y-auto rounded-[30px] bg-[#f1f5f9] p-6 sm:p-10"
           onClick={(e) => e.stopPropagation()}
         >
           {onCloseModal && (
@@ -94,7 +94,7 @@ export const ComingNextSection: React.FC<ComingNextSectionProps> = ({
               type="button"
               onClick={onCloseModal}
               aria-label="Close roadmap"
-              className="sticky top-2 z-20 ml-auto flex h-10 w-10 items-center justify-center rounded-full border border-black/10 bg-white text-[#1d1d1f] hover:bg-black/5"
+              className="sticky top-2 z-20 ml-auto flex h-10 w-10 items-center justify-center rounded-full border border-black/10 bg-white text-[#0f172a] hover:bg-black/5"
             >
               <X className="h-5 w-5" aria-hidden="true" />
             </button>

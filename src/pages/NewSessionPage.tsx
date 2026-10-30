@@ -171,14 +171,14 @@ export const NewSessionPage: React.FC = () => {
   const isBusy = stage !== 'idle';
 
   return (
-    <div className="min-h-[calc(100dvh-3rem)] bg-[#f5f5f7] pb-20 text-[#1d1d1f]">
+    <div className="min-h-[calc(100dvh-3rem)] bg-[#f1f5f9] pb-20 text-[#0f172a]">
       {/* Sticky Local Sub-Navigation with Stepper */}
       <div className="frosted-localnav-light sticky top-12 z-30 h-[52px] w-full">
         <div className="mx-auto flex h-full max-w-[960px] items-center justify-between px-4 sm:px-6">
           <div className="flex items-center gap-3">
             <Link
               to="/history"
-              className="inline-flex items-center gap-1 text-xs font-medium text-[#6e6e73] transition-colors hover:text-[#1d1d1f]"
+              className="inline-flex items-center gap-1 text-xs font-medium text-[#6e6e73] transition-colors hover:text-[#0f172a]"
             >
               <ArrowLeft className="h-3.5 w-3.5" aria-hidden="true" />
               <span className="hidden sm:inline">History</span>
@@ -186,7 +186,7 @@ export const NewSessionPage: React.FC = () => {
             <span className="text-black/15" aria-hidden="true">
               /
             </span>
-            <h1 className="font-display text-sm font-bold tracking-tight text-[#1d1d1f] sm:text-base">
+            <h1 className="font-display text-sm font-bold tracking-tight text-[#0f172a] sm:text-base">
               New practice session
             </h1>
           </div>
@@ -199,8 +199,8 @@ export const NewSessionPage: React.FC = () => {
             <span
               className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 ${
                 stage === 'idle'
-                  ? 'bg-[#1d1d1f] text-white'
-                  : 'bg-[#30d158]/20 text-[#15803d]'
+                  ? 'bg-[#0f172a] text-white'
+                  : 'bg-[#14b8a6]/20 text-[#0f766e]'
               }`}
             >
               <span className="font-bold tabular-nums">1</span>
@@ -213,7 +213,7 @@ export const NewSessionPage: React.FC = () => {
             <span
               className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 ${
                 stage !== 'idle'
-                  ? 'bg-[#0071e3] text-white'
+                  ? 'bg-[#0284c7] text-white'
                   : 'bg-black/[0.05] text-[#6e6e73]'
               }`}
             >
@@ -228,7 +228,7 @@ export const NewSessionPage: React.FC = () => {
         {/* Header & Sample Fill Action */}
         <div className="mb-6 flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
           <div>
-            <h2 className="font-display text-3xl font-bold tracking-tight text-[#1d1d1f] sm:text-4xl">
+            <h2 className="font-display text-3xl font-bold tracking-tight text-[#0f172a] sm:text-4xl">
               Set up your interview
             </h2>
             <p className="mt-1.5 text-sm text-[#6e6e73] sm:text-base">
@@ -244,7 +244,7 @@ export const NewSessionPage: React.FC = () => {
             className="btn-pill-secondary-light min-h-[40px] shrink-0 self-start px-4 py-2 text-xs font-semibold sm:self-auto"
           >
             <Sparkles
-              className="h-3.5 w-3.5 text-[#0071e3]"
+              className="h-3.5 w-3.5 text-[#0369a1]"
               aria-hidden="true"
             />
             <span>Use a sample resume &amp; job</span>
@@ -263,10 +263,10 @@ export const NewSessionPage: React.FC = () => {
             />
           </div>
           <div className="flex flex-col justify-center p-5 sm:col-span-7 sm:p-6">
-            <span className="inline-flex w-fit items-center gap-1.5 rounded-full bg-[#30d158]/15 px-2.5 py-0.5 text-xs font-semibold text-[#15803d]">
+            <span className="inline-flex w-fit items-center gap-1.5 rounded-full bg-[#14b8a6]/15 px-2.5 py-0.5 text-xs font-semibold text-[#0f766e]">
               Built from your own experience
             </span>
-            <p className="mt-2 font-display text-base font-bold text-[#1d1d1f]">
+            <p className="mt-2 font-display text-base font-bold text-[#0f172a]">
               Every question comes from work you have already done
             </p>
             <p className="mt-1 text-xs leading-relaxed text-[#6e6e73]">
@@ -288,11 +288,11 @@ export const NewSessionPage: React.FC = () => {
           <div
             role="status"
             aria-live="polite"
-            className="bento-card-dark mb-8 p-6 text-[#f5f5f7] sm:p-8"
+            className="bento-card-dark mb-8 p-6 text-[#f8fafc] sm:p-8"
           >
             <div className="flex items-center gap-3">
               <Loader2
-                className="h-5 w-5 animate-spin text-[#2997ff]"
+                className="h-5 w-5 animate-spin text-[#38bdf8]"
                 aria-hidden="true"
               />
               <h3 className="font-display text-lg font-bold">
@@ -309,18 +309,18 @@ export const NewSessionPage: React.FC = () => {
               <div
                 className={`flex items-center gap-3 rounded-2xl border p-4 ${
                   stage === 'parsing'
-                    ? 'border-[#0071e3] bg-[#0071e3]/15'
-                    : 'border-[#30d158]/40 bg-[#30d158]/10'
+                    ? 'border-[#0284c7] bg-[#0284c7]/15'
+                    : 'border-[#14b8a6]/40 bg-[#14b8a6]/10'
                 }`}
               >
                 {stage === 'parsing' ? (
                   <Loader2
-                    className="h-4 w-4 shrink-0 animate-spin text-[#2997ff]"
+                    className="h-4 w-4 shrink-0 animate-spin text-[#38bdf8]"
                     aria-hidden="true"
                   />
                 ) : (
                   <CheckCircle2
-                    className="h-4 w-4 shrink-0 text-[#30d158]"
+                    className="h-4 w-4 shrink-0 text-[#14b8a6]"
                     aria-hidden="true"
                   />
                 )}
@@ -335,13 +335,13 @@ export const NewSessionPage: React.FC = () => {
               <div
                 className={`flex items-center gap-3 rounded-2xl border p-4 ${
                   stage === 'generating'
-                    ? 'border-[#0071e3] bg-[#0071e3]/15'
+                    ? 'border-[#0284c7] bg-[#0284c7]/15'
                     : 'border-white/10 bg-white/[0.04] opacity-60'
                 }`}
               >
                 {stage === 'generating' ? (
                   <Loader2
-                    className="h-4 w-4 shrink-0 animate-spin text-[#2997ff]"
+                    className="h-4 w-4 shrink-0 animate-spin text-[#38bdf8]"
                     aria-hidden="true"
                   />
                 ) : (
@@ -367,7 +367,7 @@ export const NewSessionPage: React.FC = () => {
             <div className="flex items-center justify-between gap-2">
               <label
                 htmlFor="resume-upload"
-                className="font-display text-lg font-bold text-[#1d1d1f]"
+                className="font-display text-lg font-bold text-[#0f172a]"
               >
                 1. Resume PDF <span className="text-[#ff453a]">*</span>
               </label>
@@ -418,14 +418,14 @@ export const NewSessionPage: React.FC = () => {
                 aria-label="Upload resume PDF file"
                 className={`mt-4 flex cursor-pointer flex-col items-center justify-center rounded-[20px] border-2 border-dashed px-6 py-9 text-center transition-colors ${
                   dragOver
-                    ? 'border-[#0071e3] bg-[#0071e3]/[0.06]'
-                    : 'border-black/15 bg-[#f5f5f7]/70 hover:border-[#0071e3]/60 hover:bg-[#f5f5f7]'
+                    ? 'border-[#0284c7] bg-[#0284c7]/[0.06]'
+                    : 'border-black/15 bg-[#f1f5f9]/70 hover:border-[#0284c7]/60 hover:bg-[#f1f5f9]'
                 }`}
               >
-                <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#0071e3]/10 text-[#0071e3]">
+                <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#0284c7]/10 text-[#0369a1]">
                   <Upload className="h-5 w-5" aria-hidden="true" />
                 </div>
-                <p className="mt-3 text-sm font-semibold text-[#1d1d1f]">
+                <p className="mt-3 text-sm font-semibold text-[#0f172a]">
                   Click to choose a PDF or drag and drop it here
                 </p>
                 <p className="mt-1 text-xs text-[#86868b]">
@@ -433,13 +433,13 @@ export const NewSessionPage: React.FC = () => {
                 </p>
               </div>
             ) : (
-              <div className="mt-4 flex items-center justify-between gap-3 rounded-[18px] border border-[#30d158]/40 bg-[#30d158]/[0.08] px-4 py-3.5">
+              <div className="mt-4 flex items-center justify-between gap-3 rounded-[18px] border border-[#14b8a6]/40 bg-[#14b8a6]/[0.08] px-4 py-3.5">
                 <div className="flex min-w-0 items-center gap-3">
-                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#30d158]/20 text-[#15803d]">
+                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#14b8a6]/20 text-[#0f766e]">
                     <FileText className="h-5 w-5" aria-hidden="true" />
                   </div>
                   <div className="min-w-0">
-                    <p className="truncate text-sm font-semibold text-[#1d1d1f]">
+                    <p className="truncate text-sm font-semibold text-[#0f172a]">
                       {file.name}
                     </p>
                     <p className="text-xs tabular-nums text-[#6e6e73]">
@@ -456,7 +456,7 @@ export const NewSessionPage: React.FC = () => {
                     if (fileInputRef.current) fileInputRef.current.value = '';
                   }}
                   aria-label="Remove selected resume PDF"
-                  className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-black/5 text-[#1d1d1f] transition-colors hover:bg-black/10"
+                  className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-black/5 text-[#0f172a] transition-colors hover:bg-black/10"
                 >
                   <X className="h-4 w-4" aria-hidden="true" />
                 </button>
@@ -475,7 +475,7 @@ export const NewSessionPage: React.FC = () => {
 
           {/* 2. Target Role & Company (Optional) */}
           <section className="bento-card-light p-6 sm:p-8">
-            <h3 className="font-display text-lg font-bold text-[#1d1d1f]">
+            <h3 className="font-display text-lg font-bold text-[#0f172a]">
               2. Role and company{' '}
               <span className="font-sans text-xs font-normal text-[#86868b]">
                 (optional)
@@ -485,7 +485,7 @@ export const NewSessionPage: React.FC = () => {
               <div>
                 <label
                   htmlFor="role-title"
-                  className="block text-xs font-semibold text-[#1d1d1f]"
+                  className="block text-xs font-semibold text-[#0f172a]"
                 >
                   Role title
                 </label>
@@ -496,13 +496,13 @@ export const NewSessionPage: React.FC = () => {
                   value={roleTitle}
                   onChange={(e) => setRoleTitle(e.target.value)}
                   placeholder="e.g. Senior Product Analyst"
-                  className="mt-1.5 block min-h-[44px] w-full rounded-2xl border border-black/15 bg-[#f5f5f7]/60 px-4 py-2.5 text-base text-[#1d1d1f] placeholder:text-[#aeaeb2] focus:border-[#0071e3] focus:bg-white focus:outline-none"
+                  className="mt-1.5 block min-h-[44px] w-full rounded-2xl border border-black/15 bg-[#f1f5f9]/60 px-4 py-2.5 text-base text-[#0f172a] placeholder:text-[#aeaeb2] focus:border-[#0284c7] focus:bg-white focus:outline-none"
                 />
               </div>
               <div>
                 <label
                   htmlFor="company-name"
-                  className="block text-xs font-semibold text-[#1d1d1f]"
+                  className="block text-xs font-semibold text-[#0f172a]"
                 >
                   Company
                 </label>
@@ -513,7 +513,7 @@ export const NewSessionPage: React.FC = () => {
                   value={company}
                   onChange={(e) => setCompany(e.target.value)}
                   placeholder="e.g. FinFlow"
-                  className="mt-1.5 block min-h-[44px] w-full rounded-2xl border border-black/15 bg-[#f5f5f7]/60 px-4 py-2.5 text-base text-[#1d1d1f] placeholder:text-[#aeaeb2] focus:border-[#0071e3] focus:bg-white focus:outline-none"
+                  className="mt-1.5 block min-h-[44px] w-full rounded-2xl border border-black/15 bg-[#f1f5f9]/60 px-4 py-2.5 text-base text-[#0f172a] placeholder:text-[#aeaeb2] focus:border-[#0284c7] focus:bg-white focus:outline-none"
                 />
               </div>
             </div>
@@ -524,20 +524,20 @@ export const NewSessionPage: React.FC = () => {
             <div className="flex flex-wrap items-center justify-between gap-2">
               <label
                 htmlFor="jd-textarea"
-                className="font-display text-lg font-bold text-[#1d1d1f]"
+                className="font-display text-lg font-bold text-[#0f172a]"
               >
                 3. Job description <span className="text-[#ff453a]">*</span>
               </label>
               <span
                 className={`inline-flex items-center gap-1.5 rounded-full px-3 py-0.5 text-xs font-semibold tabular-nums ${
                   isJdValid
-                    ? 'bg-[#30d158]/15 text-[#15803d]'
+                    ? 'bg-[#14b8a6]/15 text-[#0f766e]'
                     : 'bg-black/[0.05] text-[#6e6e73]'
                 }`}
               >
                 <span
                   className={`h-1.5 w-1.5 rounded-full ${
-                    isJdValid ? 'bg-[#30d158]' : 'bg-[#86868b]'
+                    isJdValid ? 'bg-[#14b8a6]' : 'bg-[#86868b]'
                   }`}
                   aria-hidden="true"
                 />
@@ -559,7 +559,7 @@ export const NewSessionPage: React.FC = () => {
                 if (jdError) setJdError(null);
               }}
               placeholder="Paste the full job description here (responsibilities, skills and tools)…"
-              className="mt-4 block w-full rounded-[18px] border border-black/15 bg-[#f5f5f7]/60 p-4 text-base leading-relaxed text-[#1d1d1f] placeholder:text-[#aeaeb2] focus:border-[#0071e3] focus:bg-white focus:outline-none"
+              className="mt-4 block w-full rounded-[18px] border border-black/15 bg-[#f1f5f9]/60 p-4 text-base leading-relaxed text-[#0f172a] placeholder:text-[#aeaeb2] focus:border-[#0284c7] focus:bg-white focus:outline-none"
             />
 
             {jdError && (
@@ -578,7 +578,7 @@ export const NewSessionPage: React.FC = () => {
             className="bento-card-light p-6 sm:p-8"
           >
             <div className="flex flex-wrap items-center justify-between gap-2">
-              <h3 className="font-display text-lg font-bold text-[#1d1d1f]">
+              <h3 className="font-display text-lg font-bold text-[#0f172a]">
                 4. Grill With Docs: go deeper with your own documents{' '}
                 <span className="font-sans text-xs font-normal text-[#86868b]">
                   (optional)
@@ -609,7 +609,7 @@ export const NewSessionPage: React.FC = () => {
               <div>
                 <label
                   htmlFor="new-industry-select"
-                  className="block text-xs font-semibold text-[#1d1d1f]"
+                  className="block text-xs font-semibold text-[#0f172a]"
                 >
                   Industry
                 </label>
@@ -623,7 +623,7 @@ export const NewSessionPage: React.FC = () => {
                       industry: e.target.value,
                     })
                   }
-                  className="mt-1.5 block min-h-[44px] w-full rounded-2xl border border-black/15 bg-[#f5f5f7]/60 px-3.5 py-2 text-sm text-[#1d1d1f] focus:border-[#0071e3] focus:bg-white focus:outline-none"
+                  className="mt-1.5 block min-h-[44px] w-full rounded-2xl border border-black/15 bg-[#f1f5f9]/60 px-3.5 py-2 text-sm text-[#0f172a] focus:border-[#0284c7] focus:bg-white focus:outline-none"
                 >
                   <option value="" disabled>
                     e.g. {INDUSTRY_OPTIONS[0]}
@@ -639,7 +639,7 @@ export const NewSessionPage: React.FC = () => {
               <div>
                 <label
                   htmlFor="new-dept-select"
-                  className="block text-xs font-semibold text-[#1d1d1f]"
+                  className="block text-xs font-semibold text-[#0f172a]"
                 >
                   Department
                 </label>
@@ -653,7 +653,7 @@ export const NewSessionPage: React.FC = () => {
                       department: e.target.value,
                     })
                   }
-                  className="mt-1.5 block min-h-[44px] w-full rounded-2xl border border-black/15 bg-[#f5f5f7]/60 px-3.5 py-2 text-sm text-[#1d1d1f] focus:border-[#0071e3] focus:bg-white focus:outline-none"
+                  className="mt-1.5 block min-h-[44px] w-full rounded-2xl border border-black/15 bg-[#f1f5f9]/60 px-3.5 py-2 text-sm text-[#0f172a] focus:border-[#0284c7] focus:bg-white focus:outline-none"
                 >
                   <option value="" disabled>
                     e.g. {DEPARTMENT_OPTIONS[0]}
@@ -669,7 +669,7 @@ export const NewSessionPage: React.FC = () => {
               <div>
                 <label
                   htmlFor="new-seniority-select"
-                  className="block text-xs font-semibold text-[#1d1d1f]"
+                  className="block text-xs font-semibold text-[#0f172a]"
                 >
                   Seniority
                 </label>
@@ -683,7 +683,7 @@ export const NewSessionPage: React.FC = () => {
                       seniority: e.target.value,
                     })
                   }
-                  className="mt-1.5 block min-h-[44px] w-full rounded-2xl border border-black/15 bg-[#f5f5f7]/60 px-3.5 py-2 text-sm text-[#1d1d1f] focus:border-[#0071e3] focus:bg-white focus:outline-none"
+                  className="mt-1.5 block min-h-[44px] w-full rounded-2xl border border-black/15 bg-[#f1f5f9]/60 px-3.5 py-2 text-sm text-[#0f172a] focus:border-[#0284c7] focus:bg-white focus:outline-none"
                 >
                   <option value="" disabled>
                     e.g. {SENIORITY_OPTIONS[0]}
@@ -699,10 +699,10 @@ export const NewSessionPage: React.FC = () => {
 
             {/* Dedicated Niche Category & Dedicated C-Suite Category */}
             <div className="mt-4 grid gap-4 sm:grid-cols-2">
-              <div className="rounded-2xl border border-[#0071e3]/20 bg-[#0071e3]/[0.04] p-4">
+              <div className="rounded-2xl border border-[#0284c7]/20 bg-[#0284c7]/[0.04] p-4">
                 <label
                   htmlFor="new-niche-category-select"
-                  className="block text-xs font-bold text-[#0071e3]"
+                  className="block text-xs font-bold text-[#0369a1]"
                 >
                   Specialist area
                 </label>
@@ -716,7 +716,7 @@ export const NewSessionPage: React.FC = () => {
                       nicheCategory: e.target.value,
                     })
                   }
-                  className="mt-1.5 block min-h-[44px] w-full rounded-xl border border-black/15 bg-white px-3.5 py-2 text-sm text-[#1d1d1f] focus:border-[#0071e3] focus:outline-none"
+                  className="mt-1.5 block min-h-[44px] w-full rounded-xl border border-black/15 bg-white px-3.5 py-2 text-sm text-[#0f172a] focus:border-[#0284c7] focus:outline-none"
                 >
                   <option value="" disabled>
                     e.g. {NICHE_CATEGORY_OPTIONS[0]}
@@ -729,10 +729,10 @@ export const NewSessionPage: React.FC = () => {
                 </select>
               </div>
 
-              <div className="rounded-2xl border border-black/15 bg-[#f5f5f7] p-4">
+              <div className="rounded-2xl border border-black/15 bg-[#f1f5f9] p-4">
                 <label
                   htmlFor="new-csuite-category-select"
-                  className="block text-xs font-bold text-[#1d1d1f]"
+                  className="block text-xs font-bold text-[#0f172a]"
                 >
                   Executive or board role
                 </label>
@@ -746,7 +746,7 @@ export const NewSessionPage: React.FC = () => {
                       cSuiteCategory: e.target.value,
                     })
                   }
-                  className="mt-1.5 block min-h-[44px] w-full rounded-xl border border-black/15 bg-white px-3.5 py-2 text-sm text-[#1d1d1f] focus:border-[#0071e3] focus:outline-none"
+                  className="mt-1.5 block min-h-[44px] w-full rounded-xl border border-black/15 bg-white px-3.5 py-2 text-sm text-[#0f172a] focus:border-[#0284c7] focus:outline-none"
                 >
                   <option value="" disabled>
                     e.g. {CSUITE_CATEGORY_OPTIONS[0]}
@@ -763,7 +763,7 @@ export const NewSessionPage: React.FC = () => {
             <div className="mt-4">
               <label
                 htmlFor="new-niche-focus"
-                className="block text-xs font-semibold text-[#1d1d1f]"
+                className="block text-xs font-semibold text-[#0f172a]"
               >
                 Your specialist focus or first-90-days goal
               </label>
@@ -779,15 +779,15 @@ export const NewSessionPage: React.FC = () => {
                   })
                 }
                 placeholder="e.g. business payments, launching in new countries, AI products…"
-                className="mt-1.5 block min-h-[44px] w-full rounded-2xl border border-black/15 bg-[#f5f5f7]/60 px-4 py-2.5 text-base text-[#1d1d1f] placeholder:text-[#aeaeb2] focus:border-[#0071e3] focus:bg-white focus:outline-none"
+                className="mt-1.5 block min-h-[44px] w-full rounded-2xl border border-black/15 bg-[#f1f5f9]/60 px-4 py-2.5 text-base text-[#0f172a] placeholder:text-[#aeaeb2] focus:border-[#0284c7] focus:bg-white focus:outline-none"
               />
             </div>
 
             <div className="mt-4 grid gap-4 sm:grid-cols-2">
               {/* Supplemental File Uploads */}
-              <div className="rounded-2xl border border-black/10 bg-[#f5f5f7]/70 p-4">
+              <div className="rounded-2xl border border-black/10 bg-[#f1f5f9]/70 p-4">
                 <div className="flex items-center justify-between gap-2">
-                  <span className="text-xs font-semibold text-[#1d1d1f]">
+                  <span className="text-xs font-semibold text-[#0f172a]">
                     Extra files (presentations, reports, case studies)
                   </span>
                   <input
@@ -816,7 +816,7 @@ export const NewSessionPage: React.FC = () => {
                     type="button"
                     disabled={isBusy}
                     onClick={() => extraContextFileRef.current?.click()}
-                    className="inline-flex items-center gap-1 rounded-full bg-[#0071e3]/10 px-3 py-1 text-xs font-semibold text-[#0071e3] hover:bg-[#0071e3]/20"
+                    className="inline-flex items-center gap-1 rounded-full bg-[#0284c7]/10 px-3 py-1 text-xs font-semibold text-[#0369a1] hover:bg-[#0284c7]/20"
                   >
                     <Plus className="h-3 w-3" aria-hidden="true" />
                     <span>Add file</span>
@@ -826,7 +826,7 @@ export const NewSessionPage: React.FC = () => {
                   {grillContext.uploadedFiles.map((fileName) => (
                     <span
                       key={fileName}
-                      className="inline-flex items-center gap-1.5 rounded-full border border-black/10 bg-white px-2.5 py-1 text-xs text-[#1d1d1f]"
+                      className="inline-flex items-center gap-1.5 rounded-full border border-black/10 bg-white px-2.5 py-1 text-xs text-[#0f172a]"
                     >
                       <span className="max-w-[180px] truncate">{fileName}</span>
                       <button
@@ -840,7 +840,7 @@ export const NewSessionPage: React.FC = () => {
                           })
                         }
                         aria-label={`Remove ${fileName}`}
-                        className="text-[#86868b] hover:text-[#1d1d1f]"
+                        className="text-[#86868b] hover:text-[#0f172a]"
                       >
                         <X className="h-3 w-3" aria-hidden="true" />
                       </button>
@@ -850,9 +850,9 @@ export const NewSessionPage: React.FC = () => {
               </div>
 
               {/* Shared Context Links */}
-              <div className="rounded-2xl border border-black/10 bg-[#f5f5f7]/70 p-4">
-                <span className="flex items-center gap-1.5 text-xs font-semibold text-[#1d1d1f]">
-                  <Link2 className="h-3.5 w-3.5 text-[#0071e3]" aria-hidden="true" />
+              <div className="rounded-2xl border border-black/10 bg-[#f1f5f9]/70 p-4">
+                <span className="flex items-center gap-1.5 text-xs font-semibold text-[#0f172a]">
+                  <Link2 className="h-3.5 w-3.5 text-[#0369a1]" aria-hidden="true" />
                   <span>Links (company website, articles, profiles)</span>
                 </span>
                 <div className="mt-2 flex gap-1.5">
@@ -863,7 +863,7 @@ export const NewSessionPage: React.FC = () => {
                     value={newContextLink}
                     onChange={(e) => setNewContextLink(e.target.value)}
                     placeholder="https://company.com/strategy-memo"
-                    className="min-h-[36px] flex-1 rounded-xl border border-black/15 bg-white px-3 py-1 text-xs text-[#1d1d1f] placeholder:text-[#aeaeb2] focus:border-[#0071e3] focus:outline-none"
+                    className="min-h-[36px] flex-1 rounded-xl border border-black/15 bg-white px-3 py-1 text-xs text-[#0f172a] placeholder:text-[#aeaeb2] focus:border-[#0284c7] focus:outline-none"
                   />
                   <button
                     type="button"
@@ -881,7 +881,7 @@ export const NewSessionPage: React.FC = () => {
                         setNewContextLink('');
                       }
                     }}
-                    className="rounded-xl bg-[#0071e3] px-3 py-1 text-xs font-semibold text-white hover:bg-[#0077ed]"
+                    className="rounded-xl bg-[#0284c7] px-3 py-1 text-xs font-semibold text-white hover:bg-[#0369a1]"
                   >
                     Add
                   </button>
@@ -890,7 +890,7 @@ export const NewSessionPage: React.FC = () => {
                   {grillContext.sharedLinks.map((url) => (
                     <span
                       key={url}
-                      className="inline-flex items-center gap-1.5 rounded-full border border-black/10 bg-white px-2.5 py-1 text-xs text-[#0071e3]"
+                      className="inline-flex items-center gap-1.5 rounded-full border border-black/10 bg-white px-2.5 py-1 text-xs text-[#0369a1]"
                     >
                       <span className="max-w-[180px] truncate">{url}</span>
                       <button
@@ -904,7 +904,7 @@ export const NewSessionPage: React.FC = () => {
                           })
                         }
                         aria-label={`Remove ${url}`}
-                        className="text-[#86868b] hover:text-[#1d1d1f]"
+                        className="text-[#86868b] hover:text-[#0f172a]"
                       >
                         <X className="h-3 w-3" aria-hidden="true" />
                       </button>

@@ -33,7 +33,7 @@ export const ErrorBanner: React.FC<ErrorBannerProps> = ({
       data-ui="error-banner"
       role="alert"
       aria-live="assertive"
-      className="flex flex-col gap-3 rounded-[18px] border border-[#ff453a]/30 bg-[#fff5f5] p-4 text-[#1d1d1f] sm:flex-row sm:items-center sm:justify-between"
+      className="flex flex-col gap-3 rounded-[18px] border border-[#ff453a]/30 bg-[#fff5f5] p-4 text-[#0f172a] sm:flex-row sm:items-center sm:justify-between"
     >
       <div className="flex items-start gap-3">
         <div className="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[#ff453a]/15 text-[#d70015]">
@@ -41,7 +41,7 @@ export const ErrorBanner: React.FC<ErrorBannerProps> = ({
         </div>
         <div>
           <div className="flex flex-wrap items-center gap-2">
-            <p className="font-display text-sm font-bold text-[#1d1d1f]">
+            <p className="font-display text-sm font-bold text-[#0f172a]">
               {title}
             </p>
           </div>
@@ -55,7 +55,7 @@ export const ErrorBanner: React.FC<ErrorBannerProps> = ({
         <button
           type="button"
           onClick={onRetry}
-          className="inline-flex min-h-[38px] shrink-0 items-center justify-center gap-1.5 self-start rounded-full bg-[#1d1d1f] px-4 py-1.5 text-xs font-semibold text-white transition-colors hover:bg-[#333336] sm:self-center"
+          className="inline-flex min-h-[38px] shrink-0 items-center justify-center gap-1.5 self-start rounded-full bg-[#0f172a] px-4 py-1.5 text-xs font-semibold text-white transition-colors hover:bg-[#333336] sm:self-center"
         >
           <RotateCcw className="h-3.5 w-3.5" aria-hidden="true" />
           {retryLabel}

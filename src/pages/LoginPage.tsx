@@ -62,10 +62,10 @@ export const LoginPage: React.FC = () => {
   const mockActive = isMockMode();
 
   return (
-    <main className="flex min-h-[calc(100dvh-3rem)] flex-col justify-center bg-[#f5f5f7] px-4 py-10 sm:px-6 lg:py-16">
+    <main className="flex min-h-[calc(100dvh-3rem)] flex-col justify-center bg-[#f1f5f9] px-4 py-10 sm:px-6 lg:py-16">
       <div className="mx-auto grid w-full max-w-[1024px] gap-8 lg:grid-cols-12 lg:items-center">
         {/* Left Column: Studio Showcase with Ambient Motion + Confidence Visual */}
-        <div className="bento-card-dark relative overflow-hidden p-7 text-[#f5f5f7] sm:p-10 lg:col-span-6">
+        <div className="bento-card-dark relative overflow-hidden p-7 text-[#f8fafc] sm:p-10 lg:col-span-6">
           <AmbientHeroCanvas
             backdropImage="/assets/img/hero-candidate-focus.jpg"
             videoOpacity={0.42}
@@ -73,7 +73,7 @@ export const LoginPage: React.FC = () => {
           <div className="relative z-10">
             <Logo theme="dark" size="md" />
 
-            <h1 className="mt-6 font-display text-3xl font-bold leading-[1.1] tracking-tight text-[#f5f5f7] sm:text-4xl">
+            <h1 className="mt-6 font-display text-3xl font-bold leading-[1.1] tracking-tight text-[#f8fafc] sm:text-4xl">
               Practise every question with your own resume in view
             </h1>
 
@@ -93,7 +93,7 @@ export const LoginPage: React.FC = () => {
               <div className="visual-media-scrim" />
               <div className="absolute bottom-3 left-3 right-3 flex items-center justify-between gap-2 rounded-xl bg-black/65 px-3 py-2 text-xs text-white backdrop-blur-md">
                 <span>Rehearse in private until your delivery feels natural</span>
-                <span className="shrink-0 font-semibold text-[#30d158]">
+                <span className="shrink-0 font-semibold text-[#14b8a6]">
                   6 questions
                 </span>
               </div>
@@ -102,7 +102,7 @@ export const LoginPage: React.FC = () => {
             <ul className="mt-6 space-y-3 text-sm text-[#d2d2d7]">
               <li className="flex items-start gap-3">
                 <CheckCircle2
-                  className="mt-0.5 h-4 w-4 shrink-0 text-[#30d158]"
+                  className="mt-0.5 h-4 w-4 shrink-0 text-[#14b8a6]"
                   aria-hidden="true"
                 />
                 <span>
@@ -112,7 +112,7 @@ export const LoginPage: React.FC = () => {
               </li>
               <li className="flex items-start gap-3">
                 <CheckCircle2
-                  className="mt-0.5 h-4 w-4 shrink-0 text-[#30d158]"
+                  className="mt-0.5 h-4 w-4 shrink-0 text-[#14b8a6]"
                   aria-hidden="true"
                 />
                 <span>
@@ -122,7 +122,7 @@ export const LoginPage: React.FC = () => {
               </li>
               <li className="flex items-start gap-3">
                 <CheckCircle2
-                  className="mt-0.5 h-4 w-4 shrink-0 text-[#30d158]"
+                  className="mt-0.5 h-4 w-4 shrink-0 text-[#14b8a6]"
                   aria-hidden="true"
                 />
                 <span>
@@ -135,7 +135,7 @@ export const LoginPage: React.FC = () => {
             <div className="mt-8 border-t border-white/10 pt-5 text-xs text-[#86868b]">
               <Link
                 to="/"
-                className="inline-flex items-center gap-1.5 font-medium text-[#2997ff] hover:underline"
+                className="inline-flex items-center gap-1.5 font-medium text-[#38bdf8] hover:underline"
               >
                 <span>Back to product overview</span>
                 <ArrowRight className="h-3.5 w-3.5" aria-hidden="true" />
@@ -150,16 +150,16 @@ export const LoginPage: React.FC = () => {
           className="bento-card-light order-first p-6 sm:p-10 lg:order-none lg:col-span-6"
         >
           {mockActive && (
-            <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-black/10 bg-[#f5f5f7] px-3.5 py-1.5 text-xs font-medium text-[#1d1d1f]">
+            <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-black/10 bg-[#f1f5f9] px-3.5 py-1.5 text-xs font-medium text-[#0f172a]">
               <span
-                className="h-2 w-2 rounded-full bg-[#30d158]"
+                className="h-2 w-2 rounded-full bg-[#14b8a6]"
                 aria-hidden="true"
               />
               <span>Demo mode with sample data (stored in your browser)</span>
             </div>
           )}
 
-          <h2 className="font-display text-2xl font-bold tracking-tight text-[#1d1d1f]">
+          <h2 className="font-display text-2xl font-bold tracking-tight text-[#0f172a]">
             {mode === 'signin'
               ? 'Sign in to RoleReady'
               : 'Create your RoleReady account'}
@@ -207,7 +207,7 @@ export const LoginPage: React.FC = () => {
           <div
             role="tablist"
             aria-label="Authentication mode"
-            className="mt-4 grid grid-cols-2 rounded-full bg-[#f5f5f7] p-1"
+            className="mt-4 grid grid-cols-2 rounded-full bg-[#f1f5f9] p-1"
           >
             <button
               type="button"
@@ -219,8 +219,8 @@ export const LoginPage: React.FC = () => {
               }}
               className={`min-h-[38px] rounded-full text-xs font-semibold transition-colors ${
                 mode === 'signin'
-                  ? 'bg-white text-[#1d1d1f]'
-                  : 'text-[#6e6e73] hover:text-[#1d1d1f]'
+                  ? 'bg-white text-[#0f172a]'
+                  : 'text-[#6e6e73] hover:text-[#0f172a]'
               }`}
             >
               Sign in
@@ -235,8 +235,8 @@ export const LoginPage: React.FC = () => {
               }}
               className={`min-h-[38px] rounded-full text-xs font-semibold transition-colors ${
                 mode === 'signup'
-                  ? 'bg-white text-[#1d1d1f]'
-                  : 'text-[#6e6e73] hover:text-[#1d1d1f]'
+                  ? 'bg-white text-[#0f172a]'
+                  : 'text-[#6e6e73] hover:text-[#0f172a]'
               }`}
             >
               Create account
@@ -253,7 +253,7 @@ export const LoginPage: React.FC = () => {
             <div>
               <label
                 htmlFor="auth-email"
-                className="block text-xs font-semibold text-[#1d1d1f]"
+                className="block text-xs font-semibold text-[#0f172a]"
               >
                 Email address
               </label>
@@ -265,14 +265,14 @@ export const LoginPage: React.FC = () => {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="alex.rivera@roleready.app"
-                className="mt-1.5 block min-h-[44px] w-full rounded-2xl border border-black/15 bg-[#f5f5f7]/60 px-4 py-2.5 text-base text-[#1d1d1f] placeholder:text-[#aeaeb2] focus:border-[#0071e3] focus:bg-white focus:outline-none"
+                className="mt-1.5 block min-h-[44px] w-full rounded-2xl border border-black/15 bg-[#f1f5f9]/60 px-4 py-2.5 text-base text-[#0f172a] placeholder:text-[#aeaeb2] focus:border-[#0284c7] focus:bg-white focus:outline-none"
               />
             </div>
 
             <div>
               <label
                 htmlFor="auth-password"
-                className="block text-xs font-semibold text-[#1d1d1f]"
+                className="block text-xs font-semibold text-[#0f172a]"
               >
                 Password
               </label>
@@ -287,7 +287,7 @@ export const LoginPage: React.FC = () => {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="••••••••••••"
-                className="mt-1.5 block min-h-[44px] w-full rounded-2xl border border-black/15 bg-[#f5f5f7]/60 px-4 py-2.5 text-base text-[#1d1d1f] placeholder:text-[#aeaeb2] focus:border-[#0071e3] focus:bg-white focus:outline-none"
+                className="mt-1.5 block min-h-[44px] w-full rounded-2xl border border-black/15 bg-[#f1f5f9]/60 px-4 py-2.5 text-base text-[#0f172a] placeholder:text-[#aeaeb2] focus:border-[#0284c7] focus:bg-white focus:outline-none"
               />
             </div>
 
@@ -319,7 +319,7 @@ export const LoginPage: React.FC = () => {
           </form>
 
           <p className="mt-5 flex items-center justify-center gap-1.5 text-center text-xs text-[#86868b]">
-            <Lock className="h-3.5 w-3.5 text-[#30d158]" aria-hidden="true" />
+            <Lock className="h-3.5 w-3.5 text-[#14b8a6]" aria-hidden="true" />
             <span>Your resume and interview answers stay private.</span>
           </p>
         </div>

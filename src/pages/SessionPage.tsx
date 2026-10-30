@@ -29,7 +29,7 @@ const STATUS_BADGE: Record<
   },
   ready: {
     label: 'Ready',
-    className: 'border-[#0071e3]/30 bg-[#0071e3]/10 text-[#0071e3]',
+    className: 'border-[#0284c7]/30 bg-[#0284c7]/10 text-[#0369a1]',
   },
   in_progress: {
     label: 'In progress',
@@ -37,7 +37,7 @@ const STATUS_BADGE: Record<
   },
   completed: {
     label: 'Completed',
-    className: 'border-[#30d158]/35 bg-[#30d158]/15 text-[#15803d]',
+    className: 'border-[#14b8a6]/35 bg-[#14b8a6]/15 text-[#0f766e]',
   },
 };
 
@@ -135,7 +135,7 @@ export const SessionPage: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="min-h-[calc(100dvh-3rem)] bg-[#f5f5f7] px-4 py-12 sm:px-6">
+      <div className="min-h-[calc(100dvh-3rem)] bg-[#f1f5f9] px-4 py-12 sm:px-6">
         <div className="mx-auto max-w-[1080px] space-y-6">
           <div className="bento-card-light h-28 p-6" />
           <div className="grid gap-6 lg:grid-cols-12">
@@ -158,7 +158,7 @@ export const SessionPage: React.FC = () => {
           <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-black/[0.05] text-[#6e6e73]">
             <FolderOpen className="h-6 w-6" aria-hidden="true" />
           </div>
-          <h1 className="mt-4 font-display text-xl font-bold text-[#1d1d1f]">
+          <h1 className="mt-4 font-display text-xl font-bold text-[#0f172a]">
             Session not found
           </h1>
           <p className="mt-1 text-sm text-[#6e6e73]">
@@ -202,14 +202,14 @@ export const SessionPage: React.FC = () => {
   const jdRequirements = session.jd_requirements ?? [];
 
   return (
-    <div className="min-h-[calc(100dvh-3rem)] bg-[#f5f5f7] pb-20 text-[#1d1d1f]">
+    <div className="min-h-[calc(100dvh-3rem)] bg-[#f1f5f9] pb-20 text-[#0f172a]">
       {/* Sticky Local Sub-Navigation Bar */}
       <div className="frosted-localnav-light sticky top-12 z-30 h-[54px] w-full">
         <div className="mx-auto flex h-full max-w-[1080px] items-center justify-between gap-4 px-4 sm:px-6">
           <div className="flex min-w-0 items-center gap-2.5">
             <Link
               to="/history"
-              className="inline-flex shrink-0 items-center gap-1 text-xs font-medium text-[#6e6e73] transition-colors hover:text-[#1d1d1f]"
+              className="inline-flex shrink-0 items-center gap-1 text-xs font-medium text-[#6e6e73] transition-colors hover:text-[#0f172a]"
             >
               <ArrowLeft className="h-3.5 w-3.5" aria-hidden="true" />
               <span className="hidden sm:inline">History</span>
@@ -217,7 +217,7 @@ export const SessionPage: React.FC = () => {
             <span className="text-black/15" aria-hidden="true">
               /
             </span>
-            <h1 className="truncate font-display text-sm font-bold tracking-tight text-[#1d1d1f] sm:text-base">
+            <h1 className="truncate font-display text-sm font-bold tracking-tight text-[#0f172a] sm:text-base">
               {session.role_title || 'Target Role Interview'}
               {session.company ? (
                 <span className="font-normal text-[#6e6e73]">
@@ -235,7 +235,7 @@ export const SessionPage: React.FC = () => {
 
           {/* Progress Indicator */}
           <div className="flex shrink-0 items-center gap-3">
-            <span className="text-xs font-semibold tabular-nums text-[#1d1d1f]">
+            <span className="text-xs font-semibold tabular-nums text-[#0f172a]">
               {answeredCount} of {totalQuestions} answered
             </span>
             <div
@@ -247,7 +247,7 @@ export const SessionPage: React.FC = () => {
               aria-label={`${answeredCount} of ${totalQuestions} questions answered`}
             >
               <div
-                className="h-full rounded-full bg-[#0071e3] transition-[width] duration-300"
+                className="h-full rounded-full bg-[#0284c7] transition-[width] duration-300"
                 style={{
                   width: `${Math.round((answeredCount / totalQuestions) * 100)}%`,
                 }}
@@ -275,14 +275,14 @@ export const SessionPage: React.FC = () => {
               type="button"
               onClick={() => setShowReferences((prev) => !prev)}
               aria-expanded={showReferences}
-              className="flex w-full items-center justify-between gap-3 text-left text-xs font-semibold text-[#1d1d1f]"
+              className="flex w-full items-center justify-between gap-3 text-left text-xs font-semibold text-[#0f172a]"
             >
               <span className="flex flex-wrap items-center gap-2">
-                <span className="inline-flex items-center gap-1 rounded-full bg-[#0071e3]/10 px-2.5 py-0.5 text-xs text-[#0071e3]">
+                <span className="inline-flex items-center gap-1 rounded-full bg-[#0284c7]/10 px-2.5 py-0.5 text-xs text-[#0369a1]">
                   <FileText className="h-3 w-3" aria-hidden="true" />
                   {resumeLines.length} resume lines
                 </span>
-                <span className="inline-flex items-center gap-1 rounded-full bg-black/[0.05] px-2.5 py-0.5 text-xs text-[#1d1d1f]">
+                <span className="inline-flex items-center gap-1 rounded-full bg-black/[0.05] px-2.5 py-0.5 text-xs text-[#0f172a]">
                   <Briefcase className="h-3 w-3" aria-hidden="true" />
                   {jdRequirements.length} job requirements
                 </span>
@@ -307,14 +307,14 @@ export const SessionPage: React.FC = () => {
 
             {showReferences && (
               <div className="mt-4 grid grid-cols-1 gap-4 border-t border-black/10 pt-4 text-xs md:grid-cols-2">
-                <div className="rounded-2xl bg-[#f5f5f7] p-4">
-                  <p className="font-display text-sm font-bold text-[#0071e3]">
+                <div className="rounded-2xl bg-[#f1f5f9] p-4">
+                  <p className="font-display text-sm font-bold text-[#0369a1]">
                     Lines from your resume ({resumeLines.length})
                   </p>
-                  <ul className="mt-3 space-y-2 text-[#1d1d1f]">
+                  <ul className="mt-3 space-y-2 text-[#0f172a]">
                     {resumeLines.map((r, idx) => (
                       <li key={r.id} className="leading-relaxed">
-                        <span className="mr-1.5 inline-block rounded-full border border-[#0071e3]/30 bg-[#0071e3]/10 px-2 py-0.5 text-xs font-bold text-[#0071e3]">
+                        <span className="mr-1.5 inline-block rounded-full border border-[#0284c7]/30 bg-[#0284c7]/10 px-2 py-0.5 text-xs font-bold text-[#0369a1]">
                           Line {idx + 1}
                         </span>
                         <span>{r.text}</span>
@@ -323,14 +323,14 @@ export const SessionPage: React.FC = () => {
                   </ul>
                 </div>
 
-                <div className="rounded-2xl bg-[#f5f5f7] p-4">
-                  <p className="font-display text-sm font-bold text-[#1d1d1f]">
+                <div className="rounded-2xl bg-[#f1f5f9] p-4">
+                  <p className="font-display text-sm font-bold text-[#0f172a]">
                     What the job asks for ({jdRequirements.length})
                   </p>
-                  <ul className="mt-3 space-y-2 text-[#1d1d1f]">
+                  <ul className="mt-3 space-y-2 text-[#0f172a]">
                     {jdRequirements.map((j, idx) => (
                       <li key={j.id} className="leading-relaxed">
-                        <span className="mr-1.5 inline-block rounded-full border border-black/15 bg-white px-2 py-0.5 text-xs font-bold text-[#1d1d1f]">
+                        <span className="mr-1.5 inline-block rounded-full border border-black/15 bg-white px-2 py-0.5 text-xs font-bold text-[#0f172a]">
                           Requirement {idx + 1}
                         </span>
                         <span>{j.text}</span>
@@ -345,7 +345,7 @@ export const SessionPage: React.FC = () => {
 
         {questions.length === 0 && (
           <div data-ui="setup-unfinished" className="bento-card-light p-6 text-center sm:p-8">
-            <h2 className="font-display text-xl font-bold text-[#1d1d1f]">
+            <h2 className="font-display text-xl font-bold text-[#0f172a]">
               This session's questions aren't ready yet
             </h2>
             <p className="mx-auto mt-1 max-w-md text-sm text-[#6e6e73]">
@@ -401,12 +401,12 @@ export const SessionPage: React.FC = () => {
                     <button
                       type="button"
                       onClick={() => scrollToQuestion(q.position)}
-                      className="flex w-full items-center justify-between gap-2 rounded-xl px-2.5 py-2 text-left text-xs transition-colors hover:bg-[#f5f5f7]"
+                      className="flex w-full items-center justify-between gap-2 rounded-xl px-2.5 py-2 text-left text-xs transition-colors hover:bg-[#f1f5f9]"
                     >
-                      <span className="flex items-center gap-2 font-medium text-[#1d1d1f]">
+                      <span className="flex items-center gap-2 font-medium text-[#0f172a]">
                         {isAnswered ? (
                           <CheckCircle2
-                            className="h-4 w-4 shrink-0 text-[#30d158]"
+                            className="h-4 w-4 shrink-0 text-[#14b8a6]"
                             aria-hidden="true"
                           />
                         ) : (
@@ -424,7 +424,7 @@ export const SessionPage: React.FC = () => {
                       </span>
 
                       {ans ? (
-                        <span className="text-xs font-semibold tabular-nums text-[#15803d]">
+                        <span className="text-xs font-semibold tabular-nums text-[#0f766e]">
                           {ans.overall}
                         </span>
                       ) : (

@@ -53,7 +53,7 @@ const VERDICT_META: Record<
 > = {
   held_up: {
     label: 'You held up',
-    className: 'border-[#30d158]/40 bg-[#30d158]/15 text-[#30d158]',
+    className: 'border-[#14b8a6]/40 bg-[#14b8a6]/15 text-[#14b8a6]',
     Icon: CheckCircle2,
   },
   partly: {
@@ -161,10 +161,10 @@ export const GrillFollowUp: React.FC<GrillFollowUpProps> = ({
     <section
       data-ui="grill-followup"
       aria-label="Grill Me follow-up question"
-      className="bento-card-dark mt-6 overflow-hidden p-6 text-[#f5f5f7] sm:p-8"
+      className="bento-card-dark mt-6 overflow-hidden p-6 text-[#f8fafc] sm:p-8"
     >
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <span className="inline-flex items-center gap-1.5 rounded-full bg-[#0071e3] px-3 py-1 text-xs font-semibold text-white">
+        <span className="inline-flex items-center gap-1.5 rounded-full bg-[#0284c7] px-3 py-1 text-xs font-semibold text-white">
           <Flame className="h-3.5 w-3.5" aria-hidden="true" />
           <span>Grill Me · Follow-up</span>
         </span>
@@ -255,7 +255,7 @@ export const GrillFollowUp: React.FC<GrillFollowUpProps> = ({
       {followUp && (
         <div className="mt-5 space-y-4">
           <div className="rounded-2xl border border-white/15 bg-white/[0.05] p-5">
-            <p className="text-xs font-semibold text-[#2997ff]">
+            <p className="text-xs font-semibold text-[#38bdf8]">
               Interviewer · {HEAT_LEVELS[askedHeat].name}
             </p>
             <p className="mt-2 text-base font-semibold leading-snug text-white">
@@ -326,7 +326,7 @@ export const GrillFollowUp: React.FC<GrillFollowUpProps> = ({
                 disabled={loading !== null}
                 onChange={(e) => setReply(e.target.value)}
                 placeholder="Answer the follow-up directly. Name what you did and the number."
-                className="mt-2 block w-full rounded-[18px] border border-white/15 bg-black/40 p-4 text-base leading-relaxed text-white placeholder:text-[#aeaeb2] focus:border-[#2997ff] focus:outline-none disabled:opacity-60"
+                className="mt-2 block w-full rounded-[18px] border border-white/15 bg-black/40 p-4 text-base leading-relaxed text-white placeholder:text-[#aeaeb2] focus:border-[#38bdf8] focus:outline-none disabled:opacity-60"
               />
               <div className="mt-3 flex flex-wrap items-center justify-between gap-3">
                 <span className="text-xs text-[#a1a1a6]">
@@ -375,7 +375,7 @@ export const GrillFollowUp: React.FC<GrillFollowUpProps> = ({
               <div className="space-y-4" aria-live="polite">
                 <div className="rounded-2xl border border-white/10 bg-black/40 p-4">
                   <p className="text-xs font-semibold text-[#a1a1a6]">Your reply</p>
-                  <p className="mt-1 whitespace-pre-wrap text-sm text-[#f5f5f7]">
+                  <p className="mt-1 whitespace-pre-wrap text-sm text-[#f8fafc]">
                     {reply}
                   </p>
                 </div>
@@ -386,19 +386,19 @@ export const GrillFollowUp: React.FC<GrillFollowUpProps> = ({
                     <verdictMeta.Icon className="h-3.5 w-3.5" aria-hidden="true" />
                     <span>{verdictMeta.label}</span>
                   </span>
-                  <p className="mt-2 text-sm leading-relaxed text-[#f5f5f7]">
+                  <p className="mt-2 text-sm leading-relaxed text-[#f8fafc]">
                     {verdict.feedback}
                   </p>
                 </div>
-                <div className="rounded-2xl border border-[#2997ff]/30 bg-[#0071e3]/10 p-4">
+                <div className="rounded-2xl border border-[#38bdf8]/30 bg-[#0284c7]/10 p-4">
                   <div className="flex items-center justify-between gap-2">
-                    <p className="text-xs font-semibold text-[#2997ff]">
+                    <p className="text-xs font-semibold text-[#38bdf8]">
                       A stronger reply, from your resume
                     </p>
                     <button
                       type="button"
                       onClick={copyBetter}
-                      className="inline-flex items-center gap-1 text-xs font-semibold text-[#2997ff] hover:text-white"
+                      className="inline-flex items-center gap-1 text-xs font-semibold text-[#38bdf8] hover:text-white"
                     >
                       {copied ? (
                         <Check className="h-3.5 w-3.5" aria-hidden="true" />
@@ -408,7 +408,7 @@ export const GrillFollowUp: React.FC<GrillFollowUpProps> = ({
                       <span>{copied ? 'Copied' : 'Copy'}</span>
                     </button>
                   </div>
-                  <p className="mt-1.5 text-sm leading-relaxed text-[#f5f5f7]">
+                  <p className="mt-1.5 text-sm leading-relaxed text-[#f8fafc]">
                     {verdict.better_reply}
                   </p>
                 </div>
