@@ -5,6 +5,8 @@ interface ReferenceChipProps {
   id: string;
   text: string;
   kind: 'resume' | 'jd';
+  /** Use on dark backgrounds so the job-post chip stays readable. */
+  theme?: 'light' | 'dark';
 }
 
 function buildShortPreview(text: string): string {
@@ -17,6 +19,7 @@ function buildShortPreview(text: string): string {
 export const ReferenceChip: React.FC<ReferenceChipProps> = ({
   text,
   kind,
+  theme = 'light',
 }) => {
   const [open, setOpen] = useState(false);
   const tooltipId = useId();
@@ -37,7 +40,9 @@ export const ReferenceChip: React.FC<ReferenceChipProps> = ({
         className={`inline-flex min-h-[28px] items-center gap-1.5 rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors ${
           isResume
             ? 'border-[#0071e3]/25 bg-[#0071e3]/10 text-[#0071e3] hover:border-[#0071e3]/50 hover:bg-[#0071e3]/15'
-            : 'border-black/15 bg-black/[0.04] text-[#1d1d1f] hover:border-black/30 hover:bg-black/[0.08]'
+            : theme === 'dark'
+              ? 'border-white/20 bg-white/[0.08] text-[#f5f5f7] hover:border-white/35 hover:bg-white/[0.14]'
+              : 'border-black/15 bg-black/[0.04] text-[#1d1d1f] hover:border-black/30 hover:bg-black/[0.08]'
         }`}
       >
         {isResume ? (

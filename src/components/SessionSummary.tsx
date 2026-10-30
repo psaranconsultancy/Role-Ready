@@ -73,7 +73,7 @@ export const SessionSummary: React.FC<SessionSummaryProps> = ({
           >
             <RotateCcw className="h-3.5 w-3.5" aria-hidden="true" />
             <span>
-              Re-drill Q{weakestQuestion.position} (
+              Retry Q{weakestQuestion.position} (
               {answersByQuestionId[weakestQuestion.id]?.overall ?? 0}/100)
             </span>
           </button>

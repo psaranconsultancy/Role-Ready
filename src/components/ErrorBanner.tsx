@@ -12,7 +12,7 @@ const ERROR_TITLES: Record<ApiError['error']['code'], string> = {
   bad_request: 'Check your input',
   unauthorized: 'Please sign in again',
   parse_failed: "We couldn't read that PDF",
-  llm_failed: 'The coach timed out',
+  llm_failed: 'The coach didn\'t respond in time',
   not_found: 'Session not found',
 };
 
@@ -25,7 +25,7 @@ export const ErrorBanner: React.FC<ErrorBannerProps> = ({
 
   const isStructured = typeof error !== 'string' && 'error' in error;
   const code = isStructured ? error.error.code : null;
-  const title = code ? ERROR_TITLES[code] : 'Action could not be completed';
+  const title = code ? ERROR_TITLES[code] : 'Something went wrong';
   const message = isStructured ? error.error.message : error;
 
   return (
@@ -44,11 +44,6 @@ export const ErrorBanner: React.FC<ErrorBannerProps> = ({
             <p className="font-display text-sm font-bold text-[#1d1d1f]">
               {title}
             </p>
-            {code && (
-              <code className="rounded-full bg-[#ff453a]/10 px-2 py-0.5 text-xs font-medium text-[#d70015]">
-                {code}
-              </code>
-            )}
           </div>
           <p className="mt-0.5 text-sm leading-relaxed text-[#6e6e73]">
             {message}

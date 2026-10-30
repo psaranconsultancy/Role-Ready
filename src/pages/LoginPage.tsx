@@ -105,7 +105,7 @@ export const LoginPage: React.FC = () => {
                   aria-hidden="true"
                 />
                 <span>
-                  Every question cites the exact line from your resume and the
+                  Every question shows the exact line from your resume and the
                   job requirement it tests.
                 </span>
               </li>
@@ -115,7 +115,7 @@ export const LoginPage: React.FC = () => {
                   aria-hidden="true"
                 />
                 <span>
-                  Your answers get a 0–100 score across Relevance, Evidence,
+                  Your answers get a score out of 100 for Relevance, Evidence,
                   Structure, and Impact.
                 </span>
               </li>
@@ -126,7 +126,7 @@ export const LoginPage: React.FC = () => {
                 />
                 <span>
                   Each scorecard flags claims that are not on your resume and
-                  gives you a stronger rewrite to practise.
+                  gives you a stronger example answer to practise.
                 </span>
               </li>
             </ul>

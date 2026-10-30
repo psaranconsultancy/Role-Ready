@@ -152,7 +152,7 @@ export const GrillFollowUp: React.FC<GrillFollowUpProps> = ({
 
   const resolveResume = (id: string) =>
     resumeLines.find((l) => l.id === id)?.text ??
-    'Referenced resume line from your uploaded CV';
+    'A line from your resume';
 
   const replyId = `grill-reply-${question.id}`;
   const verdictMeta = verdict ? VERDICT_META[verdict.verdict] : null;

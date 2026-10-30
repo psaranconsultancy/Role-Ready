@@ -63,7 +63,7 @@ const CRITERIA_LABELS: Array<{
   {
     key: 'structure',
     label: 'Structure',
-    description: 'Clear Situation, Task, Action, and Result flow',
+    description: 'Tells a clear story: situation, what you did, result',
   },
   {
     key: 'impact',
@@ -113,7 +113,7 @@ export const FeedbackPanel: React.FC<FeedbackPanelProps> = ({
               Answer scorecard
             </p>
             <p className="text-xs text-[#6e6e73]">
-              Graded against your cited resume lines and the job requirements
+              Marked against your resume and what the job asks for
             </p>
           </div>
         </div>
@@ -225,7 +225,7 @@ export const FeedbackPanel: React.FC<FeedbackPanelProps> = ({
         <div className="flex flex-wrap items-center justify-between gap-2 border-b border-black/[0.06] pb-3">
           <div>
             <h4 className="font-display text-sm font-bold text-[#1d1d1f]">
-              Stronger rewrite using your resume
+              A stronger answer, using your resume
             </h4>
           </div>
           <button
@@ -244,7 +244,7 @@ export const FeedbackPanel: React.FC<FeedbackPanelProps> = ({
             ) : (
               <>
                 <Copy className="h-3.5 w-3.5" aria-hidden="true" />
-                <span>Copy rewrite</span>
+                <span>Copy answer</span>
               </>
             )}
           </button>

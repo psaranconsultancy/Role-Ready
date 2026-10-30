@@ -189,7 +189,7 @@ export const HistoryPage: React.FC = () => {
 
             <div className="bento-card-light p-5">
               <p className="text-xs font-medium text-[#86868b]">
-                Completed interviews
+                Completed sessions
               </p>
               <p className="mt-2 font-display text-3xl font-bold tabular-nums text-[#1d1d1f]">
                 {completedSessions.length}
@@ -339,7 +339,7 @@ export const HistoryPage: React.FC = () => {
                     )}
 
                     <span className="inline-flex min-h-[36px] items-center gap-1.5 rounded-full bg-[#f5f5f7] px-4 py-1.5 text-xs font-semibold text-[#1d1d1f] transition-colors group-hover:bg-[#0071e3] group-hover:text-white">
-                      <span>{isCompleted ? 'Review' : 'Resume'}</span>
+                      <span>{isCompleted ? 'Review' : 'Continue'}</span>
                       <ArrowRight className="h-3.5 w-3.5" aria-hidden="true" />
                     </span>
                   </div>

@@ -62,7 +62,7 @@ export const LandingPage: React.FC = () => {
 
             <p className="mx-auto mt-5 max-w-2xl text-[17px] leading-[1.45] text-[#d2d2d7] sm:text-[21px]">
               Upload your resume, paste the job description, and practise six
-              questions built from both. Every question cites the exact line
+              questions built from both. Every question shows the exact line
               from your resume and the job requirement it tests, and every
               answer gets a 0–100 score with a stronger rewrite.
             </p>
@@ -139,7 +139,7 @@ export const LandingPage: React.FC = () => {
 
                 <div className="flex flex-col justify-center p-6 sm:p-8 lg:col-span-5">
                   <span className="inline-flex w-fit items-center gap-1.5 rounded-full bg-[#0071e3]/20 px-3 py-1 text-xs font-semibold text-[#2997ff]">
-                    Built for calm command
+                    Built for calm confidence
                   </span>
                   <h2 className="mt-3 font-display text-xl font-bold leading-snug text-[#f5f5f7] sm:text-2xl">
                     You already did the work. We help you tell the story.
@@ -168,7 +168,7 @@ export const LandingPage: React.FC = () => {
                   </span>
                 </div>
                 <span className="text-xs font-medium text-[#30d158]">
-                  Hover or tap each source tag to read the exact quote
+                  Hover over or tap a tag to read the exact line
                 </span>
               </div>
 
@@ -176,25 +176,26 @@ export const LandingPage: React.FC = () => {
                 {/* Left 7 cols: Question + Citations + Answer Excerpt */}
                 <div className="space-y-4 lg:col-span-7">
                   <p className="font-display text-lg font-semibold leading-snug text-[#f5f5f7] sm:text-xl">
-                    “Walk me through how you redesigned the onboarding funnel at
-                    PayWave to lift activation by 18%, and how that approach
-                    applies to owning our B2B checkout conversion roadmap.”
+                    “Walk me through how you redesigned sign-up at PayWave so 18%
+                    more new customers started using the product, and how you
+                    would use that approach to improve our checkout.”
                   </p>
 
                   {/* Interactive Citation Chips */}
                   <div className="flex flex-wrap items-center gap-2 rounded-2xl border border-white/10 bg-white/[0.04] p-3">
                     <span className="text-xs font-medium text-[#a1a1a6]">
-                      Cites:
+                      Based on:
                     </span>
                     <ReferenceChip
                       id="resume-onboarding"
                       kind="resume"
-                      text="Redesigned merchant onboarding funnel using Amplitude + SQL cohort analysis, increasing 30-day activation by 18% across 14,000 SMB accounts."
+                      text="Redesigned sign-up for 14,000 small-business customers, so 18% more of them were actively using the product within their first month."
                     />
                     <ReferenceChip
                       id="jd-checkout"
                       kind="jd"
-                      text="Own end-to-end funnel diagnostics and checkout conversion experiments across B2B payment flows."
+                      theme="dark"
+                      text="Find where business customers drop out of checkout and test changes that help more of them complete payment."
                     />
                   </div>
 
@@ -206,10 +207,10 @@ export const LandingPage: React.FC = () => {
                       </span>
                     </div>
                     <p className="text-xs leading-relaxed text-[#d2d2d7] sm:text-sm">
-                      “At PayWave, 38% of SMBs dropped off at KYB document
-                      upload. I ran SQL cohort queries across 14,000 accounts,
-                      worked with engineering to ship async verification, and
-                      lifted 30-day activation by 18% in two quarters…”
+                      “At PayWave, 38% of small businesses gave up at the ID
+                      check during sign-up. I studied where 14,000 accounts
+                      dropped out, worked with engineers to run the check in the
+                      background, and raised first-month use by 18% in six months…”
                     </p>
                   </div>
                 </div>
@@ -225,7 +226,7 @@ export const LandingPage: React.FC = () => {
                         Strong · Clear business impact
                       </p>
                       <p className="mt-0.5 text-xs text-[#a1a1a6]">
-                        Backed by your PayWave resume bullet with zero unverified claims
+                        Every claim matches the PayWave line on your resume
                       </p>
                     </div>
                     <ScoreRing score={84} size="md" theme="dark" />
@@ -250,8 +251,8 @@ export const LandingPage: React.FC = () => {
                     <span className="font-semibold text-[#2997ff]">
                       What to fix next:
                     </span>{' '}
-                    Connect the 18% activation lift directly to the B2B checkout
-                    experiments in the job description.
+                    Link the 18% rise in active customers to the checkout
+                    improvements this job asks for.
                   </div>
                 </div>
               </div>
@@ -288,7 +289,7 @@ export const LandingPage: React.FC = () => {
               />
               <div className="visual-media-scrim" />
               <span className="absolute bottom-3 left-3 rounded-full bg-black/70 px-2.5 py-1 text-xs font-semibold text-white backdrop-blur-md">
-                Step 1 · Map your proof
+                Step 1 · Match your experience
               </span>
             </div>
             <div className="flex items-center justify-between">
@@ -300,12 +301,12 @@ export const LandingPage: React.FC = () => {
               </span>
             </div>
             <h3 className="mt-4 font-display text-xl font-bold text-[#1d1d1f]">
-              Upload resume and JD
+              Add your resume and the job
             </h3>
             <p className="mt-2 text-sm leading-relaxed text-[#6e6e73]">
               Drop your PDF resume (up to 5 MB) and paste the job description.
-              RoleReady splits your resume into numbered lines and pulls out the
-              core requirements from the job post.
+              RoleReady reads your resume line by line and picks out what the
+              job is asking for.
             </p>
           </div>
 
@@ -321,7 +322,7 @@ export const LandingPage: React.FC = () => {
               />
               <div className="visual-media-scrim" />
               <span className="absolute bottom-3 left-3 rounded-full bg-black/70 px-2.5 py-1 text-xs font-semibold text-white backdrop-blur-md">
-                Step 2 · Rehearse real prompts
+                Step 2 · Practise real questions
               </span>
             </div>
             <div className="flex items-center justify-between">
@@ -337,8 +338,8 @@ export const LandingPage: React.FC = () => {
             </h3>
             <p className="mt-2 text-sm leading-relaxed text-[#6e6e73]">
               Practise two behavioral, two technical, and two role-specific
-              questions. Each question shows clickable chips so you can see the
-              exact resume line and job requirement it is testing.
+              questions. Each question has tags you can tap to see the exact
+              resume line and job requirement it is testing.
             </p>
           </div>
 
@@ -366,12 +367,12 @@ export const LandingPage: React.FC = () => {
               </span>
             </div>
             <h3 className="mt-4 font-display text-xl font-bold text-[#1d1d1f]">
-              Get scored, fix, re-drill
+              Get scored, improve, try again
             </h3>
             <p className="mt-2 text-sm leading-relaxed text-[#6e6e73]">
-              Get an instant 0–100 score across Relevance, Evidence, Structure,
-              and Impact, along with one specific fix, a stronger rewrite, and a
-              button to re-drill your lowest-scoring question.
+              Get an instant score out of 100 for Relevance, Evidence, Structure,
+              and Impact, along with one specific fix, a stronger example
+              answer, and a button to retry your lowest-scoring question.
             </p>
           </div>
         </div>
@@ -398,23 +399,23 @@ export const LandingPage: React.FC = () => {
             <div>
               <div className="inline-flex items-center gap-2 rounded-full bg-[#0071e3]/10 px-3 py-1 text-xs font-semibold text-[#0071e3]">
                 <Target className="h-3.5 w-3.5" aria-hidden="true" />
-                Direct citations
+                Built from your resume
               </div>
               <h3 className="mt-4 font-display text-xl font-bold text-[#1d1d1f]">
-                Cites your resume line by line
+                Every question points to your resume
               </h3>
               <p className="mt-2 text-sm leading-relaxed text-[#6e6e73]">
                 Every question links to specific lines from your uploaded resume
-                and the target job description. Hover or tap any chip to read
-                the source text.
+                and the job description. Hover over or tap any tag to read the
+                original text.
               </p>
             </div>
             <div className="mt-6 flex flex-wrap gap-2 rounded-2xl bg-[#f5f5f7] p-3.5">
               <span className="rounded-full border border-[#0071e3]/30 bg-[#0071e3]/10 px-2.5 py-0.5 text-xs font-semibold text-[#0071e3]">
-                Resume · SQL cohort analysis
+                Resume · Grew sign-ups 18%
               </span>
               <span className="rounded-full border border-black/15 bg-white px-2.5 py-0.5 text-xs font-semibold text-[#1d1d1f]">
-                Job post · Looker dashboards
+                Job post · Improve checkout
               </span>
             </div>
           </div>
@@ -424,7 +425,7 @@ export const LandingPage: React.FC = () => {
             <div>
               <div className="inline-flex items-center gap-2 rounded-full bg-[#30d158]/15 px-3 py-1 text-xs font-semibold text-[#15803d]">
                 <CheckCircle2 className="h-3.5 w-3.5" aria-hidden="true" />
-                0–100 rubric
+                Score out of 100
               </div>
               <h3 className="mt-4 font-display text-xl font-bold text-[#1d1d1f]">
                 Scored on four hiring criteria
@@ -432,7 +433,7 @@ export const LandingPage: React.FC = () => {
               <p className="mt-2 text-sm leading-relaxed text-[#6e6e73]">
                 Each answer is graded on Relevance, Evidence, Structure, and
                 Impact. You see what worked, the one change that will raise your
-                score most, and a stronger rewrite.
+                score most, and a stronger example answer.
               </p>
             </div>
             <div className="mt-6 flex items-center justify-between rounded-2xl bg-[#f5f5f7] p-3.5">
@@ -456,7 +457,7 @@ export const LandingPage: React.FC = () => {
                 Fact check
               </div>
               <h3 className="mt-4 font-display text-xl font-bold text-[#1d1d1f]">
-                Catches claims not on your CV
+                Catches claims not on your resume
               </h3>
               <p className="mt-2 text-sm leading-relaxed text-[#6e6e73]">
                 If you mention a metric or team size that is not on your resume,
