@@ -34,14 +34,13 @@ export const Header: React.FC = () => {
       navigate('/history');
       return;
     }
-    if (!isMockMode()) {
-      navigate('/login');
-      return;
-    }
     setStartingDemo(true);
     try {
       await signInDemo();
       navigate('/history');
+    } catch {
+      // Demo sign-in unavailable (e.g. anonymous sign-ins off): offer email sign-in.
+      navigate('/login');
     } finally {
       setStartingDemo(false);
     }
