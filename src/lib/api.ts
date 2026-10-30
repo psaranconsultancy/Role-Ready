@@ -17,6 +17,7 @@ import {
   mockScoreAnswer,
   mockGetSession,
   mockListSessions,
+  mockDeleteSession,
   type MockUser,
 } from '../mocks/mockStore';
 
@@ -189,13 +190,17 @@ export async function signIn(email: string, password: string): Promise<AppUser> 
 
 export async function signInAsDemo(): Promise<AppUser> {
   if (!isMockMode()) {
-    const err: ApiError = {
-      error: {
-        code: 'bad_request',
-        message: 'Demo sign-in is only available in mock mode.',
-      },
-    };
-    throw err;
+    // Real backend: a throwaway anonymous Supabase user, so the demo needs no
+    // shared password. Requires "Allow anonymous sign-ins" in Supabase Auth.
+    const { data, error } = await supabase.auth.signInAnonymously();
+    if (error || !data.user) {
+      throw toApiError(
+        error,
+        'unauthorized',
+        'The demo is not available right now. Please create an account instead.'
+      );
+    }
+    return { id: data.user.id, email: 'Demo user' };
   }
   await fakeDelay(600, 950);
   const demoUser: AppUser = {
@@ -226,7 +231,10 @@ export async function getUser(): Promise<AppUser | null> {
   if (error || !data.user) {
     return null;
   }
-  return { id: data.user.id, email: data.user.email ?? '' };
+  return {
+    id: data.user.id,
+    email: data.user.email || (data.user.is_anonymous ? 'Demo user' : ''),
+  };
 }
 
 export async function createSession(params: {
@@ -501,6 +509,47 @@ export async function getSession(id: string): Promise<{
     questions: (questionsRes.data ?? []) as Question[],
     answers: (answersRes.data ?? []) as Feedback[],
   };
+}
+
+export async function deleteSession(id: string): Promise<void> {
+  const user = await getUser();
+  if (!user) {
+    const err: ApiError = {
+      error: { code: 'unauthorized', message: 'You must be signed in.' },
+    };
+    throw err;
+  }
+
+  if (isMockMode()) {
+    await fakeDelay(600, 900);
+    try {
+      mockDeleteSession(user.id, id);
+      return;
+    } catch (err) {
+      throw toApiError(err, 'not_found', 'Session not found.');
+    }
+  }
+
+  // Questions and answers go with the session (on delete cascade).
+  const { data: deleted, error } = await supabase
+    .from('sessions')
+    .delete()
+    .eq('id', id)
+    .select('resume_path');
+  if (error) {
+    throw toApiError(error, 'bad_request', 'Could not delete this session.');
+  }
+  if (!deleted || deleted.length === 0) {
+    const err: ApiError = {
+      error: { code: 'not_found', message: 'Session not found.' },
+    };
+    throw err;
+  }
+  const resumePath = (deleted[0] as { resume_path: string | null }).resume_path;
+  if (resumePath) {
+    // Best effort: the session is already gone, so a leftover PDF is not an error.
+    await supabase.storage.from('resumes').remove([resumePath.replace(/^resumes\//, '')]);
+  }
 }
 
 export async function listSessions(): Promise<Session[]> {

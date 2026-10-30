@@ -7,9 +7,11 @@ import {
   Calendar,
   FileText,
   FolderOpen,
+  Trash2,
+  Loader2,
 } from 'lucide-react';
 import type { Session, ApiError } from '@contracts';
-import { listSessions, toApiError } from '../lib/api';
+import { deleteSession, listSessions, toApiError } from '../lib/api';
 import { ErrorBanner } from '../components/ErrorBanner';
 import { getScoreBand } from '../components/FeedbackPanel';
 import { ScoreRing } from '../components/ScoreRing';
@@ -79,6 +81,27 @@ export const HistoryPage: React.FC = () => {
   useEffect(() => {
     fetchHistory();
   }, [fetchHistory]);
+
+  const [deletingId, setDeletingId] = useState<string | null>(null);
+
+  const handleDelete = async (s: Session) => {
+    const name = s.role_title || 'this practice session';
+    if (!window.confirm(`Delete ${name}? Its questions and scored answers will be removed for good.`)) {
+      return;
+    }
+    setDeletingId(s.id);
+    setError(null);
+    try {
+      await deleteSession(s.id);
+      setSessions((prev) => prev.filter((item) => item.id !== s.id));
+    } catch (err) {
+      setError(
+        toApiError(err, 'bad_request', 'Could not delete this session. Please try again.')
+      );
+    } finally {
+      setDeletingId(null);
+    }
+  };
 
   const totalSessions = sessions.length;
   const completedSessions = sessions.filter(
@@ -255,10 +278,10 @@ export const HistoryPage: React.FC = () => {
               const isCompleted = s.status === 'completed';
 
               return (
+                <div key={s.id} className="relative">
                 <Link
-                  key={s.id}
                   to={`/session/${s.id}`}
-                  className="bento-card-light bento-card-light-interactive group flex flex-col justify-between gap-4 p-5 sm:flex-row sm:items-center sm:p-6"
+                  className="bento-card-light bento-card-light-interactive group flex flex-col justify-between gap-4 p-5 pr-14 sm:flex-row sm:items-center sm:p-6 sm:pr-16"
                 >
                   <div className="min-w-0 space-y-1.5">
                     <div className="flex flex-wrap items-center gap-2">
@@ -321,6 +344,21 @@ export const HistoryPage: React.FC = () => {
                     </span>
                   </div>
                 </Link>
+                <button
+                  type="button"
+                  onClick={() => handleDelete(s)}
+                  disabled={deletingId === s.id}
+                  aria-label={`Delete ${s.role_title || 'practice session'}${s.company ? ` at ${s.company}` : ''}`}
+                  title="Delete session"
+                  className="absolute right-3 top-3 flex h-9 w-9 items-center justify-center rounded-full text-[#86868b] transition-colors hover:bg-[#ff3b30]/10 hover:text-[#d70015] focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#0071e3] disabled:opacity-60 sm:top-1/2 sm:-translate-y-1/2"
+                >
+                  {deletingId === s.id ? (
+                    <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />
+                  ) : (
+                    <Trash2 className="h-4 w-4" aria-hidden="true" />
+                  )}
+                </button>
+                </div>
               );
             })}
           </div>
