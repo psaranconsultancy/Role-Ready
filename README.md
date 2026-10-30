@@ -1,6 +1,6 @@
 # RoleReady
 
-AI interview practice grounded in your own resume. Upload your resume as a PDF and paste the job description. RoleReady writes six tailored interview questions, each one citing the resume lines and job requirements it tests. You type your answers and get a 0–100 score across four criteria: relevance, evidence, structure and impact. Each score comes with one thing to fix and a stronger rewrite that only uses facts from your resume. Your sessions are saved to History so you can come back and re-drill your weakest question.
+AI interview practice grounded in your own resume. Upload your resume as a PDF and paste the job description. RoleReady writes six tailored interview questions, each one citing the resume lines and job requirements it tests. You type your answers and get a 0–100 score across four criteria: relevance, evidence, structure and impact. Each score comes with one thing to fix and a stronger rewrite that only uses facts from your resume. Your sessions are saved to History so you can come back and re-drill your weakest question, and a finished session can be saved as a PDF report or emailed to yourself.
 
 **Live demo:** https://roleready-team44.vercel.app. Click **Try the demo** to sign in with sample data; no account needed.
 

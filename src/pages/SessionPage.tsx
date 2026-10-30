@@ -238,6 +238,7 @@ export const SessionPage: React.FC = () => {
         {/* Session Summary Banner when all 6 questions are answered */}
         {allAnswered && computedOverall !== null && (
           <SessionSummary
+            session={session}
             overallScore={computedOverall}
             questions={questions}
             answersByQuestionId={answersByQuestionId}
