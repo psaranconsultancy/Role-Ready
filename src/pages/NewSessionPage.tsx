@@ -560,12 +560,15 @@ export const NewSessionPage: React.FC = () => {
           >
             <div className="flex flex-wrap items-center justify-between gap-2">
               <h3 className="font-display text-lg font-bold text-[#1d1d1f]">
-                4. Role context: Niche category, C-Suite category, uploads &amp; links{' '}
+                4. Grill With Docs: Niche category, C-Suite category, uploads &amp; links{' '}
                 <span className="font-sans text-xs font-normal text-[#86868b]">
-                  (powers Grill Me deep-dive questioning)
+                  (builds live Decision Records &amp; Domain Glossary)
                 </span>
               </h3>
               <div className="flex flex-wrap gap-1.5">
+                <span className="rounded-full bg-[#30d158]/15 px-3 py-0.5 text-xs font-semibold text-[#15803d]">
+                  Grill With Docs
+                </span>
                 <span className="rounded-full bg-[#0071e3]/10 px-3 py-0.5 text-xs font-semibold text-[#0071e3]">
                   Niche Category
                 </span>
@@ -577,7 +580,9 @@ export const NewSessionPage: React.FC = () => {
             <p className="mt-1 text-xs text-[#6e6e73]">
               Select your Industry, Department, Seniority, dedicated Niche
               category, and C-Suite seat, or attach board decks, case studies,
-              and company URLs so your follow-up grilling matches the exact role.
+              and company URLs. Grill With Docs uses these files to challenge
+              your answers and build your downloadable Candidate Decision Records
+              (CDRs) and Domain Glossary as you practise.
             </p>
 
             <div className="mt-4 grid gap-4 sm:grid-cols-3">

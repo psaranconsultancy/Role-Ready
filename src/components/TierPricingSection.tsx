@@ -53,7 +53,9 @@ export const TierPricingSection: React.FC<TierPricingSectionProps> = ({
       <div className="mx-auto max-w-3xl text-center">
         <div className="mb-3 inline-flex items-center gap-2 rounded-full border border-[#0071e3]/25 bg-[#0071e3]/10 px-3.5 py-1 text-xs font-semibold text-[#0071e3]">
           <Flame className="h-3.5 w-3.5" aria-hidden="true" />
-          <span>Grill Me Deep-Dive Questioning &amp; Tier Plans</span>
+          <span>
+            Grill Me, Grill With Docs (Live CDRs &amp; Glossary) &amp; Tier Plans
+          </span>
         </div>
         <h2 className="font-display text-3xl font-bold tracking-tight text-[#1d1d1f] sm:text-4xl">
           {activeFramework.headline}

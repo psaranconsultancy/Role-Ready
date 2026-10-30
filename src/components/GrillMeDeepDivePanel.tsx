@@ -22,6 +22,9 @@ import {
   Gauge,
   Plus,
   X,
+  FileText,
+  BookOpen,
+  Download,
 } from 'lucide-react';
 import type { Question, Feedback, ResumeLine, JdRequirement } from '@contracts';
 import {
@@ -82,6 +85,8 @@ export const GrillMeDeepDivePanel: React.FC<GrillMeDeepDivePanelProps> = ({
     Record<string, DeliveryComposureMetrics>
   >({});
   const [copiedScript, setCopiedScript] = useState(false);
+  const [activeDocsTab, setActiveDocsTab] = useState<'cdr' | 'glossary'>('cdr');
+  const [copiedDossier, setCopiedDossier] = useState(false);
 
   // Voice synthesis & voice recognition state
   const [speakingQuestionId, setSpeakingQuestionId] = useState<string | null>(
@@ -357,6 +362,79 @@ export const GrillMeDeepDivePanel: React.FC<GrillMeDeepDivePanelProps> = ({
       setTimeout(() => setCopiedScript(false), 2000);
     } catch {
       // ignore clipboard errors
+    }
+  };
+
+  const buildDossierMarkdown = (): string => {
+    const lines: string[] = [
+      `# ${plan.grillWithDocs.dossierTitle}`,
+      `- **Industry**: ${grillContext.industry}`,
+      `- **Department**: ${grillContext.department}`,
+      `- **Seniority Band**: ${grillContext.seniority}`,
+      `- **Niche Category**: ${grillContext.nicheCategory}`,
+      `- **C-Suite Category**: ${grillContext.cSuiteCategory}`,
+      `- **Heat Level**: ${heat}/4 (${activeHeatMeta.name})`,
+      `- **Uploaded Docs**: ${grillContext.uploadedFiles.join(', ') || 'None'}`,
+      `- **Shared Links**: ${grillContext.sharedLinks.join(', ') || 'None'}`,
+      '',
+      '## 1. Candidate Decision Records (CDR Log)',
+    ];
+
+    plan.grillWithDocs.decisionRecords.forEach((cdr) => {
+      const settledText = settledIds[cdr.questionId];
+      lines.push(
+        `### ${cdr.code} · ${cdr.title} (${settledText ? 'Settled' : 'Draft'})`,
+        `- **Source Docs Cited**: ${cdr.sourceDocsCited}`,
+        `- **Panel Challenge**: ${cdr.panelChallenge}`,
+        `- **Your Decision & Rebuttal**: ${settledText || cdr.defaultDecisionSummary}`,
+        `- **Trade-Off Defended**: ${cdr.tradeOffDefended}`,
+        `- **Rollback & Guardrail Metric**: ${cdr.rollbackThreshold}`,
+        ''
+      );
+    });
+
+    lines.push('## 2. Niche & C-Suite Domain Glossary');
+    plan.grillWithDocs.domainGlossary.forEach((entry) => {
+      lines.push(
+        `### ${entry.term} [${entry.categoryBadge}]`,
+        `- **What the Panel Tests**: ${entry.panelMeaning}`,
+        `- **Your Grounded Proof**: ${entry.yourGroundedProof}`,
+        ''
+      );
+    });
+
+    lines.push(
+      '## 3. Salary & Offer Negotiation Script',
+      plan.negotiationScript.spokenScript
+    );
+
+    return lines.join('\n');
+  };
+
+  const handleCopyDossier = async () => {
+    try {
+      await navigator.clipboard.writeText(buildDossierMarkdown());
+      setCopiedDossier(true);
+      setTimeout(() => setCopiedDossier(false), 2000);
+    } catch {
+      // ignore
+    }
+  };
+
+  const handleDownloadDossier = () => {
+    try {
+      const md = buildDossierMarkdown();
+      const blob = new Blob([md], { type: 'text/markdown;charset=utf-8' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `RoleReady-Grill-With-Docs-Q${question.position}.md`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    } catch {
+      // ignore
     }
   };
 
@@ -1195,6 +1273,165 @@ export const GrillMeDeepDivePanel: React.FC<GrillMeDeepDivePanelProps> = ({
             <p className="mt-3 text-xs leading-relaxed text-[#f5f5f7] sm:text-sm">
               {plan.negotiationScript.spokenScript}
             </p>
+          </div>
+
+          {/* Grill With Docs: Live Candidate Decision Records (CDRs) & Niche/C-Suite Domain Glossary */}
+          <div className="rounded-2xl border border-[#2997ff]/35 bg-white/[0.04] p-5">
+            <div className="flex flex-wrap items-center justify-between gap-3 border-b border-white/10 pb-4">
+              <div>
+                <div className="flex flex-wrap items-center gap-2">
+                  <span className="inline-flex items-center gap-1.5 rounded-full bg-[#0071e3]/25 px-3 py-0.5 text-xs font-semibold text-[#2997ff]">
+                    <FileText className="h-3.5 w-3.5" aria-hidden="true" />
+                    <span>Grill With Docs · Live Dossier</span>
+                  </span>
+                  <span className="text-xs font-medium text-[#30d158]">
+                    {Object.keys(settledIds).length} of 4 Decision Records settled
+                  </span>
+                </div>
+                <h4 className="mt-1.5 font-display text-base font-bold text-white">
+                  {plan.grillWithDocs.dossierTitle}
+                </h4>
+                <p className="mt-0.5 text-xs text-[#a1a1a6]">
+                  Builds Candidate Decision Records (CDRs) and a Niche &amp;
+                  C-Suite Domain Glossary as you answer each round.
+                </p>
+              </div>
+
+              <div className="flex flex-wrap items-center gap-2">
+                <button
+                  type="button"
+                  onClick={handleCopyDossier}
+                  className="inline-flex min-h-[36px] items-center gap-1.5 rounded-full border border-white/15 bg-white/10 px-3.5 py-1.5 text-xs font-semibold text-white hover:bg-white/15"
+                >
+                  {copiedDossier ? (
+                    <>
+                      <Check
+                        className="h-3.5 w-3.5 text-[#30d158]"
+                        aria-hidden="true"
+                      />
+                      <span>Dossier copied</span>
+                    </>
+                  ) : (
+                    <>
+                      <Copy className="h-3.5 w-3.5" aria-hidden="true" />
+                      <span>Copy dossier</span>
+                    </>
+                  )}
+                </button>
+                <button
+                  type="button"
+                  onClick={handleDownloadDossier}
+                  className="inline-flex min-h-[36px] items-center gap-1.5 rounded-full bg-[#0071e3] px-3.5 py-1.5 text-xs font-semibold text-white hover:bg-[#0077ed]"
+                >
+                  <Download className="h-3.5 w-3.5" aria-hidden="true" />
+                  <span>Download .md</span>
+                </button>
+              </div>
+            </div>
+
+            {/* Sub-tabs: Decision Records vs Domain Glossary */}
+            <div className="mt-4 flex flex-wrap items-center gap-2">
+              <button
+                type="button"
+                onClick={() => setActiveDocsTab('cdr')}
+                className={`inline-flex min-h-[34px] items-center gap-1.5 rounded-full px-3.5 py-1 text-xs font-semibold transition-colors ${
+                  activeDocsTab === 'cdr'
+                    ? 'bg-white text-[#1d1d1f]'
+                    : 'bg-white/10 text-[#d2d2d7] hover:bg-white/15'
+                }`}
+              >
+                <FileText className="h-3.5 w-3.5" aria-hidden="true" />
+                <span>Candidate Decision Records (4 CDRs)</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => setActiveDocsTab('glossary')}
+                className={`inline-flex min-h-[34px] items-center gap-1.5 rounded-full px-3.5 py-1 text-xs font-semibold transition-colors ${
+                  activeDocsTab === 'glossary'
+                    ? 'bg-white text-[#1d1d1f]'
+                    : 'bg-white/10 text-[#d2d2d7] hover:bg-white/15'
+                }`}
+              >
+                <BookOpen className="h-3.5 w-3.5" aria-hidden="true" />
+                <span>Niche &amp; C-Suite Glossary (4 Terms)</span>
+              </button>
+            </div>
+
+            {activeDocsTab === 'cdr' ? (
+              <div className="mt-4 grid gap-3 sm:grid-cols-2">
+                {plan.grillWithDocs.decisionRecords.map((cdr) => {
+                  const settledAnswer = settledIds[cdr.questionId];
+                  const isRecorded = Boolean(settledAnswer);
+                  return (
+                    <div
+                      key={cdr.id}
+                      className={`rounded-xl border p-4 text-xs ${
+                        isRecorded
+                          ? 'border-[#30d158]/40 bg-[#30d158]/[0.07]'
+                          : 'border-white/10 bg-black/40'
+                      }`}
+                    >
+                      <div className="flex items-center justify-between gap-2">
+                        <span className="font-display font-bold text-white">
+                          {cdr.code} · {cdr.title}
+                        </span>
+                        <span
+                          className={`rounded-full px-2 py-0.5 text-[11px] font-semibold ${
+                            isRecorded
+                              ? 'bg-[#30d158]/20 text-[#30d158]'
+                              : 'bg-white/10 text-[#a1a1a6]'
+                          }`}
+                        >
+                          {isRecorded ? 'Recorded from answer' : `Round ${cdr.roundNumber} draft`}
+                        </span>
+                      </div>
+                      <p className="mt-1.5 text-[#a1a1a6]">
+                        <strong className="text-[#d2d2d7]">Docs cited:</strong>{' '}
+                        {cdr.sourceDocsCited}
+                      </p>
+                      <p className="mt-1.5 leading-relaxed text-[#f5f5f7]">
+                        <strong className="text-[#2997ff]">Decision:</strong>{' '}
+                        {settledAnswer || cdr.defaultDecisionSummary}
+                      </p>
+                      <p className="mt-1.5 leading-relaxed text-[#d2d2d7]">
+                        <strong className="text-white">Trade-off:</strong>{' '}
+                        {cdr.tradeOffDefended}
+                      </p>
+                      <p className="mt-1.5 leading-relaxed text-[#a1a1a6]">
+                        <strong className="text-[#30d158]">Guardrail:</strong>{' '}
+                        {cdr.rollbackThreshold}
+                      </p>
+                    </div>
+                  );
+                })}
+              </div>
+            ) : (
+              <div className="mt-4 grid gap-3 sm:grid-cols-2">
+                {plan.grillWithDocs.domainGlossary.map((item, idx) => (
+                  <div
+                    key={idx}
+                    className="rounded-xl border border-white/10 bg-black/40 p-4 text-xs"
+                  >
+                    <div className="flex items-center justify-between gap-2">
+                      <span className="font-display font-bold text-white">
+                        {item.term}
+                      </span>
+                      <span className="rounded-full border border-[#2997ff]/30 bg-[#0071e3]/15 px-2 py-0.5 text-[11px] font-semibold text-[#2997ff]">
+                        {item.categoryBadge}
+                      </span>
+                    </div>
+                    <p className="mt-2 leading-relaxed text-[#d2d2d7]">
+                      <strong className="text-white">Panel lens:</strong>{' '}
+                      {item.panelMeaning}
+                    </p>
+                    <p className="mt-1.5 leading-relaxed text-[#a1a1a6]">
+                      <strong className="text-[#30d158]">Your proof:</strong>{' '}
+                      {item.yourGroundedProof}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
         </div>
       )}

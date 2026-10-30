@@ -1215,8 +1215,43 @@ export interface GrillRound {
   questions: [GrillFrontierQuestion, GrillFrontierQuestion];
 }
 
+export interface CandidateDecisionRecord {
+  id: string;
+  questionId: string;
+  code: 'CDR-01' | 'CDR-02' | 'CDR-03' | 'CDR-04';
+  roundNumber: 1 | 2;
+  title: string;
+  sourceDocsCited: string;
+  panelChallenge: string;
+  defaultDecisionSummary: string;
+  tradeOffDefended: string;
+  rollbackThreshold: string;
+}
+
+export interface DomainGlossaryEntry {
+  term: string;
+  categoryBadge: 'Niche Domain' | 'C-Suite Mandate' | 'Uploaded Doc';
+  panelMeaning: string;
+  yourGroundedProof: string;
+}
+
 export interface GrillTreePlan {
   rounds: [GrillRound, GrillRound];
+  grillWithDocs: {
+    dossierTitle: string;
+    decisionRecords: [
+      CandidateDecisionRecord,
+      CandidateDecisionRecord,
+      CandidateDecisionRecord,
+      CandidateDecisionRecord,
+    ];
+    domainGlossary: [
+      DomainGlossaryEntry,
+      DomainGlossaryEntry,
+      DomainGlossaryEntry,
+      DomainGlossaryEntry,
+    ];
+  };
   negotiationScript: {
     anchorHeadline: string;
     proofSummary: string;
@@ -1333,6 +1368,85 @@ export function buildGrillRoundsForQuestion(
         ],
       },
     ],
+    grillWithDocs: {
+      dossierTitle: `Grill-With-Docs Dossier · ${targetRole} at ${targetCompany}`,
+      decisionRecords: [
+        {
+          id: `${question.id}-cdr-1`,
+          questionId: `${question.id}-r1-q1`,
+          code: 'CDR-01',
+          roundNumber: 1,
+          title: 'Personal Ownership vs. Team Momentum',
+          sourceDocsCited: `Resume bullet + ${uploadedDoc}`,
+          panelChallenge: `Did your personal decision drive "${resumeSnippet}", or would the team have hit that number anyway?`,
+          defaultDecisionSummary: `Personally led the diagnostic and execution cited on the resume, aligning the change with ${uploadedDoc} in ${activeNiche}.`,
+          tradeOffDefended: `Focused engineering and analyst time on the highest-drop-off step instead of spreading effort across minor UI tweaks.`,
+          rollbackThreshold: `Monitored 7-day and 30-day cohort conversion daily to confirm the lift held across all customer segments.`,
+        },
+        {
+          id: `${question.id}-cdr-2`,
+          questionId: `${question.id}-r1-q2`,
+          code: 'CDR-02',
+          roundNumber: 1,
+          title: `${activeCSuite} Scope & Budget Cut Defense`,
+          sourceDocsCited: `Job description + ${sharedLink}`,
+          panelChallenge: `What lower-return project or budget item did you cut to deliver "${jdSnippet}" on schedule?`,
+          defaultDecisionSummary: `Paused lower-impact reporting requests to free up capacity for the core ${activeNiche} delivery roadmap.`,
+          tradeOffDefended: `Traded short-term cosmetic features for measurable movement on the primary revenue and retention metric in ${sharedLink}.`,
+          rollbackThreshold: `Reviewed sprint velocity and stakeholder SLA impact every 14 days.`,
+        },
+        {
+          id: `${question.id}-cdr-3`,
+          questionId: `${question.id}-r2-q1`,
+          code: 'CDR-03',
+          roundNumber: 2,
+          title: 'Production Failure & Rollback Protocol',
+          sourceDocsCited: `${uploadedDoc} + ${sharedLink}`,
+          panelChallenge: `If the ${activeNiche} playbook moves the main metric the wrong way in your first 60 days at ${targetCompany}, when do you pull the plug?`,
+          defaultDecisionSummary: `Run a staged rollout with an explicit 14-day safety metric before exposing 100% of accounts.`,
+          tradeOffDefended: `Accepts a slightly slower initial rollout in exchange for zero uncontained downside on margin or churn.`,
+          rollbackThreshold: `Automatic rollback if the safety metric drops by more than 2% against the control cohort over 14 days.`,
+        },
+        {
+          id: `${question.id}-cdr-4`,
+          questionId: `${question.id}-r2-q2`,
+          code: 'CDR-04',
+          roundNumber: 2,
+          title: `Resolving ${context.department} vs. ${activeCSuite} Deadlocks`,
+          sourceDocsCited: `Resume proof + Job requirement`,
+          panelChallenge: `How do you settle a disagreement between speed and margin in ${activeNiche} without escalating or missing the deadline?`,
+          defaultDecisionSummary: `Frame the disagreement as a time-boxed two-week cohort test with one shared growth metric and one margin floor.`,
+          tradeOffDefended: `Replaces opinion debates with a bounded experiment agreed upfront by both ${context.department} and ${activeCSuite} leaders.`,
+          rollbackThreshold: `Pre-agreed go/no-go review at day 14 using a single shared dashboard.`,
+        },
+      ],
+      domainGlossary: [
+        {
+          term: activeNiche,
+          categoryBadge: 'Niche Domain',
+          panelMeaning: `Tests whether you know the real operational bottlenecks in ${activeNiche} rather than speaking in textbook generalities.`,
+          yourGroundedProof: `Anchor your answer in "${resumeSnippet}" and cross-reference ${uploadedDoc}.`,
+        },
+        {
+          term: `${activeCSuite} Capital & Scope Allocation`,
+          categoryBadge: 'C-Suite Mandate',
+          panelMeaning: `At the ${activeCSuite} level, panels listen for what you chose not to fund and how you protected unit economics.`,
+          yourGroundedProof: `Connect your scope-cut decision directly to "${jdSnippet}".`,
+        },
+        {
+          term: '14-Day Guardrail & Rollback Metric',
+          categoryBadge: 'Niche Domain',
+          panelMeaning: `Proves you pair growth experiments with a clear safety floor so a bad release never damages core revenue or trust.`,
+          yourGroundedProof: `Cite how you sized and monitored cohorts on your resume alongside ${sharedLink}.`,
+        },
+        {
+          term: `Document Brief (${uploadedDoc})`,
+          categoryBadge: 'Uploaded Doc',
+          panelMeaning: `Shows the hiring panel you have studied the company's strategy and mapped your past work to their next 90 days.`,
+          yourGroundedProof: `Tie your first-quarter plan for ${targetCompany} to ${uploadedDoc} and ${sharedLink}.`,
+        },
+      ],
+    },
     negotiationScript: {
       anchorHeadline: `Salary Negotiation Script · ${targetRole} (${activeCSuite} · ${activeNiche})`,
       proofSummary: `Connects your proven resume results and ${uploadedDoc} directly to the job requirements.`,
