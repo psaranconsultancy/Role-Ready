@@ -22,6 +22,11 @@ import { GrillFollowUp } from './GrillFollowUp';
 import { useSpeechToText } from '../lib/useSpeechToText';
 import { QUESTION_TYPE_LABELS } from '../lib/sessionReport';
 
+const REPHRASE_REQUEST =
+  "I don't understand the question. Can you rephrase it in plainer words?";
+const SHORT_CLARIFY =
+  /^(what\??|huh\??|pardon\??|sorry\??|(please )?(rephrase|reword|explain|clarify)( (it|that|this|please))?\??|(i )?(don'?t|do not) (understand|get it)\??|not clear\??|unclear\??|explain please\??|rephrase\?)$/i;
+
 interface QuestionCardProps {
   question: Question;
   existingFeedback?: Feedback;
@@ -72,7 +77,11 @@ export const QuestionCard: React.FC<QuestionCardProps> = ({
     .trim()
     .split(/\s+/)
     .filter(Boolean).length;
-  const isValidLength = charCount >= 20 && charCount <= 4000;
+  // Short asks like "What?" or "Rephrase please" skip the 20-character minimum.
+  const isShortClarification =
+    charCount > 0 && charCount < 20 && SHORT_CLARIFY.test(answerText.trim());
+  const isValidLength =
+    (charCount >= 20 && charCount <= 4000) || isShortClarification;
   const typeLabel = QUESTION_TYPE_LABELS[question.type] ?? question.type;
 
   const resolveResumeText = (refId: string): string => {
@@ -85,15 +94,18 @@ export const QuestionCard: React.FC<QuestionCardProps> = ({
     return found ? found.text : 'Referenced requirement from the job description';
   };
 
-  const handleSubmit = async (e?: React.FormEvent) => {
+  const handleSubmit = async (e?: React.FormEvent, askToRephrase = false) => {
     if (e) e.preventDefault();
-    if (!isValidLength || submitting) return;
+    if ((!isValidLength && !askToRephrase) || submitting) return;
     speech.stop();
 
     setSubmitting(true);
     setError(null);
     try {
-      const res = await scoreAnswer(question.id, answerText);
+      // The server needs 20+ characters, so short or one-click asks are sent as a full sentence.
+      const text =
+        askToRephrase || isShortClarification ? REPHRASE_REQUEST : answerText;
+      const res = await scoreAnswer(question.id, text);
       if (isClarification(res)) {
         // A request to explain the question, not an answer: show plainer wording, keep editing.
         setClarified(res.clarification);
@@ -310,7 +322,7 @@ export const QuestionCard: React.FC<QuestionCardProps> = ({
             disabled={submitting}
             value={answerText}
             onChange={(e) => setAnswerText(e.target.value)}
-            placeholder="Describe the situation, what you personally did, and the result. Include a number if you can. Not sure what the question means? Say so and we'll rephrase it."
+            placeholder="Describe the situation, what you personally did, and the result. Include a number if you can. Not sure what the question means? Press ‘Rephrase the question’."
             className="mt-2 block w-full rounded-[18px] border border-black/15 bg-[#f5f5f7]/60 p-4 text-base leading-relaxed text-[#1d1d1f] placeholder:text-[#86868b] focus:border-[#0071e3] focus:bg-white focus:outline-none disabled:opacity-60"
           />
 
@@ -345,7 +357,9 @@ export const QuestionCard: React.FC<QuestionCardProps> = ({
 
           <div className="mt-4 flex flex-wrap items-center justify-between gap-3">
             <span className="text-xs text-[#6e6e73]">
-              {charCount < 20
+              {isShortClarification
+                ? 'We will rephrase the question.'
+                : charCount < 20
                 ? `Write at least ${20 - charCount} more character${
                     20 - charCount === 1 ? '' : 's'
                   } to submit.`
@@ -353,6 +367,15 @@ export const QuestionCard: React.FC<QuestionCardProps> = ({
             </span>
 
             <div className="flex w-full items-center justify-end gap-2 sm:w-auto">
+              {!submitting && (
+                <button
+                  type="button"
+                  onClick={() => handleSubmit(undefined, true)}
+                  className="btn-pill-secondary-light min-h-[42px] px-4 py-2 text-xs font-semibold"
+                >
+                  Rephrase the question
+                </button>
+              )}
               {existingFeedback && !submitting && (
                 <button
                   type="button"
