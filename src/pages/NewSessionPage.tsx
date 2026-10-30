@@ -524,7 +524,7 @@ export const NewSessionPage: React.FC = () => {
                   }`}
                   aria-hidden="true"
                 />
-                {trimmedJdLength} / 200+ chars
+                {trimmedJdLength} / 200 characters
               </span>
             </div>
             <p className="mt-1 text-xs text-[#6e6e73]">
@@ -570,15 +570,6 @@ export const NewSessionPage: React.FC = () => {
               <div className="flex flex-wrap gap-1.5">
                 <span className="rounded-full bg-[#ff9f0a]/15 px-3 py-0.5 text-xs font-semibold text-[#b45309]">
                   Coming soon
-                </span>
-                <span className="rounded-full bg-[#30d158]/15 px-3 py-0.5 text-xs font-semibold text-[#15803d]">
-                  Grill With Docs
-                </span>
-                <span className="rounded-full bg-[#0071e3]/10 px-3 py-0.5 text-xs font-semibold text-[#0071e3]">
-                  Niche Category
-                </span>
-                <span className="rounded-full bg-[#1d1d1f] px-3 py-0.5 text-xs font-semibold text-white">
-                  C-Suite Category
                 </span>
               </div>
             </div>
@@ -896,7 +887,7 @@ export const NewSessionPage: React.FC = () => {
           {/* Submit Action Bar */}
           <div className="flex flex-col items-center justify-between gap-4 pt-2 sm:flex-row">
             <p className="text-xs text-[#6e6e73]">
-              Creates 6 tailored questions (2 behavioral, 2 technical, 2
+              Creates 6 tailored questions (2 behavioural, 2 technical, 2
               role-specific).
             </p>
             <button

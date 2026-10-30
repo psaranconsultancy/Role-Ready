@@ -297,7 +297,7 @@ export const HistoryPage: React.FC = () => {
                       {s.resume_lines && (
                         <span className="inline-flex items-center gap-1 text-xs tabular-nums text-[#0071e3]">
                           <FileText className="h-3 w-3" aria-hidden="true" />
-                          {s.resume_lines.length} resume lines cited
+                          {s.resume_lines.length} lines from your resume
                         </span>
                       )}
                     </div>

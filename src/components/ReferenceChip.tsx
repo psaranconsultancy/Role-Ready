@@ -28,7 +28,7 @@ export const ReferenceChip: React.FC<ReferenceChipProps> = ({
   const shortLabel = buildShortPreview(text);
 
   return (
-    <span className="relative inline-block" data-ui="reference-chip">
+    <span className="relative inline-block max-w-full" data-ui="reference-chip">
       <button
         type="button"
         aria-describedby={open ? tooltipId : undefined}
@@ -37,7 +37,7 @@ export const ReferenceChip: React.FC<ReferenceChipProps> = ({
         onFocus={() => setOpen(true)}
         onBlur={() => setOpen(false)}
         onClick={() => setOpen((prev) => !prev)}
-        className={`inline-flex min-h-[28px] items-center gap-1.5 rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors ${
+        className={`inline-flex min-h-[28px] max-w-full items-center gap-1.5 rounded-full border px-2.5 py-0.5 text-left text-xs font-semibold transition-colors ${
           isResume
             ? 'border-[#0071e3]/25 bg-[#0071e3]/10 text-[#0071e3] hover:border-[#0071e3]/50 hover:bg-[#0071e3]/15'
             : theme === 'dark'
@@ -50,7 +50,7 @@ export const ReferenceChip: React.FC<ReferenceChipProps> = ({
         ) : (
           <Briefcase className="h-3 w-3 shrink-0" aria-hidden="true" />
         )}
-        <span>
+        <span className="min-w-0 truncate">
           {isResume ? 'Resume' : 'Job post'} · {shortLabel}
         </span>
         <span className="sr-only">

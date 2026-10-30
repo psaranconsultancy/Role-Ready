@@ -506,7 +506,7 @@ export const TIER_FRAMEWORKS: Record<TierFrameworkId, TierFramework> = {
           { text: 'A basic score out of 100 for your first answer', included: true },
           { text: 'See the resume line and job requirement behind each question', included: true },
           {
-            text: 'Panel-round behavioral & technical rewrites',
+            text: 'Panel-round behavioural & technical rewrites',
             included: false,
           },
           {
@@ -523,11 +523,11 @@ export const TIER_FRAMEWORKS: Record<TierFrameworkId, TierFramework> = {
         level: 'tier2',
         badgeLabel: 'Tier 2 · Bridge',
         name: 'Shortlist',
-        subtitle: 'Tools to clear panel rounds and behavioral assessments.',
+        subtitle: 'Tools to clear panel rounds and behavioural assessments.',
         priceMonthly: '£69',
         billingNote: 'per month · shortlist prep',
         positioning:
-          'Gets you onto the shortlist for standard behavioral and technical rounds.',
+          'Gets you onto the shortlist for standard behavioural and technical rounds.',
         psychologicalNudge:
           'Helps you reach the final three candidates, where Niche and C-Suite panels start testing every trade-off aloud.',
         ctaLabel: 'Select Shortlist',
@@ -537,7 +537,7 @@ export const TIER_FRAMEWORKS: Record<TierFrameworkId, TierFramework> = {
           { text: 'Score out of 100 across 4 areas', included: true },
           { text: 'See the resume line and job requirement behind each question', included: true },
           {
-            text: 'Panel-round behavioral & technical rewrites',
+            text: 'Panel-round behavioural & technical rewrites',
             included: true,
           },
           {
@@ -572,7 +572,7 @@ export const TIER_FRAMEWORKS: Record<TierFrameworkId, TierFramework> = {
           { text: 'Score out of 100 across 4 areas', included: true },
           { text: 'See the resume line and job requirement behind each question', included: true },
           {
-            text: 'Panel-round behavioral & technical rewrites',
+            text: 'Panel-round behavioural & technical rewrites',
             included: true,
           },
           {

@@ -3,7 +3,11 @@ import { RotateCcw, Award, FileDown, Mail } from 'lucide-react';
 import type { Question, Feedback, Session } from '@contracts';
 import { getScoreBand } from './FeedbackPanel';
 import { ScoreRing } from './ScoreRing';
-import { buildReportMailto, openReport } from '../lib/sessionReport';
+import {
+  buildReportMailto,
+  openReport,
+  QUESTION_TYPE_LABELS,
+} from '../lib/sessionReport';
 import { useAuth } from '../context/AuthContext';
 
 interface SessionSummaryProps {
@@ -130,8 +134,8 @@ export const SessionSummary: React.FC<SessionSummaryProps> = ({
                 <span className="font-bold tabular-nums text-white">
                   Q{q.position}
                 </span>
-                <span className="truncate text-xs capitalize text-[#a1a1a6]">
-                  {q.type.replace('_', ' ')}
+                <span className="truncate text-xs text-[#a1a1a6]">
+                  {QUESTION_TYPE_LABELS[q.type] ?? q.type}
                 </span>
               </div>
 

@@ -111,7 +111,7 @@ export const TierPricingSection: React.FC<TierPricingSectionProps> = ({
           return (
             <div
               key={`${activeFramework.id}-${item.level}`}
-              className={`relative flex flex-col justify-between rounded-[26px] p-6 transition-colors sm:p-7 ${
+              className={`relative flex flex-col rounded-[26px] p-6 transition-colors sm:p-7 ${
                 isTier3
                   ? 'border-2 border-[#0071e3] bg-[#161617] text-[#f5f5f7]'
                   : isTier2
@@ -120,7 +120,7 @@ export const TierPricingSection: React.FC<TierPricingSectionProps> = ({
               }`}
             >
               {isTier3 && (
-                <div className="mb-4 inline-flex w-fit items-center gap-1.5 rounded-full bg-[#0071e3] px-3.5 py-1 text-xs font-semibold text-white">
+                <div className="mb-4 inline-flex w-fit items-center gap-1.5 rounded-full bg-[#0071e3] px-3 py-1 text-xs font-semibold text-white">
                   <span>{item.badgeLabel}</span>
                 </div>
               )}
@@ -227,7 +227,7 @@ export const TierPricingSection: React.FC<TierPricingSectionProps> = ({
               </div>
 
               <p
-                className={`mt-6 pt-4 text-center text-xs ${
+                className={`mt-auto pt-6 text-center text-xs ${
                   isTier3 ? 'text-[#a1a1a6]' : 'text-[#86868b]'
                 }`}
               >

@@ -291,7 +291,7 @@ export const GrillFollowUp: React.FC<GrillFollowUpProps> = ({
                     replyLength > 2000 ? 'font-semibold text-[#ff453a]' : 'text-[#a1a1a6]'
                   }`}
                 >
-                  {replyLength}/2,000 chars
+                  {replyLength}/2,000 characters
                 </span>
               </div>
               {speech.supported && (

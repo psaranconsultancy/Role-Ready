@@ -161,7 +161,7 @@ export const Header: React.FC = () => {
                   to="/new"
                   className="btn-pill-primary px-3.5 py-1 text-xs font-semibold"
                 >
-                  New session
+                  New practice
                 </Link>
                 <span
                   className="max-w-[150px] truncate text-xs text-[#a1a1a6]"

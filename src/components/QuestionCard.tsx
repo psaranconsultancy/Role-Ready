@@ -20,6 +20,7 @@ import { FeedbackPanel, getScoreBand } from './FeedbackPanel';
 import { ErrorBanner } from './ErrorBanner';
 import { GrillFollowUp } from './GrillFollowUp';
 import { useSpeechToText } from '../lib/useSpeechToText';
+import { QUESTION_TYPE_LABELS } from '../lib/sessionReport';
 
 interface QuestionCardProps {
   question: Question;
@@ -35,12 +36,6 @@ interface QuestionCardProps {
   ) => void;
 }
 
-const QUESTION_TYPE_LABELS: Record<Question['type'], string> = {
-  behavioural: 'Behavioral',
-  technical: 'Technical',
-  role_fit: 'Role fit',
-  situational: 'Situational',
-};
 
 export const QuestionCard: React.FC<QuestionCardProps> = ({
   question,
@@ -169,7 +164,7 @@ export const QuestionCard: React.FC<QuestionCardProps> = ({
           className="mt-4 flex flex-wrap items-center gap-2 rounded-2xl border border-black/[0.06] bg-[#f5f5f7] px-3.5 py-2.5"
           aria-label="Where this question comes from"
         >
-          <span className="text-xs font-semibold text-[#6e6e73]">
+          <span className="basis-full text-xs font-semibold text-[#6e6e73]">
             Based on:
           </span>
           {question.resume_refs.map((refId) => (

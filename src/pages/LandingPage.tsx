@@ -64,7 +64,7 @@ export const LandingPage: React.FC = () => {
               Upload your resume, paste the job description, and practise six
               questions built from both. Every question shows the exact line
               from your resume and the job requirement it tests, and every
-              answer gets a 0–100 score with a stronger rewrite.
+              answer gets a score out of 100 and a stronger example answer.
             </p>
 
             <div className="mt-8 flex flex-col items-center justify-center gap-3.5 sm:flex-row">
@@ -164,7 +164,7 @@ export const LandingPage: React.FC = () => {
                     Senior Product Analyst at FinFlow
                   </span>
                   <span className="rounded-full bg-[#0071e3]/20 px-2.5 py-0.5 text-xs font-medium text-[#2997ff]">
-                    Behavioral
+                    Behavioural
                   </span>
                 </div>
                 <span className="text-xs font-medium text-[#30d158]">
@@ -183,7 +183,7 @@ export const LandingPage: React.FC = () => {
 
                   {/* Interactive Citation Chips */}
                   <div className="flex flex-wrap items-center gap-2 rounded-2xl border border-white/10 bg-white/[0.04] p-3">
-                    <span className="text-xs font-medium text-[#a1a1a6]">
+                    <span className="basis-full text-xs font-medium text-[#a1a1a6]">
                       Based on:
                     </span>
                     <ReferenceChip
@@ -268,7 +268,7 @@ export const LandingPage: React.FC = () => {
       >
         <div className="mx-auto max-w-2xl text-center">
           <h2 className="font-display text-3xl font-bold tracking-tight text-[#1d1d1f] sm:text-4xl">
-            Three steps from PDF to interview-ready
+            Three steps to interview‑ready
           </h2>
           <p className="mt-3 text-base text-[#6e6e73] sm:text-lg">
             Every session is built from your own career history and the job
@@ -337,7 +337,7 @@ export const LandingPage: React.FC = () => {
               Answer 6 tailored questions
             </h3>
             <p className="mt-2 text-sm leading-relaxed text-[#6e6e73]">
-              Practise two behavioral, two technical, and two role-specific
+              Practise two behavioural, two technical, and two role-specific
               questions. Each question has tags you can tap to see the exact
               resume line and job requirement it is testing.
             </p>

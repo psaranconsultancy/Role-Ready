@@ -12,8 +12,8 @@ export interface ReportInput {
   overallScore: number;
 }
 
-const TYPE_LABELS: Record<Question['type'], string> = {
-  behavioural: 'Behavioral',
+export const QUESTION_TYPE_LABELS: Record<Question['type'], string> = {
+  behavioural: 'Behavioural',
   technical: 'Technical',
   role_fit: 'Role fit',
   situational: 'Situational',
@@ -72,7 +72,7 @@ export function buildReportHtml(input: ReportInput): string {
       return `
       <section class="q">
         <div class="qhead">
-          <span class="pos">Q${q.position} · ${TYPE_LABELS[q.type] ?? q.type}</span>
+          <span class="pos">Q${q.position} · ${QUESTION_TYPE_LABELS[q.type] ?? q.type}</span>
           <span class="score">${a.overall}/100</span>
         </div>
         <h3>${escapeHtml(q.text)}</h3>

@@ -15,6 +15,7 @@ import { getSession, toApiError } from '../lib/api';
 import { QuestionCard } from '../components/QuestionCard';
 import { SessionSummary } from '../components/SessionSummary';
 import { ErrorBanner } from '../components/ErrorBanner';
+import { QUESTION_TYPE_LABELS } from '../lib/sessionReport';
 
 const STATUS_BADGE: Record<
   Session['status'],
@@ -357,8 +358,8 @@ export const SessionPage: React.FC = () => {
                         <span className="font-bold tabular-nums">
                           Q{q.position}
                         </span>
-                        <span className="truncate capitalize text-[#6e6e73]">
-                          {q.type.replace('_', ' ')}
+                        <span className="truncate text-[#6e6e73]">
+                          {QUESTION_TYPE_LABELS[q.type] ?? q.type}
                         </span>
                       </span>
 
