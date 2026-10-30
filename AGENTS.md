@@ -36,5 +36,9 @@ Full spec: `docs/PRD.md`. Hackathon MVP, 3 days, must-haves only. Do not add fea
 4. Run `npm run dev` and walk the whole flow in the browser on mocks: sign in → new session → 6 questions → answer one → feedback → finish all 6 → History → reopen.
 Report what you checked and anything that failed.
 
-## Git
-Small commits with clear messages ("Add interview page", "Wire api.ts to mocks"). Work on a branch, not on `main`.
+## Git & Branching
+Small commits with clear messages ("Add interview page", "Wire api.ts to mocks").
+`main` is the default and production branch:
+- Work on a feature branch (e.g., `feat/frontend-mocks` or dedicated feature branches) and open PRs against `main`.
+- Never force-push to or delete `main`.
+- Context (30 Oct): Person C's PR #1 is merged into `main` (`supabase/functions/parse-resume`, `supabase/functions/generate-questions`, and `_shared/llm.ts`, `http.ts`, `session.ts`). Frontend `tsconfig.json` excludes them and `contracts.ts` is unchanged. `VITE_USE_MOCKS=true` stays on for now. When mocks are switched off, `src/lib/api.ts` calls `parse-resume` and `generate-questions` with `{ session_id }`, expects `ParseResumeResponse` and `GenerateQuestionsResponse` from `@contracts`, and extracts `ApiError` bodies.
