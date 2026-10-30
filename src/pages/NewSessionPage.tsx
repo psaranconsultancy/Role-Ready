@@ -77,23 +77,26 @@ export const NewSessionPage: React.FC = () => {
     setFile(selected);
   };
 
-  const handleLoadSample = () => {
-    const samplePdfContent = `%PDF-1.4\n% Sample Resume for Alex Rivera - Senior Product Analyst\n1 0 obj << /Type /Catalog >> endobj\n%%EOF`;
-    const sampleBlob = new Blob([samplePdfContent], {
-      type: 'application/pdf',
-    });
-    const sampleFile = new File(
-      [sampleBlob],
-      'Alex_Rivera_Product_Analyst_Resume.pdf',
-      { type: 'application/pdf' }
-    );
-    setFile(sampleFile);
-    setRoleTitle(SAMPLE_ROLE_TITLE);
-    setCompany(SAMPLE_COMPANY);
-    setJdText(SAMPLE_JD_TEXT);
+  const handleLoadSample = async () => {
     setFileError(null);
     setJdError(null);
     setApiError(null);
+    setRoleTitle(SAMPLE_ROLE_TITLE);
+    setCompany(SAMPLE_COMPANY);
+    setJdText(SAMPLE_JD_TEXT);
+    try {
+      // A real text PDF, so the sample also works against the live backend.
+      const response = await fetch('/samples/alex-rivera-resume.pdf');
+      if (!response.ok) throw new Error(`HTTP ${response.status}`);
+      const blob = await response.blob();
+      setFile(
+        new File([blob], 'Alex_Rivera_Product_Analyst_Resume.pdf', {
+          type: 'application/pdf',
+        })
+      );
+    } catch {
+      setFileError('Could not load the sample resume. Please upload your own PDF.');
+    }
   };
 
   const trimmedJdLength = jdText.trim().length;
