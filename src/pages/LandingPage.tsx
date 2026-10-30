@@ -16,7 +16,7 @@ import { ScoreRing } from '../components/ScoreRing';
 import { ReferenceChip } from '../components/ReferenceChip';
 import { Logo } from '../components/Logo';
 import { AmbientHeroCanvas } from '../components/AmbientHeroCanvas';
-import { TierPricingSection } from '../components/TierPricingSection';
+import { ComingNextSection } from '../components/ComingNextSection';
 
 export const LandingPage: React.FC = () => {
   const { user, signInDemo } = useAuth();
@@ -474,12 +474,12 @@ export const LandingPage: React.FC = () => {
         </div>
       </section>
 
-      {/* 4. 3-Tier Psychological Pricing & Grill Me Deep-Dive Section */}
+      {/* 4. Roadmap: what is coming next */}
       <section
         id="pricing-tiers"
         className="border-t border-black/[0.06] bg-white/60 px-4 py-16 sm:px-6 sm:py-24"
       >
-        <TierPricingSection mode="section" />
+        <ComingNextSection mode="section" />
       </section>
 
       {/* 5. Closing Dark Flagship CTA Band with Ambient Canvas */}

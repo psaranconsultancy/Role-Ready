@@ -448,7 +448,7 @@ export const GrillFollowUp: React.FC<GrillFollowUpProps> = ({
         <Clock className="mt-0.5 h-3.5 w-3.5 shrink-0 text-[#ff9f0a]" aria-hidden="true" />
         <span>
           Coming soon: a spoken AI interviewer with a male or female voice,
-          Niche and C-Suite question sets, and salary negotiation scripts.
+          specialist and executive question sets, and salary negotiation scripts.
         </span>
       </p>
     </section>
