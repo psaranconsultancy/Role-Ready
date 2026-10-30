@@ -14,7 +14,7 @@ import type {
   JdRequirement,
   ApiError,
 } from '@contracts';
-import { scoreAnswer, toApiError } from '../lib/api';
+import { isClarification, scoreAnswer, toApiError } from '../lib/api';
 import { ReferenceChip } from './ReferenceChip';
 import { FeedbackPanel, getScoreBand } from './FeedbackPanel';
 import { ErrorBanner } from './ErrorBanner';
@@ -50,6 +50,10 @@ export const QuestionCard: React.FC<QuestionCardProps> = ({
   const [isEditing, setIsEditing] = useState(!existingFeedback);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<ApiError | null>(null);
+  const [clarified, setClarified] = useState<{
+    rephrased_question: string;
+    hint: string;
+  } | null>(null);
   const speech = useSpeechToText((text) =>
     setAnswerText((prev) => (prev.trim() ? `${prev.trimEnd()} ${text}` : text))
   );
@@ -90,6 +94,13 @@ export const QuestionCard: React.FC<QuestionCardProps> = ({
     setError(null);
     try {
       const res = await scoreAnswer(question.id, answerText);
+      if (isClarification(res)) {
+        // A request to explain the question, not an answer: show plainer wording, keep editing.
+        setClarified(res.clarification);
+        setAnswerText('');
+        return;
+      }
+      setClarified(null);
       const { session_completed, session_overall, ...feedback } = res;
       onScored(feedback, session_completed, session_overall);
       setIsEditing(false);
@@ -192,6 +203,24 @@ export const QuestionCard: React.FC<QuestionCardProps> = ({
         </div>
       )}
 
+      {clarified && isEditing && (
+        <div
+          role="status"
+          aria-live="polite"
+          className="mt-5 rounded-2xl border border-[#0071e3]/25 bg-[#0071e3]/[0.06] p-4"
+        >
+          <p className="text-xs font-semibold text-[#0071e3]">
+            The question in plainer words (this was not scored)
+          </p>
+          <p className="mt-1.5 text-sm font-semibold leading-relaxed text-[#1d1d1f]">
+            {clarified.rephrased_question}
+          </p>
+          <p className="mt-1.5 text-xs leading-relaxed text-[#424245]">
+            {clarified.hint}
+          </p>
+        </div>
+      )}
+
       {/* Answer Editor or Read-Only Submitted Answer */}
       {isEditing ? (
         <form onSubmit={handleSubmit} className="mt-5" noValidate>
@@ -281,7 +310,7 @@ export const QuestionCard: React.FC<QuestionCardProps> = ({
             disabled={submitting}
             value={answerText}
             onChange={(e) => setAnswerText(e.target.value)}
-            placeholder="Describe the situation, what you personally did, and the result. Include a number if you can…"
+            placeholder="Describe the situation, what you personally did, and the result. Include a number if you can. Not sure what the question means? Say so and we'll rephrase it."
             className="mt-2 block w-full rounded-[18px] border border-black/15 bg-[#f5f5f7]/60 p-4 text-base leading-relaxed text-[#1d1d1f] placeholder:text-[#86868b] focus:border-[#0071e3] focus:bg-white focus:outline-none disabled:opacity-60"
           />
 

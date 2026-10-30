@@ -5,6 +5,7 @@ import type {
   ParseResumeResponse,
   GenerateQuestionsResponse,
   ScoreAnswerResponse,
+  ScoreAnswerClarification,
   ApiError,
   GrillHeat,
   GrillFollowUpResponse,
@@ -422,7 +423,7 @@ export async function generateQuestions(
 export async function scoreAnswer(
   questionId: string,
   answerText: string
-): Promise<ScoreAnswerResponse> {
+): Promise<ScoreAnswerResponse | ScoreAnswerClarification> {
   const trimmed = answerText.trim();
   if (trimmed.length < 20 || trimmed.length > 4000) {
     const err: ApiError = {
@@ -451,7 +452,7 @@ export async function scoreAnswer(
     }
   }
 
-  const { data, error } = await supabase.functions.invoke<ScoreAnswerResponse>(
+  const { data, error } = await supabase.functions.invoke<ScoreAnswerResponse | ScoreAnswerClarification>(
     'score-answer',
     {
       body: { question_id: questionId, answer_text: trimmed },
@@ -465,6 +466,12 @@ export async function scoreAnswer(
     );
   }
   return data;
+}
+
+export function isClarification(
+  res: ScoreAnswerResponse | ScoreAnswerClarification
+): res is ScoreAnswerClarification {
+  return 'clarification' in res && !!res.clarification;
 }
 
 /** Grill Me: one tougher follow-up on an already scored answer. */
