@@ -86,3 +86,26 @@ export interface ScoreAnswerResponse extends Feedback {
   session_overall: number | null;
 }
 
+// 4. grill-followup  (added 30 Oct for Grill Me, after the must-haves)
+// Needs a scored answer for the question. Nothing is saved: the follow-up and
+// its verdict live on the page only.
+// Without `reply`: asks one follow-up question that presses on the weakest part
+// of the saved answer, as hard as `heat` says (1 Warm .. 4 Executive Roast).
+// With `followup` + `reply`: judges the candidate's reply to that follow-up.
+export type GrillHeat = 1 | 2 | 3 | 4;
+export interface GrillFollowUpRequest {
+  question_id: string;
+  heat: GrillHeat;
+  followup?: string;                   // the follow-up being answered (required with reply)
+  reply?: string;                      // 20..2000 chars
+}
+export interface GrillFollowUpResponse {
+  followup: string;                    // the interviewer's follow-up question
+  presses_on: string;                  // short note on what it tests, e.g. "Your 30% claim is not on your resume"
+  resume_refs: string[];               // resume line ids the follow-up rests on (validated)
+}
+export interface GrillReplyResponse {
+  verdict: "held_up" | "partly" | "cracked";
+  feedback: string;                    // one or two sentences
+  better_reply: string;                // a stronger reply using only resume facts
+}

@@ -18,7 +18,7 @@ import { scoreAnswer, toApiError } from '../lib/api';
 import { ReferenceChip } from './ReferenceChip';
 import { FeedbackPanel, getScoreBand } from './FeedbackPanel';
 import { ErrorBanner } from './ErrorBanner';
-import { GrillMeDeepDivePanel } from './GrillMeDeepDivePanel';
+import { GrillFollowUp } from './GrillFollowUp';
 import { useSpeechToText } from '../lib/useSpeechToText';
 
 interface QuestionCardProps {
@@ -47,8 +47,6 @@ export const QuestionCard: React.FC<QuestionCardProps> = ({
   existingFeedback,
   resumeLines,
   jdRequirements,
-  roleTitle,
-  company,
   onScored,
 }) => {
   const [answerText, setAnswerText] = useState(
@@ -401,14 +399,11 @@ export const QuestionCard: React.FC<QuestionCardProps> = ({
         </p>
       )}
 
-      {/* Grill Me Deep-Dive Stress Test (Tier 3 Premium Feature + Upgrade Nudge) */}
-      <GrillMeDeepDivePanel
+      {/* Grill Me: a tougher follow-up on the scored answer, with a Heat Dial */}
+      <GrillFollowUp
         question={question}
-        resumeLines={resumeLines}
-        jdItems={jdRequirements}
         feedback={existingFeedback}
-        roleTitle={roleTitle}
-        company={company}
+        resumeLines={resumeLines}
       />
     </section>
   );
