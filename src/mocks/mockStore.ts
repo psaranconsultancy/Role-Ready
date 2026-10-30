@@ -4,6 +4,7 @@ import type {
   Feedback,
   Scores,
   ScoreAnswerResponse,
+  ScoreAnswerClarification,
   ParseResumeResponse,
   GenerateQuestionsResponse,
   ResumeLine,
@@ -187,7 +188,7 @@ export function mockScoreAnswer(
   userId: string,
   questionId: string,
   answerText: string
-): ScoreAnswerResponse {
+): ScoreAnswerResponse | ScoreAnswerClarification {
   // Check for #fail trigger
   if (answerText.includes('#fail')) {
     throw {
@@ -195,6 +196,22 @@ export function mockScoreAnswer(
         code: 'llm_failed' as const,
         message:
           'The scoring service timed out while grading your answer. Please try again.',
+      },
+    };
+  }
+
+  // The real scorer uses the model to spot these; the mock uses a phrase match.
+  if (
+    /\b(don'?t|do not) (understand|get)\b|\b(rephrase|clarify|reword)\b|what do you mean/i.test(answerText) &&
+    answerText.length < 200
+  ) {
+    const q = loadStore(userId).questions.find((x) => x.id === questionId);
+    return {
+      clarification: {
+        rephrased_question: q
+          ? `In simple terms: ${q.why_asking.replace(/\.$/, '')}. Pick one real example from your resume and walk through what you did and what happened.`
+          : 'Pick one real example from your resume and walk through what you did and what happened.',
+        hint: 'Say what the situation was, what you did yourself, and the result, ideally with a number.',
       },
     };
   }
