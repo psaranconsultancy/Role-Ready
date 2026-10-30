@@ -10,7 +10,7 @@ export const Logo: React.FC<LogoProps> = ({
   size = 'md',
 }) => {
   const iconDims =
-    size === 'sm' ? 'h-5 w-5' : size === 'lg' ? 'h-8 w-8' : 'h-6 w-6';
+    size === 'sm' ? 'h-6 w-6' : size === 'lg' ? 'h-9 w-9' : 'h-7 w-7';
   const textSize =
     size === 'sm'
       ? 'text-[14px]'
@@ -20,39 +20,18 @@ export const Logo: React.FC<LogoProps> = ({
 
   return (
     <span className="inline-flex items-center gap-2.5 select-none">
-      <svg
-        viewBox="0 0 32 32"
-        className={`${iconDims} shrink-0`}
+      <img
+        src="/assets/img/roleready-mark.png"
+        alt=""
         aria-hidden="true"
-      >
-        <rect
-          width="32"
-          height="32"
-          rx="8"
-          fill={theme === 'dark' ? '#1c1c1e' : '#1d1d1f'}
-          stroke={
-            theme === 'dark'
-              ? 'rgba(255,255,255,0.18)'
-              : 'rgba(0,0,0,0.12)'
-          }
-          strokeWidth="1.5"
-        />
-        <path
-          d="M9.5 16.5L14 21L22.5 11.5"
-          stroke="#0071e3"
-          strokeWidth="2.8"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          fill="none"
-        />
-        <circle cx="22.5" cy="11.5" r="2" fill="#30d158" />
-      </svg>
+        className={`${iconDims} shrink-0 rounded-md bg-white object-contain`}
+      />
       <span
         className={`font-display ${textSize} font-bold tracking-[-0.02em] ${
-          theme === 'dark' ? 'text-[#f5f5f7]' : 'text-[#1d1d1f]'
+          theme === 'dark' ? 'text-[#f5f5f7]' : 'text-[#143566]'
         }`}
       >
-        Role<span className="text-[#0071e3]">Ready</span>
+        Role<span className="text-[#62a8da]">Ready</span>
       </span>
     </span>
   );
