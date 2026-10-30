@@ -13,8 +13,9 @@ export const LoginPage: React.FC = () => {
   const navigate = useNavigate();
 
   const [mode, setMode] = useState<'signin' | 'signup'>('signin');
-  const [email, setEmail] = useState('alex.rivera@roleready.app');
-  const [password, setPassword] = useState('interview2026');
+  // Sample details only help in mock mode; on the real backend that account doesn't exist.
+  const [email, setEmail] = useState(isMockMode() ? 'alex.rivera@roleready.app' : '');
+  const [password, setPassword] = useState(isMockMode() ? 'interview2026' : '');
   const [submitting, setSubmitting] = useState(false);
   const [demoLoading, setDemoLoading] = useState(false);
   const [error, setError] = useState<ApiError | null>(null);
@@ -146,7 +147,7 @@ export const LoginPage: React.FC = () => {
         {/* Right Column: Authentication Bento Card */}
         <div
           data-ui="auth-card"
-          className="bento-card-light p-6 sm:p-10 lg:col-span-6"
+          className="bento-card-light order-first p-6 sm:p-10 lg:order-none lg:col-span-6"
         >
           {mockActive && (
             <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-black/10 bg-[#f5f5f7] px-3.5 py-1.5 text-xs font-medium text-[#1d1d1f]">

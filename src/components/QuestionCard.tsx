@@ -169,6 +169,13 @@ export const QuestionCard: React.FC<QuestionCardProps> = ({
         {question.text}
       </h2>
 
+      {question.why_asking && (
+        <p className="mt-3 text-sm leading-relaxed text-[#424245]">
+          <span className="font-semibold text-[#1d1d1f]">Why we're asking: </span>
+          {question.why_asking}
+        </p>
+      )}
+
       {/* Citation Chips Bar */}
       {(question.resume_refs.length > 0 || question.jd_refs.length > 0) && (
         <div
@@ -423,12 +430,23 @@ export const QuestionCard: React.FC<QuestionCardProps> = ({
         </p>
       )}
 
-      {/* Grill Me: a tougher follow-up on the scored answer, with a Heat Dial */}
-      <GrillFollowUp
-        question={question}
-        feedback={existingFeedback}
-        resumeLines={resumeLines}
-      />
+      {/* Grill Me: a tougher follow-up on the scored answer, with a Heat Dial.
+          Shown once the answer is scored, so unanswered cards stay short. */}
+      {existingFeedback ? (
+        <GrillFollowUp
+          question={question}
+          feedback={existingFeedback}
+          resumeLines={resumeLines}
+        />
+      ) : (
+        <p className="mt-5 flex items-center gap-1.5 text-xs text-[#6e6e73]">
+          <Sparkles className="h-3.5 w-3.5 text-[#0071e3]" aria-hidden="true" />
+          <span>
+            After your score, Grill Me can ask the tougher follow-up a real
+            panel would.
+          </span>
+        </p>
+      )}
     </section>
   );
 };

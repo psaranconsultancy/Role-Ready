@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import {
   Upload,
@@ -15,6 +15,7 @@ import {
 import type { ApiError } from '@contracts';
 import {
   createSession,
+  deleteSession,
   parseResume,
   generateQuestions,
   toApiError,
@@ -53,6 +54,10 @@ export const NewSessionPage: React.FC = () => {
   const [jdError, setJdError] = useState<string | null>(null);
   const [apiError, setApiError] = useState<ApiError | null>(null);
   const [stage, setStage] = useState<GenerationStage>('idle');
+  // Session made by an earlier attempt; a retry carries on with it instead of
+  // creating another one (which would leave an empty draft in History).
+  const [pending, setPending] = useState<{ id: string; parsed: boolean } | null>(null);
+  useEffect(() => setPending(null), [file, jdText, roleTitle, company]);
 
   const validateAndSelectFile = (selected: File | null) => {
     setFileError(null);
@@ -119,30 +124,42 @@ export const NewSessionPage: React.FC = () => {
       return;
     }
 
+    let sessionId = pending?.id;
     try {
       setStage('parsing');
-      const created = await createSession({
-        file,
-        jdText,
-        roleTitle: roleTitle.trim() || undefined,
-        company: company.trim() || undefined,
-      });
+      if (!sessionId) {
+        const created = await createSession({
+          file,
+          jdText,
+          roleTitle: roleTitle.trim() || undefined,
+          company: company.trim() || undefined,
+        });
+        sessionId = created.id;
+        setPending({ id: sessionId, parsed: false });
+      }
 
-      await parseResume(created.id);
+      if (!pending?.parsed) {
+        await parseResume(sessionId);
+        setPending({ id: sessionId, parsed: true });
+      }
 
       setStage('generating');
-      await generateQuestions(created.id);
+      await generateQuestions(sessionId);
 
-      navigate(`/session/${created.id}`);
+      navigate(`/session/${sessionId}`);
     } catch (err) {
-      setStage('idle');
-      setApiError(
-        toApiError(
-          err,
-          'llm_failed',
-          'Could not generate your interview session. Please retry.'
-        )
+      const apiErr = toApiError(
+        err,
+        'llm_failed',
+        'Could not generate your interview session. Please retry.'
       );
+      // An unreadable PDF needs a new upload: drop the empty draft so History stays clean.
+      if (apiErr.error.code === 'parse_failed' && sessionId) {
+        deleteSession(sessionId).catch(() => undefined);
+        setPending(null);
+      }
+      setStage('idle');
+      setApiError(apiErr);
     }
   };
 
