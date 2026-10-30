@@ -59,6 +59,8 @@
     background-color: var(--surface-light-bg);
     color: var(--text-light-headline);
     scroll-behavior: smooth;
+    /* keep anchor targets clear of the sticky 48px global nav */
+    scroll-padding-top: 3.5rem;
     -webkit-text-size-adjust: 100%;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;

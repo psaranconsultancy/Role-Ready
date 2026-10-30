@@ -59,7 +59,7 @@ export const Header: React.FC = () => {
         id="globalnav"
         className="frosted-globalnav-dark sticky top-0 z-50 h-12 w-full text-[#f5f5f7]"
       >
-        <div className="mx-auto flex h-full max-w-[1080px] items-center justify-between px-4 sm:px-6">
+        <div className="mx-auto flex h-full max-w-[1080px] items-center justify-between gap-4 pl-[max(1rem,env(safe-area-inset-left))] pr-[max(1rem,env(safe-area-inset-right))] sm:pl-[max(1.5rem,env(safe-area-inset-left))] sm:pr-[max(1.5rem,env(safe-area-inset-right))]">
           <Link
             to="/"
             className="flex h-11 items-center gap-2 transition-opacity hover:opacity-90"
@@ -71,7 +71,7 @@ export const Header: React.FC = () => {
           {/* Desktop Navigation */}
           <nav
             aria-label="Primary navigation"
-            className="hidden items-center gap-7 md:flex"
+            className="hidden items-center gap-6 lg:flex xl:gap-7"
           >
             <Link
               to="/"
@@ -126,16 +126,22 @@ export const Header: React.FC = () => {
                 >
                   Why it works
                 </a>
+                <a
+                  href="/#pricing-tiers"
+                  className="whitespace-nowrap text-xs font-medium text-[#f5f5f7]/75 transition-colors hover:text-white"
+                >
+                  Plans &amp; Grill Me
+                </a>
               </>
             )}
           </nav>
 
           {/* Desktop Actions */}
-          <div className="hidden items-center gap-3 md:flex">
+          <div className="hidden items-center gap-3 lg:flex">
             <button
               type="button"
               onClick={() => setShowPricingModal(true)}
-              className={`inline-flex items-center gap-1.5 rounded-full border px-2.5 py-0.5 text-xs font-medium transition-colors ${
+              className={`inline-flex items-center gap-1.5 whitespace-nowrap rounded-full border px-2.5 py-0.5 text-xs font-medium transition-colors ${
                 isTier3Unlocked
                   ? 'border-[#30d158]/40 bg-[#30d158]/15 text-[#30d158]'
                   : 'border-[#2997ff]/35 bg-[#0071e3]/15 text-[#2997ff] hover:bg-[#0071e3]/25'
@@ -151,7 +157,7 @@ export const Header: React.FC = () => {
             </button>
 
             {isMockMode() && (
-              <span className="inline-flex items-center gap-1.5 rounded-full border border-white/15 bg-white/[0.06] px-2.5 py-0.5 text-xs text-[#a1a1a6]">
+              <span className="hidden items-center gap-1.5 whitespace-nowrap rounded-full border border-white/15 bg-white/[0.06] px-2.5 py-0.5 text-xs text-[#a1a1a6] xl:inline-flex">
                 <span
                   className="h-1.5 w-1.5 rounded-full bg-[#30d158]"
                   aria-hidden="true"
@@ -206,7 +212,7 @@ export const Header: React.FC = () => {
           </div>
 
           {/* Mobile Action + Animated 2-Line Menu Toggle */}
-          <div className="flex items-center gap-2 md:hidden">
+          <div className="flex items-center gap-2 lg:hidden">
             {user ? (
               <Link
                 to="/new"
@@ -251,7 +257,7 @@ export const Header: React.FC = () => {
           role="dialog"
           aria-modal="true"
           aria-label="Mobile navigation"
-          className="fixed inset-x-0 bottom-0 top-12 z-40 flex flex-col justify-between overflow-y-auto bg-black/95 px-6 py-8 text-[#f5f5f7] md:hidden"
+          className="fixed inset-x-0 bottom-0 top-12 z-40 flex flex-col justify-between overflow-y-auto overscroll-contain bg-black/95 px-6 py-8 text-[#f5f5f7] lg:hidden"
         >
           <div className="space-y-6">
             {isMockMode() && (
@@ -287,13 +293,30 @@ export const Header: React.FC = () => {
                   </Link>
                 </>
               ) : (
-                <Link
-                  to="/login"
-                  className="flex items-center justify-between py-4 font-display text-2xl font-bold tracking-tight text-[#f5f5f7] hover:text-[#2997ff]"
-                >
-                  <span>Sign in or create account</span>
-                  <ArrowRight className="h-5 w-5 text-[#86868b]" />
-                </Link>
+                <>
+                  {[
+                    { href: '/#how-it-works', label: 'How it works' },
+                    { href: '/#grounded-architecture', label: 'Why it works' },
+                    { href: '/#pricing-tiers', label: 'Plans & Grill Me' },
+                  ].map((item) => (
+                    <a
+                      key={item.href}
+                      href={item.href}
+                      onClick={() => setMobileMenuOpen(false)}
+                      className="flex items-center justify-between py-4 font-display text-2xl font-bold tracking-tight text-[#f5f5f7] hover:text-[#2997ff]"
+                    >
+                      <span>{item.label}</span>
+                      <ArrowRight className="h-5 w-5 text-[#86868b]" />
+                    </a>
+                  ))}
+                  <Link
+                    to="/login"
+                    className="flex items-center justify-between py-4 font-display text-2xl font-bold tracking-tight text-[#f5f5f7] hover:text-[#2997ff]"
+                  >
+                    <span>Sign in or create account</span>
+                    <ArrowRight className="h-5 w-5 text-[#86868b]" />
+                  </Link>
+                </>
               )}
             </nav>
           </div>
