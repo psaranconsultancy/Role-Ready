@@ -107,7 +107,8 @@ async function callGemini(systemPrompt: string, userPrompt: string): Promise<str
       if (!response.ok) {
         const detail = await response.text();
         console.error("Gemini request failed", model, response.status, detail.slice(0, 300));
-        if (response.status === 429 || response.status === 503 || response.status === 404) continue;
+        // 403 shows up intermittently on free keys under load; 404 means the model is not offered to this key.
+        if ([403, 404, 429, 503].includes(response.status)) continue;
         throw new LlmError("The AI provider request failed.");
       }
       const payload = await response.json();
