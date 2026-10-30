@@ -2,7 +2,7 @@ import React, { useState, useMemo, useRef, useEffect } from 'react';
 import {
   Flame,
   Lock,
-  Sparkles,
+  Clock,
   CheckCircle2,
   ArrowRight,
   Copy,
@@ -52,6 +52,10 @@ interface GrillMeDeepDivePanelProps {
   company?: string | null;
 }
 
+// Grill Me is on the roadmap. Until it ships, the panel shows a labelled
+// preview with no purchase or unlock buttons; flip this to show the full deck.
+const GRILL_ME_LIVE = false;
+
 export const GrillMeDeepDivePanel: React.FC<GrillMeDeepDivePanelProps> = ({
   question,
   resumeLines,
@@ -61,10 +65,6 @@ export const GrillMeDeepDivePanel: React.FC<GrillMeDeepDivePanelProps> = ({
   company,
 }) => {
   const {
-    currentTierDef,
-    tier3Def,
-    isTier3Unlocked,
-    setTier,
     grillContext,
     updateGrillContext,
     heat,
@@ -451,6 +451,14 @@ export const GrillMeDeepDivePanel: React.FC<GrillMeDeepDivePanelProps> = ({
             <Flame className="h-3.5 w-3.5" aria-hidden="true" />
             <span>Grill Me · Voice &amp; Follow-Up Stress Test</span>
           </span>
+          {!GRILL_ME_LIVE && (
+            <span className="inline-flex items-center gap-1.5 rounded-full border border-[#ff9f0a]/40 bg-[#ff9f0a]/15 px-3 py-1 text-xs font-semibold text-[#ff9f0a]">
+              <Clock className="h-3.5 w-3.5" aria-hidden="true" />
+              Coming soon
+            </span>
+          )}
+          {GRILL_ME_LIVE && (
+          <>
           <span
             className={`rounded-full border px-3 py-1 text-xs font-semibold ${activeHeatMeta.badgeClass}`}
           >
@@ -462,9 +470,12 @@ export const GrillMeDeepDivePanel: React.FC<GrillMeDeepDivePanelProps> = ({
           <span className="rounded-full border border-white/15 bg-white/[0.06] px-3 py-1 text-xs font-medium text-[#d2d2d7]">
             C-Suite: {grillContext.cSuiteCategory}
           </span>
+          </>
+          )}
         </div>
 
         <div className="flex flex-wrap items-center gap-2">
+          {GRILL_ME_LIVE && (
           <button
             type="button"
             onClick={() => setShowContextEditor((prev) => !prev)}
@@ -473,13 +484,14 @@ export const GrillMeDeepDivePanel: React.FC<GrillMeDeepDivePanelProps> = ({
             <Building2 className="h-3.5 w-3.5 text-[#30d158]" aria-hidden="true" />
             <span>Niche &amp; C-Suite categories</span>
           </button>
+          )}
           <button
             type="button"
             onClick={() => setShowPricingModal(true)}
             className="inline-flex items-center gap-1.5 rounded-full border border-white/15 bg-white/[0.06] px-3.5 py-1.5 text-xs font-semibold text-[#2997ff] transition-colors hover:bg-white/10"
           >
             <SlidersHorizontal className="h-3.5 w-3.5" aria-hidden="true" />
-            <span>Compare 3 tiers</span>
+            <span>See the roadmap</span>
           </button>
         </div>
       </div>
@@ -752,7 +764,7 @@ export const GrillMeDeepDivePanel: React.FC<GrillMeDeepDivePanelProps> = ({
       )}
 
       {/* LOCKED STATE (Tier 1 or Tier 2) -> Psychological Nudge + Frontier Preview */}
-      {!isTier3Unlocked ? (
+      {!GRILL_ME_LIVE ? (
         <div className="mt-6 space-y-5">
           <div className="grid gap-5 lg:grid-cols-12 lg:items-center">
             <div className="space-y-2.5 lg:col-span-8">
@@ -760,21 +772,20 @@ export const GrillMeDeepDivePanel: React.FC<GrillMeDeepDivePanelProps> = ({
                 Practise the follow-up questions panels ask when they press on your numbers
               </h3>
               <p className="text-xs leading-relaxed text-[#d2d2d7] sm:text-sm">
-                {currentTierDef.psychologicalNudge} Switch to{' '}
-                <strong className="text-white">{tier3Def.name}</strong> to
-                adjust the Heat Dial up to{' '}
+                Coming soon: turn the Heat Dial up to{' '}
                 <strong className="text-[#ff453a]">Executive Roast</strong>,
-                practise aloud with Male or Female AI interviewers, and get
+                practise aloud with a male or female AI interviewer, and get
                 scored on your timing and calm under pressure.
               </p>
             </div>
             <div className="rounded-2xl border border-[#30d158]/30 bg-[#30d158]/10 p-4 lg:col-span-4">
               <div className="flex items-center gap-2 text-xs font-semibold text-[#30d158]">
                 <TrendingUp className="h-4 w-4" aria-hidden="true" />
-                <span>{tier3Def.highlightBadge}</span>
+                <span>Also on the roadmap</span>
               </div>
               <p className="mt-1.5 text-xs leading-relaxed text-[#f5f5f7]">
-                {tier3Def.roiAnchor}
+                Niche and C-Suite question sets, and salary negotiation scripts
+                built from your resume.
               </p>
             </div>
           </div>
@@ -787,9 +798,7 @@ export const GrillMeDeepDivePanel: React.FC<GrillMeDeepDivePanelProps> = ({
               </span>
               <span className="inline-flex items-center gap-1 text-xs text-[#ff9f0a]">
                 <Lock className="h-3.5 w-3.5" aria-hidden="true" />
-                <span>
-                  Heat Dial (Warm to Roast) + AI Voice Interviewer gated
-                </span>
+                <span>Heat Dial and AI voice interviewer coming soon</span>
               </span>
             </div>
 
@@ -825,16 +834,10 @@ export const GrillMeDeepDivePanel: React.FC<GrillMeDeepDivePanelProps> = ({
                 </p>
               </div>
               <div className="flex w-full shrink-0 flex-col gap-2 sm:w-auto sm:flex-row">
-                <button
-                  type="button"
-                  onClick={() => setTier('tier3')}
-                  className="btn-pill-primary min-h-[42px] px-5 py-2 text-xs font-semibold"
-                >
-                  <Sparkles className="h-3.5 w-3.5" aria-hidden="true" />
-                  <span>
-                    Switch to {tier3Def.name} ({tier3Def.priceMonthly}/mo)
-                  </span>
-                </button>
+                <span className="inline-flex min-h-[42px] items-center justify-center gap-1.5 rounded-full border border-[#ff9f0a]/40 bg-[#ff9f0a]/15 px-5 py-2 text-xs font-semibold text-[#ff9f0a]">
+                  <Clock className="h-3.5 w-3.5" aria-hidden="true" />
+                  <span>Coming soon</span>
+                </span>
               </div>
             </div>
           </div>

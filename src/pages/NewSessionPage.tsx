@@ -566,6 +566,9 @@ export const NewSessionPage: React.FC = () => {
                 </span>
               </h3>
               <div className="flex flex-wrap gap-1.5">
+                <span className="rounded-full bg-[#ff9f0a]/15 px-3 py-0.5 text-xs font-semibold text-[#b45309]">
+                  Coming soon
+                </span>
                 <span className="rounded-full bg-[#30d158]/15 px-3 py-0.5 text-xs font-semibold text-[#15803d]">
                   Grill With Docs
                 </span>
@@ -577,14 +580,21 @@ export const NewSessionPage: React.FC = () => {
                 </span>
               </div>
             </div>
-            <p className="mt-1 text-xs text-[#6e6e73]">
-              Select your Industry, Department, Seniority, dedicated Niche
+            <p id="deep-context-coming-soon" className="mt-1 text-xs text-[#6e6e73]">
+              Coming soon, and optional: you don&apos;t need any of this for your
+              six questions today. When it ships, select your Industry, Department, Seniority, dedicated Niche
               category, and C-Suite seat, or attach board decks, case studies,
               and company URLs. Grill With Docs uses these files to challenge
               your answers and build your downloadable Candidate Decision Records
               (CDRs) and Domain Glossary as you practise.
             </p>
 
+            {/* Not built yet: shown as a preview, every control disabled */}
+            <fieldset
+              disabled
+              aria-describedby="deep-context-coming-soon"
+              className="min-w-0 cursor-not-allowed opacity-60"
+            >
             <div className="mt-4 grid gap-4 sm:grid-cols-3">
               <div>
                 <label
@@ -878,6 +888,7 @@ export const NewSessionPage: React.FC = () => {
                 </div>
               </div>
             </div>
+            </fieldset>
           </section>
 
           {/* Submit Action Bar */}
