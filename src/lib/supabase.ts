@@ -1,10 +1,11 @@
 import { createClient } from '@supabase/supabase-js';
-import type { Database } from '../types/db';
+// Generated table types live in src/types/db.ts (supabase gen types). Typing this client
+// with them needs api.ts casts updated first, so it stays untyped for now.
 
 const supabaseUrl =
-  import.meta.env.VITE_SUPABASE_URL || 'https://iarkgoekjvudcprcsqtq.supabase.co';
+  import.meta.env.VITE_SUPABASE_URL || 'https://placeholder-project.supabase.co';
 const supabaseAnonKey =
-  import.meta.env.VITE_SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imlhcmtnb2VranZ1ZGNwcmNzcXRxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTMzNDE2NTYsImV4cCI6MjEwODkxNzY1Nn0.g4WoCLofAKCBfXxXhw_CjhuPE0DPdktCvqzSb06pPww';
+  import.meta.env.VITE_SUPABASE_ANON_KEY || 'placeholder-anon-key';
 
 export const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
