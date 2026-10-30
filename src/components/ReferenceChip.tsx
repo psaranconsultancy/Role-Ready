@@ -39,10 +39,10 @@ export const ReferenceChip: React.FC<ReferenceChipProps> = ({
         onClick={() => setOpen((prev) => !prev)}
         className={`inline-flex min-h-[28px] max-w-full items-center gap-1.5 rounded-full border px-2.5 py-0.5 text-left text-xs font-semibold transition-colors ${
           isResume
-            ? 'border-[#0071e3]/25 bg-[#0071e3]/10 text-[#0071e3] hover:border-[#0071e3]/50 hover:bg-[#0071e3]/15'
+            ? 'border-[#0284c7]/25 bg-[#0284c7]/10 text-[#0369a1] hover:border-[#0284c7]/50 hover:bg-[#0284c7]/15'
             : theme === 'dark'
-              ? 'border-white/20 bg-white/[0.08] text-[#f5f5f7] hover:border-white/35 hover:bg-white/[0.14]'
-              : 'border-black/15 bg-black/[0.04] text-[#1d1d1f] hover:border-black/30 hover:bg-black/[0.08]'
+              ? 'border-white/20 bg-white/[0.08] text-[#f8fafc] hover:border-white/35 hover:bg-white/[0.14]'
+              : 'border-black/15 bg-black/[0.04] text-[#0f172a] hover:border-black/30 hover:bg-black/[0.08]'
         }`}
       >
         {isResume ? (
@@ -62,14 +62,14 @@ export const ReferenceChip: React.FC<ReferenceChipProps> = ({
         <span
           id={tooltipId}
           role="tooltip"
-          className="frosted-globalnav-dark pointer-events-none absolute bottom-full left-0 z-50 mb-2 w-72 max-w-[85vw] rounded-[16px] border border-white/15 bg-[#161617]/95 p-3.5 text-left text-xs leading-relaxed text-[#f5f5f7] sm:w-80"
+          className="frosted-globalnav-dark pointer-events-none absolute bottom-full left-0 z-50 mb-2 w-72 max-w-[85vw] rounded-[16px] border border-white/15 bg-[#0f172a]/95 p-3.5 text-left text-xs leading-relaxed text-[#f8fafc] sm:w-80"
         >
           <span className="mb-1 flex items-center justify-between gap-2 text-xs font-semibold text-[#86868b]">
-            <span className={isResume ? 'text-[#2997ff]' : 'text-[#30d158]'}>
+            <span className={isResume ? 'text-[#38bdf8]' : 'text-[#14b8a6]'}>
               {isResume ? 'From your resume' : 'From the job description'}
             </span>
           </span>
-          <span className="block font-sans text-[13px] font-normal leading-snug text-[#f5f5f7]">
+          <span className="block font-sans text-[13px] font-normal leading-snug text-[#f8fafc]">
             “{text}”
           </span>
         </span>

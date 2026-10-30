@@ -27,7 +27,7 @@ const STATUS_BADGE: Record<
   },
   ready: {
     label: 'Ready',
-    className: 'border-[#0071e3]/30 bg-[#0071e3]/10 text-[#0071e3]',
+    className: 'border-[#0284c7]/30 bg-[#0284c7]/10 text-[#0369a1]',
   },
   in_progress: {
     label: 'In progress',
@@ -35,7 +35,7 @@ const STATUS_BADGE: Record<
   },
   completed: {
     label: 'Completed',
-    className: 'border-[#30d158]/35 bg-[#30d158]/15 text-[#15803d]',
+    className: 'border-[#14b8a6]/35 bg-[#14b8a6]/15 text-[#0f766e]',
   },
 };
 
@@ -121,11 +121,11 @@ export const HistoryPage: React.FC = () => {
       : null;
 
   return (
-    <div className="min-h-[calc(100dvh-3rem)] bg-[#f5f5f7] pb-20 text-[#1d1d1f]">
+    <div className="min-h-[calc(100dvh-3rem)] bg-[#f1f5f9] pb-20 text-[#0f172a]">
       {/* Sticky Local Sub-Nav */}
       <div className="frosted-localnav-light sticky top-12 z-30 h-[52px] w-full">
         <div className="mx-auto flex h-full max-w-[1024px] items-center justify-between px-4 sm:px-6">
-          <span className="font-display text-base font-bold tracking-tight text-[#1d1d1f]">
+          <span className="font-display text-base font-bold tracking-tight text-[#0f172a]">
             Practice history
           </span>
           <Link
@@ -140,18 +140,18 @@ export const HistoryPage: React.FC = () => {
 
       <main className="mx-auto max-w-[1024px] space-y-6 px-4 pt-8 sm:px-6 sm:pt-10">
         {/* Studio Readiness Header Card with Ambient Motion */}
-        <div className="bento-card-dark relative overflow-hidden p-6 text-[#f5f5f7] sm:p-8">
+        <div className="bento-card-dark relative overflow-hidden p-6 text-[#f8fafc] sm:p-8">
           <AmbientHeroCanvas
             backdropImage="/assets/img/hero-candidate-focus.jpg"
             videoOpacity={0.38}
           />
           <div className="relative z-10 flex flex-col justify-between gap-5 sm:flex-row sm:items-center">
             <div className="max-w-xl">
-              <span className="inline-flex items-center gap-1.5 rounded-full border border-white/15 bg-white/[0.08] px-3 py-1 text-xs font-medium text-[#2997ff]">
+              <span className="inline-flex items-center gap-1.5 rounded-full border border-white/15 bg-white/[0.08] px-3 py-1 text-xs font-medium text-[#38bdf8]">
                 <Sparkles className="h-3.5 w-3.5" aria-hidden="true" />
                 <span>Interview readiness studio</span>
               </span>
-              <h1 className="mt-3 font-display text-3xl font-bold tracking-tight text-[#f5f5f7] sm:text-4xl">
+              <h1 className="mt-3 font-display text-3xl font-bold tracking-tight text-[#f8fafc] sm:text-4xl">
                 Your practice sessions
               </h1>
               <p className="mt-1.5 text-sm leading-relaxed text-[#d2d2d7]">
@@ -179,7 +179,7 @@ export const HistoryPage: React.FC = () => {
               <p className="text-xs font-medium text-[#86868b]">
                 Total sessions
               </p>
-              <p className="mt-2 font-display text-3xl font-bold tabular-nums text-[#1d1d1f]">
+              <p className="mt-2 font-display text-3xl font-bold tabular-nums text-[#0f172a]">
                 {totalSessions}
               </p>
               <p className="mt-1 text-xs text-[#6e6e73]">
@@ -191,13 +191,13 @@ export const HistoryPage: React.FC = () => {
               <p className="text-xs font-medium text-[#86868b]">
                 Completed sessions
               </p>
-              <p className="mt-2 font-display text-3xl font-bold tabular-nums text-[#1d1d1f]">
+              <p className="mt-2 font-display text-3xl font-bold tabular-nums text-[#0f172a]">
                 {completedSessions.length}
                 <span className="ml-1.5 font-sans text-sm font-normal text-[#86868b]">
                   of {totalSessions}
                 </span>
               </p>
-              <p className="mt-1 text-xs text-[#15803d]">
+              <p className="mt-1 text-xs text-[#0f766e]">
                 All 6 questions answered
               </p>
             </div>
@@ -207,7 +207,7 @@ export const HistoryPage: React.FC = () => {
                 <p className="text-xs font-medium text-[#86868b]">
                   Average score
                 </p>
-                <p className="mt-2 font-display text-3xl font-bold tabular-nums text-[#1d1d1f]">
+                <p className="mt-2 font-display text-3xl font-bold tabular-nums text-[#0f172a]">
                   {avgScore !== null ? `${avgScore}/100` : 'None yet'}
                 </p>
                 <p className="mt-1 text-xs text-[#6e6e73]">
@@ -246,10 +246,10 @@ export const HistoryPage: React.FC = () => {
         ) : sessions.length === 0 ? (
           /* Designed EmptyState */
           <div className="bento-card-light p-10 text-center sm:p-14">
-            <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-[#0071e3]/10 text-[#0071e3]">
+            <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-[#0284c7]/10 text-[#0369a1]">
               <FolderOpen className="h-7 w-7" aria-hidden="true" />
             </div>
-            <h2 className="mt-4 font-display text-xl font-bold text-[#1d1d1f]">
+            <h2 className="mt-4 font-display text-xl font-bold text-[#0f172a]">
               No practice sessions yet
             </h2>
             <p className="mx-auto mt-2 max-w-md text-sm text-[#6e6e73]">
@@ -295,14 +295,14 @@ export const HistoryPage: React.FC = () => {
                         {formatDate(s.created_at)}
                       </span>
                       {s.resume_lines && (
-                        <span className="inline-flex items-center gap-1 text-xs tabular-nums text-[#0071e3]">
+                        <span className="inline-flex items-center gap-1 text-xs tabular-nums text-[#0369a1]">
                           <FileText className="h-3 w-3" aria-hidden="true" />
                           {s.resume_lines.length} lines from your resume
                         </span>
                       )}
                     </div>
 
-                    <h2 className="truncate font-display text-lg font-bold text-[#1d1d1f] transition-colors group-hover:text-[#0071e3] sm:text-xl">
+                    <h2 className="truncate font-display text-lg font-bold text-[#0f172a] transition-colors group-hover:text-[#0369a1] sm:text-xl">
                       {s.role_title || 'Target Role Interview'}
                       {s.company ? (
                         <span className="font-normal text-[#6e6e73]">
@@ -338,7 +338,7 @@ export const HistoryPage: React.FC = () => {
                       </span>
                     )}
 
-                    <span className="inline-flex min-h-[36px] items-center gap-1.5 rounded-full bg-[#f5f5f7] px-4 py-1.5 text-xs font-semibold text-[#1d1d1f] transition-colors group-hover:bg-[#0071e3] group-hover:text-white">
+                    <span className="inline-flex min-h-[36px] items-center gap-1.5 rounded-full bg-[#f1f5f9] px-4 py-1.5 text-xs font-semibold text-[#0f172a] transition-colors group-hover:bg-[#0284c7] group-hover:text-white">
                       <span>{isCompleted ? 'Review' : 'Continue'}</span>
                       <ArrowRight className="h-3.5 w-3.5" aria-hidden="true" />
                     </span>
@@ -350,7 +350,7 @@ export const HistoryPage: React.FC = () => {
                   disabled={deletingId === s.id}
                   aria-label={`Delete ${s.role_title || 'practice session'}${s.company ? ` at ${s.company}` : ''}`}
                   title="Delete session"
-                  className="absolute right-3 top-3 flex h-9 w-9 items-center justify-center rounded-full text-[#86868b] transition-colors hover:bg-[#ff3b30]/10 hover:text-[#d70015] focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#0071e3] disabled:opacity-60 sm:top-1/2 sm:-translate-y-1/2"
+                  className="absolute right-3 top-3 flex h-9 w-9 items-center justify-center rounded-full text-[#86868b] transition-colors hover:bg-[#ff3b30]/10 hover:text-[#d70015] focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#0284c7] disabled:opacity-60 sm:top-1/2 sm:-translate-y-1/2"
                 >
                   {deletingId === s.id ? (
                     <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />

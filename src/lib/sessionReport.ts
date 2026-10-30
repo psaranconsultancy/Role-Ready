@@ -98,14 +98,14 @@ export function buildReportHtml(input: ReportInput): string {
 <title>RoleReady report · ${escapeHtml(roleLine(session))}</title>
 <style>
   * { box-sizing: border-box; }
-  body { margin: 0; background: #f5f5f7; color: #1d1d1f;
+  body { margin: 0; background: #f8fafc; color: #0f172a;
     font: 14px/1.55 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
   .page { max-width: 760px; margin: 0 auto; padding: 32px 20px 48px; }
   .bar { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 20px; }
   .bar button { font: inherit; font-weight: 600; border: 0; border-radius: 999px; padding: 10px 20px;
-    background: #0071e3; color: #fff; cursor: pointer; }
-  header { background: #1d1d1f; color: #f5f5f7; border-radius: 20px; padding: 24px; }
-  header .brand { font-size: 12px; font-weight: 600; color: #2997ff; letter-spacing: .02em; }
+    background: #0284c7; color: #fff; cursor: pointer; }
+  header { background: #0f172a; color: #f8fafc; border-radius: 20px; padding: 24px; }
+  header .brand { font-size: 12px; font-weight: 600; color: #38bdf8; letter-spacing: .02em; }
   header h1 { margin: 6px 0 2px; font-size: 22px; }
   header .meta { color: #a1a1a6; font-size: 13px; }
   .overall { display: flex; gap: 20px; align-items: baseline; margin-top: 16px; flex-wrap: wrap; }
@@ -113,18 +113,18 @@ export function buildReportHtml(input: ReportInput): string {
   .tiles { display: grid; grid-template-columns: repeat(6, 1fr); gap: 8px; margin-top: 16px; }
   .tile { background: rgba(255,255,255,.08); border-radius: 12px; padding: 8px 10px; font-size: 12px; color: #a1a1a6; }
   .tile b { display: block; color: #fff; font-size: 18px; }
-  .focus { margin-top: 16px; font-size: 13px; color: #f5f5f7; }
+  .focus { margin-top: 16px; font-size: 13px; color: #f8fafc; }
   .q { background: #fff; border-radius: 20px; padding: 22px 24px; margin-top: 16px; break-inside: avoid-page; }
   .qhead { display: flex; justify-content: space-between; font-size: 12px; font-weight: 600; }
-  .pos { color: #0071e3; }
-  .score { color: #1d1d1f; }
+  .pos { color: #0284c7; }
+  .score { color: #0f172a; }
   h3 { margin: 6px 0 10px; font-size: 16px; line-height: 1.4; }
   h4 { margin: 14px 0 4px; font-size: 12px; color: #6e6e73; text-transform: uppercase; letter-spacing: .04em; }
   p { margin: 0; }
   .answer { white-space: pre-wrap; color: #424245; }
-  .stronger { background: #f0f7ff; border-left: 3px solid #0071e3; padding: 8px 12px; border-radius: 6px; }
+  .stronger { background: #f0f9ff; border-left: 3px solid #0284c7; padding: 8px 12px; border-radius: 6px; }
   .crits { width: 100%; border-collapse: separate; border-spacing: 6px 0; margin: 0 -6px; }
-  .crits td { background: #f5f5f7; border-radius: 10px; padding: 6px 10px; font-size: 12px; }
+  .crits td { background: #f8fafc; border-radius: 10px; padding: 6px 10px; font-size: 12px; }
   .crit { display: block; color: #6e6e73; }
   .warn { margin: 0; padding-left: 18px; color: #b45309; }
   footer { margin-top: 24px; font-size: 12px; color: #86868b; text-align: center; }

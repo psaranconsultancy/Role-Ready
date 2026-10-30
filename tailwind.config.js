@@ -40,24 +40,32 @@ export default {
         ],
       },
       colors: {
+        brand: {
+          primary: '#0EA5E9', // Vibrant cyan arrow
+          hover: '#0284C7', // Darker cyan
+          secondary: '#0D9488', // Petrol teal monogram
+          accent: '#0F766E', // Deep teal accent
+          dark: '#0F172A', // Steel slate text/borders
+          light: '#F8FAFC', // Clean surface background
+        },
         canvas: {
-          light: '#f5f5f7',
+          light: '#f8fafc',
           white: '#ffffff',
-          dark: '#000000',
-          elevated: '#161617',
-          card: '#1c1c1e',
+          dark: '#0f172a',
+          elevated: '#0f172a',
+          card: '#1e293b',
         },
         ink: {
-          DEFAULT: '#1d1d1f',
+          DEFAULT: '#0f172a',
           secondary: '#6e6e73',
           muted: '#86868b',
-          light: '#f5f5f7',
+          light: '#f8fafc',
         },
         accent: {
-          blue: '#0071e3',
-          blueHover: '#0077ed',
-          link: '#2997ff',
-          green: '#30d158',
+          blue: '#0284c7',
+          blueHover: '#0369a1',
+          link: '#38bdf8',
+          green: '#14b8a6',
           amber: '#ff9f0a',
           orange: '#f56300',
           red: '#ff453a',

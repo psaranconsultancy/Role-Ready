@@ -442,12 +442,12 @@ export const GrillMeDeepDivePanel: React.FC<GrillMeDeepDivePanelProps> = ({
     <section
       data-ui="grill-me-panel"
       aria-label="Grill Me deep-dive voice stress test"
-      className="bento-card-dark mt-6 overflow-hidden p-6 text-[#f5f5f7] sm:p-8"
+      className="bento-card-dark mt-6 overflow-hidden p-6 text-[#f8fafc] sm:p-8"
     >
       {/* Top Header Strip */}
       <div className="flex flex-wrap items-center justify-between gap-3 border-b border-white/10 pb-5">
         <div className="flex flex-wrap items-center gap-2">
-          <span className="inline-flex items-center gap-1.5 rounded-full bg-[#0071e3] px-3 py-1 text-xs font-semibold text-white">
+          <span className="inline-flex items-center gap-1.5 rounded-full bg-[#0284c7] px-3 py-1 text-xs font-semibold text-white">
             <Flame className="h-3.5 w-3.5" aria-hidden="true" />
             <span>Grill Me · Voice &amp; Follow-Up Stress Test</span>
           </span>
@@ -464,7 +464,7 @@ export const GrillMeDeepDivePanel: React.FC<GrillMeDeepDivePanelProps> = ({
           >
             Heat {heat}/4 · {activeHeatMeta.name}
           </span>
-          <span className="rounded-full border border-[#2997ff]/30 bg-[#0071e3]/15 px-3 py-1 text-xs font-medium text-[#2997ff]">
+          <span className="rounded-full border border-[#38bdf8]/30 bg-[#0284c7]/15 px-3 py-1 text-xs font-medium text-[#38bdf8]">
             Niche: {grillContext.nicheCategory}
           </span>
           <span className="rounded-full border border-white/15 bg-white/[0.06] px-3 py-1 text-xs font-medium text-[#d2d2d7]">
@@ -481,14 +481,14 @@ export const GrillMeDeepDivePanel: React.FC<GrillMeDeepDivePanelProps> = ({
             onClick={() => setShowContextEditor((prev) => !prev)}
             className="inline-flex items-center gap-1.5 rounded-full border border-white/15 bg-white/[0.06] px-3.5 py-1.5 text-xs font-semibold text-[#d2d2d7] transition-colors hover:bg-white/10"
           >
-            <Building2 className="h-3.5 w-3.5 text-[#30d158]" aria-hidden="true" />
+            <Building2 className="h-3.5 w-3.5 text-[#14b8a6]" aria-hidden="true" />
             <span>Niche &amp; C-Suite categories</span>
           </button>
           )}
           <button
             type="button"
             onClick={() => setShowPricingModal(true)}
-            className="inline-flex items-center gap-1.5 rounded-full border border-white/15 bg-white/[0.06] px-3.5 py-1.5 text-xs font-semibold text-[#2997ff] transition-colors hover:bg-white/10"
+            className="inline-flex items-center gap-1.5 rounded-full border border-white/15 bg-white/[0.06] px-3.5 py-1.5 text-xs font-semibold text-[#38bdf8] transition-colors hover:bg-white/10"
           >
             <SlidersHorizontal className="h-3.5 w-3.5" aria-hidden="true" />
             <span>See the roadmap</span>
@@ -532,7 +532,7 @@ export const GrillMeDeepDivePanel: React.FC<GrillMeDeepDivePanelProps> = ({
                 onChange={(e) =>
                   updateGrillContext({ ...grillContext, industry: e.target.value })
                 }
-                className="mt-1.5 block min-h-[40px] w-full rounded-xl border border-white/15 bg-[#161617] px-3 py-2 text-xs text-white focus:border-[#2997ff] focus:outline-none"
+                className="mt-1.5 block min-h-[40px] w-full rounded-xl border border-white/15 bg-[#0f172a] px-3 py-2 text-xs text-white focus:border-[#38bdf8] focus:outline-none"
               >
                 {INDUSTRY_OPTIONS.map((opt) => (
                   <option key={opt} value={opt}>
@@ -558,7 +558,7 @@ export const GrillMeDeepDivePanel: React.FC<GrillMeDeepDivePanelProps> = ({
                     department: e.target.value,
                   })
                 }
-                className="mt-1.5 block min-h-[40px] w-full rounded-xl border border-white/15 bg-[#161617] px-3 py-2 text-xs text-white focus:border-[#2997ff] focus:outline-none"
+                className="mt-1.5 block min-h-[40px] w-full rounded-xl border border-white/15 bg-[#0f172a] px-3 py-2 text-xs text-white focus:border-[#38bdf8] focus:outline-none"
               >
                 {DEPARTMENT_OPTIONS.map((opt) => (
                   <option key={opt} value={opt}>
@@ -584,7 +584,7 @@ export const GrillMeDeepDivePanel: React.FC<GrillMeDeepDivePanelProps> = ({
                     seniority: e.target.value,
                   })
                 }
-                className="mt-1.5 block min-h-[40px] w-full rounded-xl border border-white/15 bg-[#161617] px-3 py-2 text-xs text-white focus:border-[#2997ff] focus:outline-none"
+                className="mt-1.5 block min-h-[40px] w-full rounded-xl border border-white/15 bg-[#0f172a] px-3 py-2 text-xs text-white focus:border-[#38bdf8] focus:outline-none"
               >
                 {SENIORITY_OPTIONS.map((opt) => (
                   <option key={opt} value={opt}>
@@ -597,10 +597,10 @@ export const GrillMeDeepDivePanel: React.FC<GrillMeDeepDivePanelProps> = ({
 
           {/* Separate Niche Category & Separate C-Suite Category */}
           <div className="mt-4 grid gap-4 sm:grid-cols-2">
-            <div className="rounded-xl border border-[#2997ff]/30 bg-[#0071e3]/10 p-3.5">
+            <div className="rounded-xl border border-[#38bdf8]/30 bg-[#0284c7]/10 p-3.5">
               <label
                 htmlFor={`niche-cat-select-${question.id}`}
-                className="block text-xs font-bold text-[#2997ff]"
+                className="block text-xs font-bold text-[#38bdf8]"
               >
                 Niche Category (Specialist Domain)
               </label>
@@ -613,7 +613,7 @@ export const GrillMeDeepDivePanel: React.FC<GrillMeDeepDivePanelProps> = ({
                     nicheCategory: e.target.value,
                   })
                 }
-                className="mt-1.5 block min-h-[40px] w-full rounded-xl border border-white/15 bg-[#161617] px-3 py-2 text-xs text-white focus:border-[#2997ff] focus:outline-none"
+                className="mt-1.5 block min-h-[40px] w-full rounded-xl border border-white/15 bg-[#0f172a] px-3 py-2 text-xs text-white focus:border-[#38bdf8] focus:outline-none"
               >
                 {NICHE_CATEGORY_OPTIONS.map((opt) => (
                   <option key={opt} value={opt}>
@@ -639,7 +639,7 @@ export const GrillMeDeepDivePanel: React.FC<GrillMeDeepDivePanelProps> = ({
                     cSuiteCategory: e.target.value,
                   })
                 }
-                className="mt-1.5 block min-h-[40px] w-full rounded-xl border border-white/15 bg-[#161617] px-3 py-2 text-xs text-white focus:border-[#2997ff] focus:outline-none"
+                className="mt-1.5 block min-h-[40px] w-full rounded-xl border border-white/15 bg-[#0f172a] px-3 py-2 text-xs text-white focus:border-[#38bdf8] focus:outline-none"
               >
                 {CSUITE_CATEGORY_OPTIONS.map((opt) => (
                   <option key={opt} value={opt}>
@@ -668,7 +668,7 @@ export const GrillMeDeepDivePanel: React.FC<GrillMeDeepDivePanelProps> = ({
                 })
               }
               placeholder="e.g. Post-merger integration, Series C international expansion, SOC2 & enterprise risk…"
-              className="mt-1.5 block min-h-[40px] w-full rounded-xl border border-white/15 bg-black/50 px-3.5 py-2 text-xs text-white placeholder:text-[#aeaeb2] focus:border-[#2997ff] focus:outline-none"
+              className="mt-1.5 block min-h-[40px] w-full rounded-xl border border-white/15 bg-black/50 px-3.5 py-2 text-xs text-white placeholder:text-[#aeaeb2] focus:border-[#38bdf8] focus:outline-none"
             />
           </div>
 
@@ -678,7 +678,7 @@ export const GrillMeDeepDivePanel: React.FC<GrillMeDeepDivePanelProps> = ({
             <div className="rounded-xl border border-white/10 bg-black/40 p-3.5">
               <div className="flex items-center justify-between gap-2">
                 <span className="flex items-center gap-1.5 text-xs font-semibold text-white">
-                  <Upload className="h-3.5 w-3.5 text-[#2997ff]" aria-hidden="true" />
+                  <Upload className="h-3.5 w-3.5 text-[#38bdf8]" aria-hidden="true" />
                   <span>Extra files (Decks, 10-K, Case Studies)</span>
                 </span>
                 <input
@@ -691,7 +691,7 @@ export const GrillMeDeepDivePanel: React.FC<GrillMeDeepDivePanelProps> = ({
                 <button
                   type="button"
                   onClick={() => contextFileInputRef.current?.click()}
-                  className="inline-flex items-center gap-1 rounded-full bg-white/10 px-2.5 py-1 text-xs font-semibold text-[#2997ff] hover:bg-white/15"
+                  className="inline-flex items-center gap-1 rounded-full bg-white/10 px-2.5 py-1 text-xs font-semibold text-[#38bdf8] hover:bg-white/15"
                 >
                   <Plus className="h-3 w-3" aria-hidden="true" />
                   <span>Upload file</span>
@@ -720,7 +720,7 @@ export const GrillMeDeepDivePanel: React.FC<GrillMeDeepDivePanelProps> = ({
             {/* Shared Context Links */}
             <div className="rounded-xl border border-white/10 bg-black/40 p-3.5">
               <span className="flex items-center gap-1.5 text-xs font-semibold text-white">
-                <Link2 className="h-3.5 w-3.5 text-[#30d158]" aria-hidden="true" />
+                <Link2 className="h-3.5 w-3.5 text-[#14b8a6]" aria-hidden="true" />
                 <span>Shared context links (Company URLs, Memos, Profiles)</span>
               </span>
               <div className="mt-2 flex gap-1.5">
@@ -730,12 +730,12 @@ export const GrillMeDeepDivePanel: React.FC<GrillMeDeepDivePanelProps> = ({
                   value={newLinkUrl}
                   onChange={(e) => setNewLinkUrl(e.target.value)}
                   placeholder="https://company.com/investor-memo"
-                  className="min-h-[34px] flex-1 rounded-lg border border-white/15 bg-black/60 px-2.5 py-1 text-xs text-white placeholder:text-[#aeaeb2] focus:border-[#2997ff] focus:outline-none"
+                  className="min-h-[34px] flex-1 rounded-lg border border-white/15 bg-black/60 px-2.5 py-1 text-xs text-white placeholder:text-[#aeaeb2] focus:border-[#38bdf8] focus:outline-none"
                 />
                 <button
                   type="button"
                   onClick={handleAddSharedLink}
-                  className="rounded-lg bg-[#0071e3] px-3 py-1 text-xs font-semibold text-white hover:bg-[#0077ed]"
+                  className="rounded-lg bg-[#0284c7] px-3 py-1 text-xs font-semibold text-white hover:bg-[#0369a1]"
                 >
                   Add
                 </button>
@@ -744,7 +744,7 @@ export const GrillMeDeepDivePanel: React.FC<GrillMeDeepDivePanelProps> = ({
                 {grillContext.sharedLinks.map((url) => (
                   <span
                     key={url}
-                    className="inline-flex items-center gap-1.5 rounded-full border border-white/15 bg-white/[0.06] px-2.5 py-1 text-xs text-[#2997ff]"
+                    className="inline-flex items-center gap-1.5 rounded-full border border-white/15 bg-white/[0.06] px-2.5 py-1 text-xs text-[#38bdf8]"
                   >
                     <span className="max-w-[200px] truncate">{url}</span>
                     <button
@@ -778,12 +778,12 @@ export const GrillMeDeepDivePanel: React.FC<GrillMeDeepDivePanelProps> = ({
                 scored on your timing and calm under pressure.
               </p>
             </div>
-            <div className="rounded-2xl border border-[#30d158]/30 bg-[#30d158]/10 p-4 lg:col-span-4">
-              <div className="flex items-center gap-2 text-xs font-semibold text-[#30d158]">
+            <div className="rounded-2xl border border-[#14b8a6]/30 bg-[#14b8a6]/10 p-4 lg:col-span-4">
+              <div className="flex items-center gap-2 text-xs font-semibold text-[#14b8a6]">
                 <TrendingUp className="h-4 w-4" aria-hidden="true" />
                 <span>Also on the roadmap</span>
               </div>
-              <p className="mt-1.5 text-xs leading-relaxed text-[#f5f5f7]">
+              <p className="mt-1.5 text-xs leading-relaxed text-[#f8fafc]">
                 Niche and C-Suite question sets, and salary negotiation scripts
                 built from your resume.
               </p>
@@ -793,7 +793,7 @@ export const GrillMeDeepDivePanel: React.FC<GrillMeDeepDivePanelProps> = ({
           {/* Teaser of Round 1 Frontier Q1 */}
           <div className="rounded-2xl border border-white/15 bg-white/[0.04] p-5">
             <div className="flex flex-wrap items-center justify-between gap-2">
-              <span className="text-xs font-semibold text-[#2997ff]">
+              <span className="text-xs font-semibold text-[#38bdf8]">
                 {round1.roundTitle} (Preview)
               </span>
               <span className="inline-flex items-center gap-1 text-xs text-[#ff9f0a]">
@@ -804,7 +804,7 @@ export const GrillMeDeepDivePanel: React.FC<GrillMeDeepDivePanelProps> = ({
 
             <p className="mt-3 flex items-center gap-2 text-sm font-semibold text-white">
               <HelpCircle
-                className="h-4 w-4 shrink-0 text-[#2997ff]"
+                className="h-4 w-4 shrink-0 text-[#38bdf8]"
                 aria-hidden="true"
               />
               <span>
@@ -820,7 +820,7 @@ export const GrillMeDeepDivePanel: React.FC<GrillMeDeepDivePanelProps> = ({
               <div className="space-y-1">
                 <p className="flex items-center gap-1.5 text-xs font-semibold text-[#a1a1a6]">
                   <ArrowRight
-                    className="h-3.5 w-3.5 text-[#2997ff]"
+                    className="h-3.5 w-3.5 text-[#38bdf8]"
                     aria-hidden="true"
                   />
                   <span>
@@ -886,7 +886,7 @@ export const GrillMeDeepDivePanel: React.FC<GrillMeDeepDivePanelProps> = ({
                             ? 'border-[#ff453a] bg-[#ff453a] text-white'
                             : lvl === 3
                               ? 'border-[#ff9f0a] bg-[#ff9f0a] text-black'
-                              : 'border-[#0071e3] bg-[#0071e3] text-white'
+                              : 'border-[#0284c7] bg-[#0284c7] text-white'
                           : 'border-white/10 bg-black/40 text-[#d2d2d7] hover:bg-white/10'
                       }`}
                     >
@@ -905,12 +905,12 @@ export const GrillMeDeepDivePanel: React.FC<GrillMeDeepDivePanelProps> = ({
               <div className="flex items-center justify-between gap-2">
                 <span className="flex items-center gap-1.5 text-xs font-semibold text-white">
                   <UserCheck
-                    className="h-4 w-4 text-[#2997ff]"
+                    className="h-4 w-4 text-[#38bdf8]"
                     aria-hidden="true"
                   />
                   <span>AI Voice Interviewer</span>
                 </span>
-                <span className="text-xs text-[#30d158]">Voice ready</span>
+                <span className="text-xs text-[#14b8a6]">Voice ready</span>
               </div>
 
               <div
@@ -928,7 +928,7 @@ export const GrillMeDeepDivePanel: React.FC<GrillMeDeepDivePanelProps> = ({
                       onClick={() => setInterviewerGender(g)}
                       className={`rounded-xl border p-2.5 text-left transition-colors ${
                         active
-                          ? 'border-[#2997ff] bg-[#0071e3]/25 text-white'
+                          ? 'border-[#38bdf8] bg-[#0284c7]/25 text-white'
                           : 'border-white/10 bg-black/40 text-[#d2d2d7] hover:bg-white/10'
                       }`}
                     >
@@ -951,7 +951,7 @@ export const GrillMeDeepDivePanel: React.FC<GrillMeDeepDivePanelProps> = ({
           {/* Round Stepper */}
           <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-white/10 bg-white/[0.04] p-4">
             <div>
-              <p className="text-xs font-semibold text-[#2997ff]">
+              <p className="text-xs font-semibold text-[#38bdf8]">
                 {currentRoundObj.roundTitle}
               </p>
               <p className="mt-0.5 text-xs text-[#a1a1a6]">
@@ -965,13 +965,13 @@ export const GrillMeDeepDivePanel: React.FC<GrillMeDeepDivePanelProps> = ({
                 onClick={() => setActiveRound(1)}
                 className={`inline-flex min-h-[36px] items-center gap-1.5 rounded-full px-3.5 py-1 text-xs font-semibold transition-colors ${
                   activeRound === 1
-                    ? 'bg-[#0071e3] text-white'
+                    ? 'bg-[#0284c7] text-white'
                     : 'bg-white/10 text-[#d2d2d7] hover:bg-white/15'
                 }`}
               >
                 <span>Round 1</span>
                 {isRound1Settled && (
-                  <CheckCircle2 className="h-3.5 w-3.5 text-[#30d158]" />
+                  <CheckCircle2 className="h-3.5 w-3.5 text-[#14b8a6]" />
                 )}
               </button>
               <button
@@ -979,13 +979,13 @@ export const GrillMeDeepDivePanel: React.FC<GrillMeDeepDivePanelProps> = ({
                 onClick={() => setActiveRound(2)}
                 className={`inline-flex min-h-[36px] items-center gap-1.5 rounded-full px-3.5 py-1 text-xs font-semibold transition-colors ${
                   activeRound === 2
-                    ? 'bg-[#0071e3] text-white'
+                    ? 'bg-[#0284c7] text-white'
                     : 'bg-white/10 text-[#d2d2d7] hover:bg-white/15'
                 }`}
               >
                 <span>Round 2</span>
                 {isRound2Settled && (
-                  <CheckCircle2 className="h-3.5 w-3.5 text-[#30d158]" />
+                  <CheckCircle2 className="h-3.5 w-3.5 text-[#14b8a6]" />
                 )}
               </button>
             </div>
@@ -1004,14 +1004,14 @@ export const GrillMeDeepDivePanel: React.FC<GrillMeDeepDivePanelProps> = ({
                   key={q.id}
                   className={`rounded-2xl border p-5 transition-colors ${
                     isSettled
-                      ? 'border-[#30d158]/40 bg-[#30d158]/[0.07]'
+                      ? 'border-[#14b8a6]/40 bg-[#14b8a6]/[0.07]'
                       : 'border-white/15 bg-white/[0.04]'
                   }`}
                 >
                   <div className="flex flex-wrap items-center justify-between gap-2">
                     <span className="flex items-center gap-2 font-display text-sm font-bold text-white sm:text-base">
                       <HelpCircle
-                        className="h-4 w-4 shrink-0 text-[#2997ff]"
+                        className="h-4 w-4 shrink-0 text-[#38bdf8]"
                         aria-hidden="true"
                       />
                       <span>
@@ -1026,7 +1026,7 @@ export const GrillMeDeepDivePanel: React.FC<GrillMeDeepDivePanelProps> = ({
                         onClick={() => handleSpeakQuestion(q.id, q.prompt)}
                         className={`inline-flex min-h-[34px] items-center gap-1.5 rounded-full border px-3 py-1 text-xs font-semibold transition-colors ${
                           isSpeaking
-                            ? 'border-[#2997ff] bg-[#0071e3] text-white'
+                            ? 'border-[#38bdf8] bg-[#0284c7] text-white'
                             : 'border-white/15 bg-white/10 text-white hover:bg-white/15'
                         }`}
                       >
@@ -1037,7 +1037,7 @@ export const GrillMeDeepDivePanel: React.FC<GrillMeDeepDivePanelProps> = ({
                           </>
                         ) : (
                           <>
-                            <Volume2 className="h-3.5 w-3.5 text-[#2997ff]" aria-hidden="true" />
+                            <Volume2 className="h-3.5 w-3.5 text-[#38bdf8]" aria-hidden="true" />
                             <span>
                               Hear {activePersona.name.split(' ')[0]} ask {q.code}
                             </span>
@@ -1046,7 +1046,7 @@ export const GrillMeDeepDivePanel: React.FC<GrillMeDeepDivePanelProps> = ({
                       </button>
 
                       {isSettled ? (
-                        <span className="inline-flex items-center gap-1 rounded-full bg-[#30d158]/20 px-2.5 py-0.5 text-xs font-semibold text-[#30d158]">
+                        <span className="inline-flex items-center gap-1 rounded-full bg-[#14b8a6]/20 px-2.5 py-0.5 text-xs font-semibold text-[#14b8a6]">
                           <CheckCircle2
                             className="h-3.5 w-3.5"
                             aria-hidden="true"
@@ -1061,7 +1061,7 @@ export const GrillMeDeepDivePanel: React.FC<GrillMeDeepDivePanelProps> = ({
                     </div>
                   </div>
 
-                  <p className="mt-2.5 text-xs leading-relaxed text-[#f5f5f7] sm:text-sm">
+                  <p className="mt-2.5 text-xs leading-relaxed text-[#f8fafc] sm:text-sm">
                     {q.prompt}
                   </p>
 
@@ -1071,8 +1071,8 @@ export const GrillMeDeepDivePanel: React.FC<GrillMeDeepDivePanelProps> = ({
                   </p>
 
                   {/* Recommended Answer Block */}
-                  <div className="mt-4 rounded-xl border border-[#0071e3]/35 bg-[#0071e3]/15 p-3.5 text-xs leading-relaxed text-[#f5f5f7]">
-                    <p className="flex items-center gap-1.5 font-semibold text-[#2997ff]">
+                  <div className="mt-4 rounded-xl border border-[#0284c7]/35 bg-[#0284c7]/15 p-3.5 text-xs leading-relaxed text-[#f8fafc]">
+                    <p className="flex items-center gap-1.5 font-semibold text-[#38bdf8]">
                       <ArrowRight className="h-3.5 w-3.5" aria-hidden="true" />
                       <span>Recommended executive rebuttal:</span>
                     </p>
@@ -1104,7 +1104,7 @@ export const GrillMeDeepDivePanel: React.FC<GrillMeDeepDivePanelProps> = ({
                         ) : (
                           <>
                             <Mic
-                              className="h-3.5 w-3.5 text-[#30d158]"
+                              className="h-3.5 w-3.5 text-[#14b8a6]"
                               aria-hidden="true"
                             />
                             <span>
@@ -1136,7 +1136,7 @@ export const GrillMeDeepDivePanel: React.FC<GrillMeDeepDivePanelProps> = ({
                           }))
                         }
                         placeholder="Speak via mic above or type your defence (measures timing, filler words & calm under pressure)…"
-                        className="min-h-[40px] flex-1 rounded-xl border border-white/15 bg-black/50 px-3.5 py-2 text-xs text-white placeholder:text-[#aeaeb2] focus:border-[#2997ff] focus:outline-none"
+                        className="min-h-[40px] flex-1 rounded-xl border border-white/15 bg-black/50 px-3.5 py-2 text-xs text-white placeholder:text-[#aeaeb2] focus:border-[#38bdf8] focus:outline-none"
                       />
                       <button
                         type="button"
@@ -1160,9 +1160,9 @@ export const GrillMeDeepDivePanel: React.FC<GrillMeDeepDivePanelProps> = ({
 
                   {/* Timing, Confidence & Calm-Under-Pressure Scorecard */}
                   {composure && (
-                    <div className="mt-4 rounded-xl border border-[#30d158]/35 bg-black/55 p-4">
+                    <div className="mt-4 rounded-xl border border-[#14b8a6]/35 bg-black/55 p-4">
                       <div className="flex flex-wrap items-center justify-between gap-2 border-b border-white/10 pb-2.5">
-                        <span className="flex items-center gap-1.5 text-xs font-bold text-[#30d158]">
+                        <span className="flex items-center gap-1.5 text-xs font-bold text-[#14b8a6]">
                           <Gauge className="h-4 w-4" aria-hidden="true" />
                           <span>
                             Voice Timing &amp; Calm Under Pressure ·{' '}
@@ -1205,7 +1205,7 @@ export const GrillMeDeepDivePanel: React.FC<GrillMeDeepDivePanelProps> = ({
                       </div>
 
                       <p className="mt-2.5 text-xs text-[#d2d2d7]">
-                        <strong className="text-[#2997ff]">
+                        <strong className="text-[#38bdf8]">
                           Composure coaching:
                         </strong>{' '}
                         {composure.coachingNote}
@@ -1219,7 +1219,7 @@ export const GrillMeDeepDivePanel: React.FC<GrillMeDeepDivePanelProps> = ({
 
           {/* Advance to Round 2 CTA when Round 1 is settled */}
           {activeRound === 1 && isRound1Settled && !isRound2Settled && (
-            <div className="flex items-center justify-between rounded-2xl border border-[#0071e3]/40 bg-[#0071e3]/15 p-4">
+            <div className="flex items-center justify-between rounded-2xl border border-[#0284c7]/40 bg-[#0284c7]/15 p-4">
               <p className="text-xs font-semibold text-white sm:text-sm">
                 Round 1 frontier settled. Ready for Round 2 failure-mode probes?
               </p>
@@ -1238,13 +1238,13 @@ export const GrillMeDeepDivePanel: React.FC<GrillMeDeepDivePanelProps> = ({
           <div
             className={`rounded-2xl border p-5 ${
               isTreeCleared
-                ? 'border-[#30d158]/50 bg-[#30d158]/10'
+                ? 'border-[#14b8a6]/50 bg-[#14b8a6]/10'
                 : 'border-white/15 bg-black/40'
             }`}
           >
             <div className="flex flex-wrap items-center justify-between gap-2">
               <div>
-                <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#30d158]">
+                <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#14b8a6]">
                   <TrendingUp className="h-4 w-4" aria-hidden="true" />
                   <span>{plan.negotiationScript.anchorHeadline}</span>
                 </span>
@@ -1260,7 +1260,7 @@ export const GrillMeDeepDivePanel: React.FC<GrillMeDeepDivePanelProps> = ({
                 {copiedScript ? (
                   <>
                     <Check
-                      className="h-3.5 w-3.5 text-[#30d158]"
+                      className="h-3.5 w-3.5 text-[#14b8a6]"
                       aria-hidden="true"
                     />
                     <span>Copied</span>
@@ -1273,21 +1273,21 @@ export const GrillMeDeepDivePanel: React.FC<GrillMeDeepDivePanelProps> = ({
                 )}
               </button>
             </div>
-            <p className="mt-3 text-xs leading-relaxed text-[#f5f5f7] sm:text-sm">
+            <p className="mt-3 text-xs leading-relaxed text-[#f8fafc] sm:text-sm">
               {plan.negotiationScript.spokenScript}
             </p>
           </div>
 
           {/* Grill With Docs: Live Candidate Decision Records (CDRs) & Niche/C-Suite Domain Glossary */}
-          <div className="rounded-2xl border border-[#2997ff]/35 bg-white/[0.04] p-5">
+          <div className="rounded-2xl border border-[#38bdf8]/35 bg-white/[0.04] p-5">
             <div className="flex flex-wrap items-center justify-between gap-3 border-b border-white/10 pb-4">
               <div>
                 <div className="flex flex-wrap items-center gap-2">
-                  <span className="inline-flex items-center gap-1.5 rounded-full bg-[#0071e3]/25 px-3 py-0.5 text-xs font-semibold text-[#2997ff]">
+                  <span className="inline-flex items-center gap-1.5 rounded-full bg-[#0284c7]/25 px-3 py-0.5 text-xs font-semibold text-[#38bdf8]">
                     <FileText className="h-3.5 w-3.5" aria-hidden="true" />
                     <span>Grill With Docs · Live Dossier</span>
                   </span>
-                  <span className="text-xs font-medium text-[#30d158]">
+                  <span className="text-xs font-medium text-[#14b8a6]">
                     {Object.keys(settledIds).length} of 4 Decision Records settled
                   </span>
                 </div>
@@ -1309,7 +1309,7 @@ export const GrillMeDeepDivePanel: React.FC<GrillMeDeepDivePanelProps> = ({
                   {copiedDossier ? (
                     <>
                       <Check
-                        className="h-3.5 w-3.5 text-[#30d158]"
+                        className="h-3.5 w-3.5 text-[#14b8a6]"
                         aria-hidden="true"
                       />
                       <span>Dossier copied</span>
@@ -1324,7 +1324,7 @@ export const GrillMeDeepDivePanel: React.FC<GrillMeDeepDivePanelProps> = ({
                 <button
                   type="button"
                   onClick={handleDownloadDossier}
-                  className="inline-flex min-h-[36px] items-center gap-1.5 rounded-full bg-[#0071e3] px-3.5 py-1.5 text-xs font-semibold text-white hover:bg-[#0077ed]"
+                  className="inline-flex min-h-[36px] items-center gap-1.5 rounded-full bg-[#0284c7] px-3.5 py-1.5 text-xs font-semibold text-white hover:bg-[#0369a1]"
                 >
                   <Download className="h-3.5 w-3.5" aria-hidden="true" />
                   <span>Download .md</span>
@@ -1339,7 +1339,7 @@ export const GrillMeDeepDivePanel: React.FC<GrillMeDeepDivePanelProps> = ({
                 onClick={() => setActiveDocsTab('cdr')}
                 className={`inline-flex min-h-[34px] items-center gap-1.5 rounded-full px-3.5 py-1 text-xs font-semibold transition-colors ${
                   activeDocsTab === 'cdr'
-                    ? 'bg-white text-[#1d1d1f]'
+                    ? 'bg-white text-[#0f172a]'
                     : 'bg-white/10 text-[#d2d2d7] hover:bg-white/15'
                 }`}
               >
@@ -1351,7 +1351,7 @@ export const GrillMeDeepDivePanel: React.FC<GrillMeDeepDivePanelProps> = ({
                 onClick={() => setActiveDocsTab('glossary')}
                 className={`inline-flex min-h-[34px] items-center gap-1.5 rounded-full px-3.5 py-1 text-xs font-semibold transition-colors ${
                   activeDocsTab === 'glossary'
-                    ? 'bg-white text-[#1d1d1f]'
+                    ? 'bg-white text-[#0f172a]'
                     : 'bg-white/10 text-[#d2d2d7] hover:bg-white/15'
                 }`}
               >
@@ -1370,7 +1370,7 @@ export const GrillMeDeepDivePanel: React.FC<GrillMeDeepDivePanelProps> = ({
                       key={cdr.id}
                       className={`rounded-xl border p-4 text-xs ${
                         isRecorded
-                          ? 'border-[#30d158]/40 bg-[#30d158]/[0.07]'
+                          ? 'border-[#14b8a6]/40 bg-[#14b8a6]/[0.07]'
                           : 'border-white/10 bg-black/40'
                       }`}
                     >
@@ -1381,7 +1381,7 @@ export const GrillMeDeepDivePanel: React.FC<GrillMeDeepDivePanelProps> = ({
                         <span
                           className={`rounded-full px-2 py-0.5 text-[11px] font-semibold ${
                             isRecorded
-                              ? 'bg-[#30d158]/20 text-[#30d158]'
+                              ? 'bg-[#14b8a6]/20 text-[#14b8a6]'
                               : 'bg-white/10 text-[#a1a1a6]'
                           }`}
                         >
@@ -1392,8 +1392,8 @@ export const GrillMeDeepDivePanel: React.FC<GrillMeDeepDivePanelProps> = ({
                         <strong className="text-[#d2d2d7]">Docs cited:</strong>{' '}
                         {cdr.sourceDocsCited}
                       </p>
-                      <p className="mt-1.5 leading-relaxed text-[#f5f5f7]">
-                        <strong className="text-[#2997ff]">Decision:</strong>{' '}
+                      <p className="mt-1.5 leading-relaxed text-[#f8fafc]">
+                        <strong className="text-[#38bdf8]">Decision:</strong>{' '}
                         {settledAnswer || cdr.defaultDecisionSummary}
                       </p>
                       <p className="mt-1.5 leading-relaxed text-[#d2d2d7]">
@@ -1401,7 +1401,7 @@ export const GrillMeDeepDivePanel: React.FC<GrillMeDeepDivePanelProps> = ({
                         {cdr.tradeOffDefended}
                       </p>
                       <p className="mt-1.5 leading-relaxed text-[#a1a1a6]">
-                        <strong className="text-[#30d158]">Guardrail:</strong>{' '}
+                        <strong className="text-[#14b8a6]">Guardrail:</strong>{' '}
                         {cdr.rollbackThreshold}
                       </p>
                     </div>
@@ -1419,7 +1419,7 @@ export const GrillMeDeepDivePanel: React.FC<GrillMeDeepDivePanelProps> = ({
                       <span className="font-display font-bold text-white">
                         {item.term}
                       </span>
-                      <span className="rounded-full border border-[#2997ff]/30 bg-[#0071e3]/15 px-2 py-0.5 text-[11px] font-semibold text-[#2997ff]">
+                      <span className="rounded-full border border-[#38bdf8]/30 bg-[#0284c7]/15 px-2 py-0.5 text-[11px] font-semibold text-[#38bdf8]">
                         {item.categoryBadge}
                       </span>
                     </div>
@@ -1428,7 +1428,7 @@ export const GrillMeDeepDivePanel: React.FC<GrillMeDeepDivePanelProps> = ({
                       {item.panelMeaning}
                     </p>
                     <p className="mt-1.5 leading-relaxed text-[#a1a1a6]">
-                      <strong className="text-[#30d158]">Your proof:</strong>{' '}
+                      <strong className="text-[#14b8a6]">Your proof:</strong>{' '}
                       {item.yourGroundedProof}
                     </p>
                   </div>

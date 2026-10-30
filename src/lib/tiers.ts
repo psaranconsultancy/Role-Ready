@@ -104,7 +104,7 @@ export const HEAT_LEVELS: Record<HeatLevel, HeatLevelMeta> = {
     timeLimitSeconds: 120,
     description:
       'Friendly coaching tone. Helps you structure your story and bring out the numbers on your resume without clock pressure.',
-    badgeClass: 'border-[#30d158]/40 bg-[#30d158]/15 text-[#30d158]',
+    badgeClass: 'border-[#14b8a6]/40 bg-[#14b8a6]/15 text-[#14b8a6]',
   },
   2: {
     level: 2,
@@ -113,7 +113,7 @@ export const HEAT_LEVELS: Record<HeatLevel, HeatLevelMeta> = {
     timeLimitSeconds: 90,
     description:
       'Standard hiring panel follow-ups. Tests your method, how you worked with other teams, and how your work fits the role.',
-    badgeClass: 'border-[#2997ff]/40 bg-[#0071e3]/20 text-[#2997ff]',
+    badgeClass: 'border-[#38bdf8]/40 bg-[#0284c7]/20 text-[#38bdf8]',
   },
   3: {
     level: 3,

@@ -54,7 +54,7 @@ export const Header: React.FC = () => {
     <>
       <header
         id="globalnav"
-        className="frosted-globalnav-dark sticky top-0 z-50 h-12 w-full text-[#f5f5f7]"
+        className="frosted-globalnav-dark sticky top-0 z-50 h-12 w-full text-[#f8fafc]"
       >
         <div className="mx-auto flex h-full max-w-[1080px] items-center justify-between gap-4 pl-[max(1rem,env(safe-area-inset-left))] pr-[max(1rem,env(safe-area-inset-right))] sm:pl-[max(1.5rem,env(safe-area-inset-left))] sm:pr-[max(1.5rem,env(safe-area-inset-right))]">
           <Link
@@ -75,8 +75,8 @@ export const Header: React.FC = () => {
               aria-current={isLanding ? 'page' : undefined}
               className={`text-xs font-medium transition-colors ${
                 isLanding
-                  ? 'text-white underline decoration-[#0071e3] decoration-2 underline-offset-8'
-                  : 'text-[#f5f5f7]/75 hover:text-white'
+                  ? 'text-white underline decoration-[#0369a1] decoration-2 underline-offset-8'
+                  : 'text-[#f8fafc]/75 hover:text-white'
               }`}
             >
               Overview
@@ -89,8 +89,8 @@ export const Header: React.FC = () => {
                   aria-current={isHistory ? 'page' : undefined}
                   className={`inline-flex items-center gap-1.5 text-xs font-medium transition-colors ${
                     isHistory
-                      ? 'text-white underline decoration-[#0071e3] decoration-2 underline-offset-8'
-                      : 'text-[#f5f5f7]/75 hover:text-white'
+                      ? 'text-white underline decoration-[#0369a1] decoration-2 underline-offset-8'
+                      : 'text-[#f8fafc]/75 hover:text-white'
                   }`}
                 >
                   <Clock className="h-3.5 w-3.5" aria-hidden="true" />
@@ -101,8 +101,8 @@ export const Header: React.FC = () => {
                   aria-current={isNew ? 'page' : undefined}
                   className={`inline-flex items-center gap-1.5 text-xs font-medium transition-colors ${
                     isNew
-                      ? 'text-white underline decoration-[#0071e3] decoration-2 underline-offset-8'
-                      : 'text-[#f5f5f7]/75 hover:text-white'
+                      ? 'text-white underline decoration-[#0369a1] decoration-2 underline-offset-8'
+                      : 'text-[#f8fafc]/75 hover:text-white'
                   }`}
                 >
                   <PlusCircle className="h-3.5 w-3.5" aria-hidden="true" />
@@ -113,19 +113,19 @@ export const Header: React.FC = () => {
               <>
                 <a
                   href="/#how-it-works"
-                  className="text-xs font-medium text-[#f5f5f7]/75 transition-colors hover:text-white"
+                  className="text-xs font-medium text-[#f8fafc]/75 transition-colors hover:text-white"
                 >
                   How it works
                 </a>
                 <a
                   href="/#grounded-architecture"
-                  className="text-xs font-medium text-[#f5f5f7]/75 transition-colors hover:text-white"
+                  className="text-xs font-medium text-[#f8fafc]/75 transition-colors hover:text-white"
                 >
                   Why it works
                 </a>
                 <a
                   href="/#pricing-tiers"
-                  className="whitespace-nowrap text-xs font-medium text-[#f5f5f7]/75 transition-colors hover:text-white"
+                  className="whitespace-nowrap text-xs font-medium text-[#f8fafc]/75 transition-colors hover:text-white"
                 >
                   Roadmap
                 </a>
@@ -148,7 +148,7 @@ export const Header: React.FC = () => {
             {isMockMode() && (
               <span className="hidden items-center gap-1.5 whitespace-nowrap rounded-full border border-white/15 bg-white/[0.06] px-2.5 py-0.5 text-xs text-[#a1a1a6] xl:inline-flex">
                 <span
-                  className="h-1.5 w-1.5 rounded-full bg-[#30d158]"
+                  className="h-1.5 w-1.5 rounded-full bg-[#14b8a6]"
                   aria-hidden="true"
                 />
                 Demo mode
@@ -173,7 +173,7 @@ export const Header: React.FC = () => {
                   type="button"
                   onClick={handleSignOut}
                   disabled={signingOut}
-                  className="inline-flex min-h-[32px] items-center gap-1.5 rounded-full border border-white/15 bg-white/10 px-3 py-1 text-xs font-medium text-[#f5f5f7] transition-colors hover:bg-white/20 disabled:opacity-50"
+                  className="inline-flex min-h-[32px] items-center gap-1.5 rounded-full border border-white/15 bg-white/10 px-3 py-1 text-xs font-medium text-[#f8fafc] transition-colors hover:bg-white/20 disabled:opacity-50"
                 >
                   <LogOut className="h-3.5 w-3.5" aria-hidden="true" />
                   <span>{signingOut ? 'Signing out…' : 'Sign out'}</span>
@@ -183,7 +183,7 @@ export const Header: React.FC = () => {
               <div className="flex items-center gap-2.5">
                 <Link
                   to="/login"
-                  className="px-2.5 py-1 text-xs font-medium text-[#f5f5f7]/80 transition-colors hover:text-white"
+                  className="px-2.5 py-1 text-xs font-medium text-[#f8fafc]/80 transition-colors hover:text-white"
                 >
                   Sign in
                 </Link>
@@ -246,12 +246,12 @@ export const Header: React.FC = () => {
           role="dialog"
           aria-modal="true"
           aria-label="Mobile navigation"
-          className="fixed inset-x-0 bottom-0 top-12 z-40 flex flex-col justify-between overflow-y-auto overscroll-contain bg-black/95 px-6 py-8 text-[#f5f5f7] lg:hidden"
+          className="fixed inset-x-0 bottom-0 top-12 z-40 flex flex-col justify-between overflow-y-auto overscroll-contain bg-black/95 px-6 py-8 text-[#f8fafc] lg:hidden"
         >
           <div className="space-y-6">
             {isMockMode() && (
               <div className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/[0.06] px-3 py-1 text-xs text-[#a1a1a6]">
-                <span className="h-2 w-2 rounded-full bg-[#30d158]" />
+                <span className="h-2 w-2 rounded-full bg-[#14b8a6]" />
                 Demo mode with sample sessions
               </div>
             )}
@@ -259,7 +259,7 @@ export const Header: React.FC = () => {
             <nav className="flex flex-col divide-y divide-white/10">
               <Link
                 to="/"
-                className="flex items-center justify-between py-4 font-display text-2xl font-bold tracking-tight text-[#f5f5f7] hover:text-[#2997ff]"
+                className="flex items-center justify-between py-4 font-display text-2xl font-bold tracking-tight text-[#f8fafc] hover:text-[#38bdf8]"
               >
                 <span>Overview</span>
                 <ArrowRight className="h-5 w-5 text-[#86868b]" />
@@ -268,14 +268,14 @@ export const Header: React.FC = () => {
                 <>
                   <Link
                     to="/history"
-                    className="flex items-center justify-between py-4 font-display text-2xl font-bold tracking-tight text-[#f5f5f7] hover:text-[#2997ff]"
+                    className="flex items-center justify-between py-4 font-display text-2xl font-bold tracking-tight text-[#f8fafc] hover:text-[#38bdf8]"
                   >
                     <span>Practice history</span>
                     <ArrowRight className="h-5 w-5 text-[#86868b]" />
                   </Link>
                   <Link
                     to="/new"
-                    className="flex items-center justify-between py-4 font-display text-2xl font-bold tracking-tight text-[#2997ff]"
+                    className="flex items-center justify-between py-4 font-display text-2xl font-bold tracking-tight text-[#38bdf8]"
                   >
                     <span>New practice session</span>
                     <ArrowRight className="h-5 w-5" />
@@ -292,7 +292,7 @@ export const Header: React.FC = () => {
                       key={item.href}
                       href={item.href}
                       onClick={() => setMobileMenuOpen(false)}
-                      className="flex items-center justify-between py-4 font-display text-2xl font-bold tracking-tight text-[#f5f5f7] hover:text-[#2997ff]"
+                      className="flex items-center justify-between py-4 font-display text-2xl font-bold tracking-tight text-[#f8fafc] hover:text-[#38bdf8]"
                     >
                       <span>{item.label}</span>
                       <ArrowRight className="h-5 w-5 text-[#86868b]" />
@@ -300,7 +300,7 @@ export const Header: React.FC = () => {
                   ))}
                   <Link
                     to="/login"
-                    className="flex items-center justify-between py-4 font-display text-2xl font-bold tracking-tight text-[#f5f5f7] hover:text-[#2997ff]"
+                    className="flex items-center justify-between py-4 font-display text-2xl font-bold tracking-tight text-[#f8fafc] hover:text-[#38bdf8]"
                   >
                     <span>Sign in or create account</span>
                     <ArrowRight className="h-5 w-5 text-[#86868b]" />
@@ -317,7 +317,7 @@ export const Header: React.FC = () => {
                   <p className="text-xs font-medium text-[#86868b]">
                     Signed in as
                   </p>
-                  <p className="mt-0.5 text-sm text-[#f5f5f7]">{user.email}</p>
+                  <p className="mt-0.5 text-sm text-[#f8fafc]">{user.email}</p>
                 </div>
                 <button
                   type="button"

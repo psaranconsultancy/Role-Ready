@@ -49,13 +49,13 @@ export const SessionSummary: React.FC<SessionSummaryProps> = ({
     <section
       data-ui="session-summary"
       aria-label="Session complete summary"
-      className="bento-card-dark overflow-hidden p-6 text-[#f5f5f7] sm:p-8"
+      className="bento-card-dark overflow-hidden p-6 text-[#f8fafc] sm:p-8"
     >
       <div className="flex flex-col justify-between gap-6 border-b border-white/10 pb-6 sm:flex-row sm:items-center">
         <div className="flex items-center gap-5">
           <ScoreRing score={overallScore} size="lg" theme="dark" />
           <div>
-            <div className="inline-flex items-center gap-1.5 rounded-full bg-[#30d158]/20 px-3 py-0.5 text-xs font-semibold text-[#30d158]">
+            <div className="inline-flex items-center gap-1.5 rounded-full bg-[#14b8a6]/20 px-3 py-0.5 text-xs font-semibold text-[#14b8a6]">
               <Award className="h-3.5 w-3.5" aria-hidden="true" />
               <span>All 6 questions answered · {band.label}</span>
             </div>
@@ -114,7 +114,7 @@ export const SessionSummary: React.FC<SessionSummaryProps> = ({
           const isWeakest = weakestQuestion?.id === q.id;
           const barColor =
             qScore >= 75
-              ? 'bg-[#30d158]'
+              ? 'bg-[#14b8a6]'
               : qScore >= 50
                 ? 'bg-[#ff9f0a]'
                 : 'bg-[#ff453a]';

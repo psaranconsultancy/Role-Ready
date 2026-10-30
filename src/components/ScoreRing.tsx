@@ -19,9 +19,9 @@ export const ScoreRing: React.FC<ScoreRingProps> = ({
     clamped >= 75
       ? {
           label: 'Strong',
-          stroke: '#30d158',
-          textLight: 'text-[#15803d]',
-          textDark: 'text-[#30d158]',
+          stroke: '#14b8a6',
+          textLight: 'text-[#0f766e]',
+          textDark: 'text-[#14b8a6]',
         }
       : clamped >= 50
         ? {
@@ -51,7 +51,7 @@ export const ScoreRing: React.FC<ScoreRingProps> = ({
   const trackColor =
     theme === 'dark' ? 'rgba(255, 255, 255, 0.12)' : 'rgba(0, 0, 0, 0.08)';
   const numberColor =
-    theme === 'dark' ? 'text-[#f5f5f7]' : 'text-[#1d1d1f]';
+    theme === 'dark' ? 'text-[#f8fafc]' : 'text-[#0f172a]';
 
   return (
     <div

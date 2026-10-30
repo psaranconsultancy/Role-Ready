@@ -149,10 +149,10 @@ export const QuestionCard: React.FC<QuestionCardProps> = ({
       {/* Question Header: Position Badge, Type Pill, Score Status */}
       <div className="flex flex-wrap items-center justify-between gap-2">
         <div className="flex items-center gap-2.5">
-          <span className="inline-flex h-7 w-7 items-center justify-center rounded-full bg-[#1d1d1f] text-xs font-bold tabular-nums text-white">
+          <span className="inline-flex h-7 w-7 items-center justify-center rounded-full bg-[#0f172a] text-xs font-bold tabular-nums text-white">
             Q{question.position}
           </span>
-          <span className="rounded-full bg-[#0071e3]/10 px-3 py-0.5 text-xs font-semibold text-[#0071e3]">
+          <span className="rounded-full bg-[#0284c7]/10 px-3 py-0.5 text-xs font-semibold text-[#0369a1]">
             {typeLabel}
           </span>
         </div>
@@ -176,14 +176,14 @@ export const QuestionCard: React.FC<QuestionCardProps> = ({
       {/* Question Prompt */}
       <h2
         id={`question-heading-${question.position}`}
-        className="mt-4 font-display text-lg font-bold leading-snug text-[#1d1d1f] sm:text-xl"
+        className="mt-4 font-display text-lg font-bold leading-snug text-[#0f172a] sm:text-xl"
       >
         {question.text}
       </h2>
 
       {question.why_asking && (
         <p className="mt-3 text-sm leading-relaxed text-[#424245]">
-          <span className="font-semibold text-[#1d1d1f]">Why we're asking: </span>
+          <span className="font-semibold text-[#0f172a]">Why we're asking: </span>
           {question.why_asking}
         </p>
       )}
@@ -191,7 +191,7 @@ export const QuestionCard: React.FC<QuestionCardProps> = ({
       {/* Citation Chips Bar */}
       {(question.resume_refs.length > 0 || question.jd_refs.length > 0) && (
         <div
-          className="mt-4 flex flex-wrap items-center gap-2 rounded-2xl border border-black/[0.06] bg-[#f5f5f7] px-3.5 py-2.5"
+          className="mt-4 flex flex-wrap items-center gap-2 rounded-2xl border border-black/[0.06] bg-[#f1f5f9] px-3.5 py-2.5"
           aria-label="Where this question comes from"
         >
           <span className="basis-full text-xs font-semibold text-[#6e6e73]">
@@ -226,12 +226,12 @@ export const QuestionCard: React.FC<QuestionCardProps> = ({
         <div
           role="status"
           aria-live="polite"
-          className="mt-5 rounded-2xl border border-[#0071e3]/25 bg-[#0071e3]/[0.06] p-4"
+          className="mt-5 rounded-2xl border border-[#0284c7]/25 bg-[#0284c7]/[0.06] p-4"
         >
-          <p className="text-xs font-semibold text-[#0071e3]">
+          <p className="text-xs font-semibold text-[#0369a1]">
             The question in plainer words (this was not scored)
           </p>
-          <p className="mt-1.5 text-sm font-semibold leading-relaxed text-[#1d1d1f]">
+          <p className="mt-1.5 text-sm font-semibold leading-relaxed text-[#0f172a]">
             {clarified.rephrased_question}
           </p>
           <p className="mt-1.5 text-xs leading-relaxed text-[#424245]">
@@ -246,7 +246,7 @@ export const QuestionCard: React.FC<QuestionCardProps> = ({
           <div className="flex flex-wrap items-center justify-between gap-2">
             <label
               htmlFor={textareaId}
-              className="text-xs font-semibold text-[#1d1d1f]"
+              className="text-xs font-semibold text-[#0f172a]"
             >
               Your answer: the situation, what you did, and the result (with a number if you can)
             </label>
@@ -254,7 +254,7 @@ export const QuestionCard: React.FC<QuestionCardProps> = ({
               <span
                 className={
                   wordCount >= 60
-                    ? 'font-semibold text-[#15803d]'
+                    ? 'font-semibold text-[#0f766e]'
                     : 'text-[#6e6e73]'
                 }
               >
@@ -266,7 +266,7 @@ export const QuestionCard: React.FC<QuestionCardProps> = ({
                   charCount > 4000
                     ? 'font-semibold text-[#d70015]'
                     : charCount >= 20
-                      ? 'text-[#1d1d1f]'
+                      ? 'text-[#0f172a]'
                       : 'text-[#86868b]'
                 }
               >
@@ -285,7 +285,7 @@ export const QuestionCard: React.FC<QuestionCardProps> = ({
                 className={`inline-flex min-h-[38px] items-center gap-1.5 rounded-full border px-4 py-1.5 text-xs font-semibold transition-colors disabled:opacity-50 ${
                   speech.listening
                     ? 'border-[#d70015]/40 bg-[#d70015]/10 text-[#d70015] hover:bg-[#d70015]/15'
-                    : 'border-[#0071e3]/30 bg-[#0071e3]/[0.06] text-[#0071e3] hover:bg-[#0071e3]/10'
+                    : 'border-[#0284c7]/30 bg-[#0284c7]/[0.06] text-[#0369a1] hover:bg-[#0284c7]/10'
                 }`}
               >
                 {speech.listening ? (
@@ -330,7 +330,7 @@ export const QuestionCard: React.FC<QuestionCardProps> = ({
             value={answerText}
             onChange={(e) => setAnswerText(e.target.value)}
             placeholder="Describe the situation, what you personally did, and the result. Include a number if you can. Not sure what the question means? Press ‘Rephrase the question’."
-            className="mt-2 block w-full rounded-[18px] border border-black/15 bg-[#f5f5f7]/60 p-4 text-base leading-relaxed text-[#1d1d1f] placeholder:text-[#aeaeb2] focus:border-[#0071e3] focus:bg-white focus:outline-none disabled:opacity-60"
+            className="mt-2 block w-full rounded-[18px] border border-black/15 bg-[#f1f5f9]/60 p-4 text-base leading-relaxed text-[#0f172a] placeholder:text-[#aeaeb2] focus:border-[#0284c7] focus:bg-white focus:outline-none disabled:opacity-60"
           />
 
           {speech.listening && speech.interim && (
@@ -344,9 +344,9 @@ export const QuestionCard: React.FC<QuestionCardProps> = ({
             <div
               role="status"
               aria-live="polite"
-              className="mt-4 rounded-2xl border border-[#0071e3]/20 bg-[#0071e3]/[0.05] p-4"
+              className="mt-4 rounded-2xl border border-[#0284c7]/20 bg-[#0284c7]/[0.05] p-4"
             >
-              <div className="flex items-center gap-2.5 text-xs font-semibold text-[#0071e3]">
+              <div className="flex items-center gap-2.5 text-xs font-semibold text-[#0369a1]">
                 <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />
                 <span>
                   Checking your answer against your resume and what the job
@@ -354,10 +354,10 @@ export const QuestionCard: React.FC<QuestionCardProps> = ({
                 </span>
               </div>
               <div className="mt-3 grid grid-cols-4 gap-2">
-                <div className="h-10 rounded-xl bg-[#0071e3]/10" />
-                <div className="h-10 rounded-xl bg-[#0071e3]/10" />
-                <div className="h-10 rounded-xl bg-[#0071e3]/10" />
-                <div className="h-10 rounded-xl bg-[#0071e3]/10" />
+                <div className="h-10 rounded-xl bg-[#0284c7]/10" />
+                <div className="h-10 rounded-xl bg-[#0284c7]/10" />
+                <div className="h-10 rounded-xl bg-[#0284c7]/10" />
+                <div className="h-10 rounded-xl bg-[#0284c7]/10" />
               </div>
             </div>
           )}
@@ -422,14 +422,14 @@ export const QuestionCard: React.FC<QuestionCardProps> = ({
           </div>
         </form>
       ) : (
-        <div className="mt-5 rounded-2xl border border-black/[0.07] bg-[#f5f5f7]/70 p-4">
+        <div className="mt-5 rounded-2xl border border-black/[0.07] bg-[#f1f5f9]/70 p-4">
           <div className="mb-1.5 flex items-center justify-between text-xs text-[#6e6e73]">
-            <span className="font-semibold text-[#1d1d1f]">
+            <span className="font-semibold text-[#0f172a]">
               Your submitted answer
             </span>
             <span className="tabular-nums">{wordCount} words</span>
           </div>
-          <p className="whitespace-pre-wrap text-sm leading-relaxed text-[#1d1d1f]">
+          <p className="whitespace-pre-wrap text-sm leading-relaxed text-[#0f172a]">
             {answerText}
           </p>
         </div>
@@ -444,7 +444,7 @@ export const QuestionCard: React.FC<QuestionCardProps> = ({
       )}
 
       {existingFeedback && isEditing && (
-        <p className="mt-3 flex items-center gap-1.5 text-xs text-[#0071e3]">
+        <p className="mt-3 flex items-center gap-1.5 text-xs text-[#0369a1]">
           <Sparkles className="h-3.5 w-3.5" aria-hidden="true" />
           <span>
             Apply the suggested fix from your scorecard and resubmit to update
@@ -463,7 +463,7 @@ export const QuestionCard: React.FC<QuestionCardProps> = ({
         />
       ) : (
         <p className="mt-5 flex items-center gap-1.5 text-xs text-[#6e6e73]">
-          <Sparkles className="h-3.5 w-3.5 text-[#0071e3]" aria-hidden="true" />
+          <Sparkles className="h-3.5 w-3.5 text-[#0369a1]" aria-hidden="true" />
           <span>
             After your score, Grill Me can ask the tougher follow-up a real
             panel would.

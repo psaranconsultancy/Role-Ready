@@ -24,9 +24,9 @@ export function getScoreBand(score: number): {
   if (score >= 75) {
     return {
       label: 'Strong',
-      badgeClass: 'border-[#30d158]/35 bg-[#30d158]/15 text-[#15803d]',
-      barClass: 'bg-[#30d158]',
-      textSignalClass: 'text-[#15803d]',
+      badgeClass: 'border-[#14b8a6]/35 bg-[#14b8a6]/15 text-[#0f766e]',
+      barClass: 'bg-[#14b8a6]',
+      textSignalClass: 'text-[#0f766e]',
     };
   }
   if (score >= 50) {
@@ -92,7 +92,7 @@ export const FeedbackPanel: React.FC<FeedbackPanelProps> = ({
   return (
     <div
       data-ui="feedback-panel"
-      className="mt-6 space-y-5 rounded-[22px] border border-black/10 bg-[#f5f5f7] p-5 sm:p-6"
+      className="mt-6 space-y-5 rounded-[22px] border border-black/10 bg-[#f1f5f9] p-5 sm:p-6"
     >
       {/* Top Row: ScoreRing + Verdict + Try Again Pill */}
       <div className="flex flex-wrap items-center justify-between gap-4 border-b border-black/10 pb-5">
@@ -109,7 +109,7 @@ export const FeedbackPanel: React.FC<FeedbackPanelProps> = ({
                 {feedback.overall} / 100
               </span>
             </div>
-            <p className="mt-1 font-display text-base font-bold text-[#1d1d1f]">
+            <p className="mt-1 font-display text-base font-bold text-[#0f172a]">
               Answer scorecard
             </p>
             <p className="text-xs text-[#6e6e73]">
@@ -139,11 +139,11 @@ export const FeedbackPanel: React.FC<FeedbackPanelProps> = ({
               className="rounded-2xl border border-black/[0.07] bg-white p-3.5"
             >
               <div className="flex items-center justify-between">
-                <span className="text-xs font-semibold text-[#1d1d1f]">
+                <span className="text-xs font-semibold text-[#0f172a]">
                   {label}
                 </span>
                 <span
-                  className="text-xs font-bold tabular-nums text-[#0071e3]"
+                  className="text-xs font-bold tabular-nums text-[#0369a1]"
                   aria-label={`${label} score ${val} out of 5`}
                 >
                   {val}/5
@@ -154,7 +154,7 @@ export const FeedbackPanel: React.FC<FeedbackPanelProps> = ({
                 aria-hidden="true"
               >
                 <div
-                  className="h-full rounded-full bg-[#0071e3] transition-[width] duration-300"
+                  className="h-full rounded-full bg-[#0284c7] transition-[width] duration-300"
                   style={{ width: `${pct}%` }}
                 />
               </div>
@@ -200,21 +200,21 @@ export const FeedbackPanel: React.FC<FeedbackPanelProps> = ({
       {/* What Worked & What to Fix Next */}
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
         <div className="rounded-2xl border border-black/[0.07] bg-white p-4">
-          <div className="flex items-center gap-2 text-xs font-bold text-[#15803d]">
+          <div className="flex items-center gap-2 text-xs font-bold text-[#0f766e]">
             <CheckCircle2 className="h-4 w-4 shrink-0" aria-hidden="true" />
             <span>What worked</span>
           </div>
-          <p className="mt-2.5 text-sm leading-relaxed text-[#1d1d1f]">
+          <p className="mt-2.5 text-sm leading-relaxed text-[#0f172a]">
             {feedback.what_worked}
           </p>
         </div>
 
-        <div className="rounded-2xl border border-[#0071e3]/25 bg-white p-4">
-          <div className="flex items-center gap-2 text-xs font-bold text-[#0071e3]">
+        <div className="rounded-2xl border border-[#0284c7]/25 bg-white p-4">
+          <div className="flex items-center gap-2 text-xs font-bold text-[#0369a1]">
             <Wrench className="h-4 w-4 shrink-0" aria-hidden="true" />
             <span>What to fix next</span>
           </div>
-          <p className="mt-2.5 text-sm leading-relaxed text-[#1d1d1f]">
+          <p className="mt-2.5 text-sm leading-relaxed text-[#0f172a]">
             {feedback.one_fix}
           </p>
         </div>
@@ -224,7 +224,7 @@ export const FeedbackPanel: React.FC<FeedbackPanelProps> = ({
       <div className="rounded-2xl border border-black/10 bg-white p-5">
         <div className="flex flex-wrap items-center justify-between gap-2 border-b border-black/[0.06] pb-3">
           <div>
-            <h4 className="font-display text-sm font-bold text-[#1d1d1f]">
+            <h4 className="font-display text-sm font-bold text-[#0f172a]">
               A stronger answer, using your resume
             </h4>
           </div>
@@ -236,7 +236,7 @@ export const FeedbackPanel: React.FC<FeedbackPanelProps> = ({
             {copied ? (
               <>
                 <Check
-                  className="h-3.5 w-3.5 text-[#15803d]"
+                  className="h-3.5 w-3.5 text-[#0f766e]"
                   aria-hidden="true"
                 />
                 <span>Copied</span>
@@ -249,7 +249,7 @@ export const FeedbackPanel: React.FC<FeedbackPanelProps> = ({
             )}
           </button>
         </div>
-        <blockquote className="mt-3.5 border-l-2 border-[#0071e3] pl-4 text-sm leading-relaxed text-[#1d1d1f]">
+        <blockquote className="mt-3.5 border-l-2 border-[#0284c7] pl-4 text-sm leading-relaxed text-[#0f172a]">
           {feedback.stronger_answer}
         </blockquote>
       </div>

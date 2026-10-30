@@ -10,7 +10,7 @@ export const Logo: React.FC<LogoProps> = ({
   size = 'md',
 }) => {
   const iconDims =
-    size === 'sm' ? 'h-6 w-6' : size === 'lg' ? 'h-9 w-9' : 'h-7 w-7';
+    size === 'sm' ? 'h-7' : size === 'lg' ? 'h-10' : 'h-8';
   const textSize =
     size === 'sm'
       ? 'text-[14px]'
@@ -24,14 +24,23 @@ export const Logo: React.FC<LogoProps> = ({
         src="/assets/img/roleready-mark.png"
         alt=""
         aria-hidden="true"
-        className={`${iconDims} shrink-0 rounded-md bg-white object-contain`}
+        width={198}
+        height={160}
+        className={`${iconDims} w-auto shrink-0 rounded-md`}
       />
       <span
         className={`font-display ${textSize} font-bold tracking-[-0.02em] ${
-          theme === 'dark' ? 'text-[#f5f5f7]' : 'text-[#143566]'
+          theme === 'dark' ? 'text-[#e2e8f0]' : 'text-[#0f172a]'
         }`}
       >
-        Role<span className="text-[#62a8da]">Ready</span>
+        Role
+        <span
+          className={`font-semibold ${
+            theme === 'dark' ? 'text-[#38bdf8]' : 'text-[#0f766e]'
+          }`}
+        >
+          Ready
+        </span>
       </span>
     </span>
   );
