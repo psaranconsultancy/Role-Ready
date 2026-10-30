@@ -187,7 +187,7 @@ export const NewSessionPage: React.FC = () => {
               }`}
             >
               <span className="font-bold tabular-nums">1</span>
-              <span>Resume &amp; JD</span>
+              <span>Resume &amp; job</span>
             </span>
             <ArrowRight
               className="h-3 w-3 text-[#86868b]"
@@ -230,7 +230,7 @@ export const NewSessionPage: React.FC = () => {
               className="h-3.5 w-3.5 text-[#0071e3]"
               aria-hidden="true"
             />
-            <span>Fill sample resume &amp; JD</span>
+            <span>Use a sample resume &amp; job</span>
           </button>
         </div>
 
@@ -253,7 +253,7 @@ export const NewSessionPage: React.FC = () => {
               Every question comes from work you have already done
             </p>
             <p className="mt-1 text-xs leading-relaxed text-[#6e6e73]">
-              We match numbered lines from your PDF directly to the job
+              We match lines from your resume to the job
               description so you can rehearse concrete examples before you step
               into the interview.
             </p>
@@ -285,8 +285,7 @@ export const NewSessionPage: React.FC = () => {
               </h3>
             </div>
             <p className="mt-1.5 text-xs text-[#a1a1a6] sm:text-sm">
-              Extracting numbered lines from your PDF and matching them against
-              the job requirements.
+              Reading your resume and matching it to what the job asks for.
             </p>
 
             <div className="mt-6 grid gap-3 sm:grid-cols-2">
@@ -360,7 +359,7 @@ export const NewSessionPage: React.FC = () => {
               </span>
             </div>
             <p className="mt-1 text-xs text-[#6e6e73]">
-              We split your resume into numbered lines so each question can cite
+              We read your resume line by line so each question can point to
               the exact work you did.
             </p>
 
@@ -525,7 +524,7 @@ export const NewSessionPage: React.FC = () => {
                   }`}
                   aria-hidden="true"
                 />
-                {trimmedJdLength} / 200+ chars
+                {trimmedJdLength} / 200 characters
               </span>
             </div>
             <p className="mt-1 text-xs text-[#6e6e73]">
@@ -542,7 +541,7 @@ export const NewSessionPage: React.FC = () => {
                 setJdText(e.target.value);
                 if (jdError) setJdError(null);
               }}
-              placeholder="Paste the full job description here (responsibilities, qualifications, technical stack)…"
+              placeholder="Paste the full job description here (responsibilities, skills and tools)…"
               className="mt-4 block w-full rounded-[18px] border border-black/15 bg-[#f5f5f7]/60 p-4 text-base leading-relaxed text-[#1d1d1f] placeholder:text-[#86868b] focus:border-[#0071e3] focus:bg-white focus:outline-none"
             />
 
@@ -563,33 +562,24 @@ export const NewSessionPage: React.FC = () => {
           >
             <div className="flex flex-wrap items-center justify-between gap-2">
               <h3 className="font-display text-lg font-bold text-[#1d1d1f]">
-                4. Grill With Docs: Niche category, C-Suite category, uploads &amp; links{' '}
+                4. Grill With Docs: go deeper with your own documents{' '}
                 <span className="font-sans text-xs font-normal text-[#86868b]">
-                  (builds live Decision Records &amp; Domain Glossary)
+                  (optional)
                 </span>
               </h3>
               <div className="flex flex-wrap gap-1.5">
                 <span className="rounded-full bg-[#ff9f0a]/15 px-3 py-0.5 text-xs font-semibold text-[#b45309]">
                   Coming soon
                 </span>
-                <span className="rounded-full bg-[#30d158]/15 px-3 py-0.5 text-xs font-semibold text-[#15803d]">
-                  Grill With Docs
-                </span>
-                <span className="rounded-full bg-[#0071e3]/10 px-3 py-0.5 text-xs font-semibold text-[#0071e3]">
-                  Niche Category
-                </span>
-                <span className="rounded-full bg-[#1d1d1f] px-3 py-0.5 text-xs font-semibold text-white">
-                  C-Suite Category
-                </span>
               </div>
             </div>
             <p id="deep-context-coming-soon" className="mt-1 text-xs text-[#6e6e73]">
               Coming soon, and optional: you don&apos;t need any of this for your
-              six questions today. When it ships, select your Industry, Department, Seniority, dedicated Niche
-              category, and C-Suite seat, or attach board decks, case studies,
-              and company URLs. Grill With Docs uses these files to challenge
-              your answers and build your downloadable Candidate Decision Records
-              (CDRs) and Domain Glossary as you practise.
+              six questions today. When it ships, you can pick your industry, department, seniority,
+              specialist area and executive role, or attach presentations, case
+              studies and company links. Grill With Docs will use them to ask
+              tougher follow-up questions and build you a downloadable summary
+              of your key decisions and the terms to know.
             </p>
 
             {/* Not built yet: shown as a preview, every control disabled */}
@@ -658,7 +648,7 @@ export const NewSessionPage: React.FC = () => {
                   htmlFor="new-seniority-select"
                   className="block text-xs font-semibold text-[#1d1d1f]"
                 >
-                  Seniority Band
+                  Seniority
                 </label>
                 <select
                   id="new-seniority-select"
@@ -688,7 +678,7 @@ export const NewSessionPage: React.FC = () => {
                   htmlFor="new-niche-category-select"
                   className="block text-xs font-bold text-[#0071e3]"
                 >
-                  Niche Category (Specialist Domain)
+                  Specialist area
                 </label>
                 <select
                   id="new-niche-category-select"
@@ -715,7 +705,7 @@ export const NewSessionPage: React.FC = () => {
                   htmlFor="new-csuite-category-select"
                   className="block text-xs font-bold text-[#1d1d1f]"
                 >
-                  C-Suite Category (Executive &amp; Board Seat)
+                  Executive or board role
                 </label>
                 <select
                   id="new-csuite-category-select"
@@ -743,7 +733,7 @@ export const NewSessionPage: React.FC = () => {
                 htmlFor="new-niche-focus"
                 className="block text-xs font-semibold text-[#1d1d1f]"
               >
-                Specific niche focus or 90-day board mandate
+                Your specialist focus or first-90-days goal
               </label>
               <input
                 id="new-niche-focus"
@@ -756,7 +746,7 @@ export const NewSessionPage: React.FC = () => {
                     nicheFocus: e.target.value,
                   })
                 }
-                placeholder="e.g. B2B payment orchestration, Series C GTM expansion, AI infrastructure latency…"
+                placeholder="e.g. business payments, launching in new countries, AI products…"
                 className="mt-1.5 block min-h-[44px] w-full rounded-2xl border border-black/15 bg-[#f5f5f7]/60 px-4 py-2.5 text-base text-[#1d1d1f] placeholder:text-[#86868b] focus:border-[#0071e3] focus:bg-white focus:outline-none"
               />
             </div>
@@ -766,7 +756,7 @@ export const NewSessionPage: React.FC = () => {
               <div className="rounded-2xl border border-black/10 bg-[#f5f5f7]/70 p-4">
                 <div className="flex items-center justify-between gap-2">
                   <span className="text-xs font-semibold text-[#1d1d1f]">
-                    Extra files (Decks, RFCs, 10-K)
+                    Extra files (presentations, reports, case studies)
                   </span>
                   <input
                     ref={extraContextFileRef}
@@ -831,7 +821,7 @@ export const NewSessionPage: React.FC = () => {
               <div className="rounded-2xl border border-black/10 bg-[#f5f5f7]/70 p-4">
                 <span className="flex items-center gap-1.5 text-xs font-semibold text-[#1d1d1f]">
                   <Link2 className="h-3.5 w-3.5 text-[#0071e3]" aria-hidden="true" />
-                  <span>Shared links (Company URLs, Memos, Profiles)</span>
+                  <span>Links (company website, articles, profiles)</span>
                 </span>
                 <div className="mt-2 flex gap-1.5">
                   <input
@@ -897,7 +887,7 @@ export const NewSessionPage: React.FC = () => {
           {/* Submit Action Bar */}
           <div className="flex flex-col items-center justify-between gap-4 pt-2 sm:flex-row">
             <p className="text-xs text-[#6e6e73]">
-              Creates 6 tailored questions (2 behavioral, 2 technical, 2
+              Creates 6 tailored questions (2 behavioural, 2 technical, 2
               role-specific).
             </p>
             <button

@@ -15,6 +15,7 @@ import { getSession, toApiError } from '../lib/api';
 import { QuestionCard } from '../components/QuestionCard';
 import { SessionSummary } from '../components/SessionSummary';
 import { ErrorBanner } from '../components/ErrorBanner';
+import { QUESTION_TYPE_LABELS } from '../lib/sessionReport';
 
 const STATUS_BADGE: Record<
   Session['status'],
@@ -265,8 +266,8 @@ export const SessionPage: React.FC = () => {
                 </span>
                 <span className="text-[#6e6e73]">
                   {showReferences
-                    ? 'Hide extracted resume lines and job requirements'
-                    : 'View all extracted resume lines and job requirements'}
+                    ? 'Hide the resume lines and job requirements we used'
+                    : 'Show the resume lines and job requirements we used'}
                 </span>
               </span>
               {showReferences ? (
@@ -286,7 +287,7 @@ export const SessionPage: React.FC = () => {
               <div className="mt-4 grid grid-cols-1 gap-4 border-t border-black/10 pt-4 text-xs md:grid-cols-2">
                 <div className="rounded-2xl bg-[#f5f5f7] p-4">
                   <p className="font-display text-sm font-bold text-[#0071e3]">
-                    Extracted resume lines ({resumeLines.length})
+                    Lines from your resume ({resumeLines.length})
                   </p>
                   <ul className="mt-3 space-y-2 text-[#1d1d1f]">
                     {resumeLines.map((r, idx) => (
@@ -302,13 +303,13 @@ export const SessionPage: React.FC = () => {
 
                 <div className="rounded-2xl bg-[#f5f5f7] p-4">
                   <p className="font-display text-sm font-bold text-[#1d1d1f]">
-                    Extracted job requirements ({jdRequirements.length})
+                    What the job asks for ({jdRequirements.length})
                   </p>
                   <ul className="mt-3 space-y-2 text-[#1d1d1f]">
                     {jdRequirements.map((j, idx) => (
                       <li key={j.id} className="leading-relaxed">
                         <span className="mr-1.5 inline-block rounded-full border border-black/15 bg-white px-2 py-0.5 text-xs font-bold text-[#1d1d1f]">
-                          Req {idx + 1}
+                          Requirement {idx + 1}
                         </span>
                         <span>{j.text}</span>
                       </li>
@@ -357,8 +358,8 @@ export const SessionPage: React.FC = () => {
                         <span className="font-bold tabular-nums">
                           Q{q.position}
                         </span>
-                        <span className="truncate capitalize text-[#6e6e73]">
-                          {q.type.replace('_', ' ')}
+                        <span className="truncate text-[#6e6e73]">
+                          {QUESTION_TYPE_LABELS[q.type] ?? q.type}
                         </span>
                       </span>
 

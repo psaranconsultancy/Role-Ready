@@ -82,7 +82,7 @@
     letter-spacing: -0.025em;
   }
 
-  code, pre, .font-mono, .tabular-nums {
+  code, pre, .font-mono {
     font-family: var(--font-mono);
     font-variant-numeric: tabular-nums;
   }

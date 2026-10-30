@@ -26,9 +26,9 @@ export const DEFAULT_GRILL_CONTEXT: RoleGrillContext = {
   industry: 'FinTech & Payments',
   department: 'Product Management',
   seniority: 'VP / SVP / Managing Director',
-  nicheCategory: 'Regulated FinTech, KYB & Cross-Border Payments',
+  nicheCategory: 'Regulated FinTech & Cross-Border Payments',
   cSuiteCategory: 'Chief Product Officer (CPO) / VP Product',
-  nicheFocus: 'B2B payment flows, KYB onboarding, and checkout conversion',
+  nicheFocus: 'Business payments, customer sign-up checks, and checkout',
   uploadedFiles: ['FinFlow_Q4_Board_Strategy_Deck.pdf'],
   sharedLinks: ['https://finflow.io/investor-relations/series-c-memo'],
 };
@@ -49,14 +49,14 @@ export const DEPARTMENT_OPTIONS = [
   'Product Management',
   'Software & Systems Engineering',
   'Data Science & Quantitative Analytics',
-  'Finance, Strategy & CorpDev',
-  'Commercial, GTM & Revenue',
+  'Finance, Strategy & Corporate Development',
+  'Sales, Marketing & Revenue',
   'Operations & Risk',
 ];
 
 export const SENIORITY_OPTIONS = [
-  'Mid-Level IC (L4–L5)',
-  'Senior / Staff / Principal IC (L6–L8)',
+  'Mid-Level (not managing a team)',
+  'Senior / Lead specialist',
   'Director / Head of Department',
   'VP / SVP / Managing Director',
   'C-Suite Executive',
@@ -64,13 +64,13 @@ export const SENIORITY_OPTIONS = [
 ];
 
 export const NICHE_CATEGORY_OPTIONS = [
-  'Regulated FinTech, KYB & Cross-Border Payments',
-  'AI Agents, Model Evals & Inference Infrastructure',
+  'Regulated FinTech & Cross-Border Payments',
+  'AI Agents, Model Testing & Infrastructure',
   'PE Portfolio Turnaround & Post-Merger Integration',
   'Clinical Biotech, Trial Design & Regulatory Submissions',
   'Zero-Trust Security, Defence & Sovereign Cloud',
-  'Quantitative Pricing, Risk & Market Microstructure',
-  'Enterprise Usage Billing, PLG & Funnel Diagnostics',
+  'Quantitative Pricing, Risk & Trading',
+  'Usage-Based Billing & Customer Growth',
   'Deep-Tech Hardware, Robotics & Supply Chain',
 ];
 
@@ -78,7 +78,7 @@ export const CSUITE_CATEGORY_OPTIONS = [
   'Chief Product Officer (CPO) / VP Product',
   'Chief Executive Officer (CEO) / Managing Director',
   'Chief Technology Officer (CTO) / VP Engineering',
-  'Chief Financial Officer (CFO) / Head of CorpDev',
+  'Chief Financial Officer (CFO) / Head of Corporate Development',
   'Chief Operating Officer (COO) / Transformation Lead',
   'Chief Revenue Officer (CRO) / Commercial Lead',
   'Chief Information Security Officer (CISO) / Chief Risk Officer',
@@ -116,7 +116,7 @@ export const HEAT_LEVELS: Record<HeatLevel, HeatLevelMeta> = {
   },
   3: {
     level: 3,
-    name: 'Bar-Raiser Grill',
+    name: 'Tough Grill',
     shortLabel: 'Grill',
     timeLimitSeconds: 75,
     description:
@@ -333,7 +333,7 @@ export const TIER_FRAMEWORKS: Record<TierFrameworkId, TierFramework> = {
         categoryTag: 'Niche Category',
         title: '1. Niche domain proof that converts to offers',
         description:
-          'Upload case studies, technical RFCs, or product specs for your exact niche so every answer proves you can deliver results from week one.',
+          'Upload case studies, technical documents, or product specs for your exact niche so every answer proves you can deliver results from week one.',
       },
       {
         categoryTag: 'C-Suite Category',
@@ -348,7 +348,7 @@ export const TIER_FRAMEWORKS: Record<TierFrameworkId, TierFramework> = {
           'Switch between Male and Female AI interviewers and turn the heat from Warm Rehearsal up to Executive Roast before your real panel.',
       },
       {
-        categoryTag: 'Timing & Salary ROI',
+        categoryTag: 'Timing & Salary',
         title: '4. Timed composure & salary negotiation scripts',
         description:
           'Measures response delay, speaking pace, and filler words under a countdown clock, then builds a custom salary script from your strongest answers.',
@@ -368,11 +368,11 @@ export const TIER_FRAMEWORKS: Record<TierFrameworkId, TierFramework> = {
           'Covers surface-level questions only. Candidates rejected in final panel rounds usually stop their practice here.',
         ctaLabel: 'Stay on Essential Prep',
         features: [
-          { text: '6 initial resume-to-JD practice questions', included: true },
-          { text: 'Basic 0–100 answer score on first draft', included: true },
-          { text: 'Line-by-line resume & JD citation chips', included: true },
+          { text: '6 practice questions from your resume and the job', included: true },
+          { text: 'A basic score out of 100 for your first answer', included: true },
+          { text: 'See the resume line and job requirement behind each question', included: true },
           {
-            text: 'Unlimited re-drills & stronger answer rewrites',
+            text: 'Unlimited retries & stronger example answers',
             included: false,
           },
           {
@@ -399,11 +399,11 @@ export const TIER_FRAMEWORKS: Record<TierFrameworkId, TierFramework> = {
         ctaLabel: 'Select Interview Ready',
         isDecoyBridge: true,
         features: [
-          { text: '6 initial resume-to-JD practice questions', included: true },
-          { text: '4-part rubric scorecard (0–100)', included: true },
-          { text: 'Line-by-line resume & JD citation chips', included: true },
+          { text: '6 practice questions from your resume and the job', included: true },
+          { text: 'Score out of 100 across 4 areas', included: true },
+          { text: 'See the resume line and job requirement behind each question', included: true },
           {
-            text: 'Unlimited re-drills & stronger answer rewrites',
+            text: 'Unlimited retries & stronger example answers',
             included: true,
           },
           {
@@ -434,11 +434,11 @@ export const TIER_FRAMEWORKS: Record<TierFrameworkId, TierFramework> = {
         roiAnchor:
           'A single successful offer negotiation pays for this tier 50x over.',
         features: [
-          { text: '6 initial resume-to-JD practice questions', included: true },
-          { text: '4-part rubric scorecard (0–100)', included: true },
-          { text: 'Line-by-line resume & JD citation chips', included: true },
+          { text: '6 practice questions from your resume and the job', included: true },
+          { text: 'Score out of 100 across 4 areas', included: true },
+          { text: 'See the resume line and job requirement behind each question', included: true },
           {
-            text: 'Unlimited re-drills & stronger answer rewrites',
+            text: 'Unlimited retries & stronger example answers',
             included: true,
           },
           {
@@ -478,9 +478,9 @@ export const TIER_FRAMEWORKS: Record<TierFrameworkId, TierFramework> = {
       },
       {
         categoryTag: 'Voice & Heat Dial',
-        title: '3. Rehearse aloud with Male or Female bar-raisers',
+        title: '3. Rehearse aloud with a male or female interviewer',
         description:
-          'Practise speaking your answers out loud while adjusting the interviewer from supportive rehearsal to sceptical bar-raiser pushback.',
+          'Practise speaking your answers out loud while adjusting the interviewer from supportive rehearsal to tough, sceptical questioning.',
       },
       {
         categoryTag: 'Timing & Composure',
@@ -502,11 +502,11 @@ export const TIER_FRAMEWORKS: Record<TierFrameworkId, TierFramework> = {
           'Keeps you at the same preparation level as everyone else in the general applicant pool.',
         ctaLabel: 'Stay as Applicant',
         features: [
-          { text: '6 initial resume-to-JD practice questions', included: true },
-          { text: 'Basic 0–100 answer score on first draft', included: true },
-          { text: 'Line-by-line resume & JD citation chips', included: true },
+          { text: '6 practice questions from your resume and the job', included: true },
+          { text: 'A basic score out of 100 for your first answer', included: true },
+          { text: 'See the resume line and job requirement behind each question', included: true },
           {
-            text: 'Panel-round behavioral & technical rewrites',
+            text: 'Panel-round behavioural & technical rewrites',
             included: false,
           },
           {
@@ -523,21 +523,21 @@ export const TIER_FRAMEWORKS: Record<TierFrameworkId, TierFramework> = {
         level: 'tier2',
         badgeLabel: 'Tier 2 · Bridge',
         name: 'Shortlist',
-        subtitle: 'Tools to clear panel rounds and behavioral assessments.',
+        subtitle: 'Tools to clear panel rounds and behavioural assessments.',
         priceMonthly: '£69',
         billingNote: 'per month · shortlist prep',
         positioning:
-          'Gets you onto the shortlist for standard behavioral and technical rounds.',
+          'Gets you onto the shortlist for standard behavioural and technical rounds.',
         psychologicalNudge:
           'Helps you reach the final three candidates, where Niche and C-Suite panels start testing every trade-off aloud.',
         ctaLabel: 'Select Shortlist',
         isDecoyBridge: true,
         features: [
-          { text: '6 initial resume-to-JD practice questions', included: true },
-          { text: '4-part rubric scorecard (0–100)', included: true },
-          { text: 'Line-by-line resume & JD citation chips', included: true },
+          { text: '6 practice questions from your resume and the job', included: true },
+          { text: 'Score out of 100 across 4 areas', included: true },
+          { text: 'See the resume line and job requirement behind each question', included: true },
           {
-            text: 'Panel-round behavioral & technical rewrites',
+            text: 'Panel-round behavioural & technical rewrites',
             included: true,
           },
           {
@@ -568,11 +568,11 @@ export const TIER_FRAMEWORKS: Record<TierFrameworkId, TierFramework> = {
         roiAnchor:
           'A single successful offer negotiation pays for this tier 50x over.',
         features: [
-          { text: '6 initial resume-to-JD practice questions', included: true },
-          { text: '4-part rubric scorecard (0–100)', included: true },
-          { text: 'Line-by-line resume & JD citation chips', included: true },
+          { text: '6 practice questions from your resume and the job', included: true },
+          { text: 'Score out of 100 across 4 areas', included: true },
+          { text: 'See the resume line and job requirement behind each question', included: true },
           {
-            text: 'Panel-round behavioral & technical rewrites',
+            text: 'Panel-round behavioural & technical rewrites',
             included: true,
           },
           {
@@ -636,9 +636,9 @@ export const TIER_FRAMEWORKS: Record<TierFrameworkId, TierFramework> = {
           'When five finalists have similar resumes, bare-minimum preparation is the fastest way to lose the role.',
         ctaLabel: 'Stay on Baseline',
         features: [
-          { text: '6 initial resume-to-JD practice questions', included: true },
-          { text: 'Basic 0–100 answer score on first draft', included: true },
-          { text: 'Line-by-line resume & JD citation chips', included: true },
+          { text: '6 practice questions from your resume and the job', included: true },
+          { text: 'A basic score out of 100 for your first answer', included: true },
+          { text: 'See the resume line and job requirement behind each question', included: true },
           {
             text: 'Company-specific answer framing & rewrites',
             included: false,
@@ -668,9 +668,9 @@ export const TIER_FRAMEWORKS: Record<TierFrameworkId, TierFramework> = {
         ctaLabel: 'Select Competitive Edge',
         isDecoyBridge: true,
         features: [
-          { text: '6 initial resume-to-JD practice questions', included: true },
-          { text: '4-part rubric scorecard (0–100)', included: true },
-          { text: 'Line-by-line resume & JD citation chips', included: true },
+          { text: '6 practice questions from your resume and the job', included: true },
+          { text: 'Score out of 100 across 4 areas', included: true },
+          { text: 'See the resume line and job requirement behind each question', included: true },
           {
             text: 'Company-specific answer framing & rewrites',
             included: true,
@@ -703,9 +703,9 @@ export const TIER_FRAMEWORKS: Record<TierFrameworkId, TierFramework> = {
         roiAnchor:
           'A single successful offer negotiation pays for this tier 50x over.',
         features: [
-          { text: '6 initial resume-to-JD practice questions', included: true },
-          { text: '4-part rubric scorecard (0–100)', included: true },
-          { text: 'Line-by-line resume & JD citation chips', included: true },
+          { text: '6 practice questions from your resume and the job', included: true },
+          { text: 'Score out of 100 across 4 areas', included: true },
+          { text: 'See the resume line and job requirement behind each question', included: true },
           {
             text: 'Company-specific answer framing & rewrites',
             included: true,
@@ -737,11 +737,11 @@ export const TIER_FRAMEWORKS: Record<TierFrameworkId, TierFramework> = {
         categoryTag: 'Niche Category',
         title: '1. Dedicated Niche domain selector & custom briefs',
         description:
-          'Choose from Regulated FinTech, AI Evals & Infra, Biotech & GxP, Quant Risk, Zero-Trust Security, or type your own specialist mandate.',
+          'Choose from Regulated FinTech, AI Infrastructure, Biotech, Financial Risk, Zero-Trust Security, or type your own specialist mandate.',
       },
       {
         categoryTag: 'Uploads & Links',
-        title: '2. Grounded in your uploaded RFCs, case studies & URLs',
+        title: '2. Grounded in your own documents, case studies & links',
         description:
           'Attach technical architecture docs, clinical protocols, or product roadmaps and share live company links to sharpen every follow-up question.',
       },
@@ -771,15 +771,15 @@ export const TIER_FRAMEWORKS: Record<TierFrameworkId, TierFramework> = {
           'Specialist hiring managers spot generic, textbook answers within the first 90 seconds.',
         ctaLabel: 'Stay on Generalist Prep',
         features: [
-          { text: '6 initial resume-to-JD practice questions', included: true },
-          { text: 'Basic 0–100 answer score on first draft', included: true },
-          { text: 'Line-by-line resume & JD citation chips', included: true },
+          { text: '6 practice questions from your resume and the job', included: true },
+          { text: 'A basic score out of 100 for your first answer', included: true },
+          { text: 'See the resume line and job requirement behind each question', included: true },
           {
             text: 'Technical & domain-specific answer rewrites',
             included: false,
           },
           {
-            text: 'Niche category selector, RFC/case-study uploads & URL context',
+            text: 'Choose your specialist area, add case studies, documents & links',
             included: false,
           },
           {
@@ -802,15 +802,15 @@ export const TIER_FRAMEWORKS: Record<TierFrameworkId, TierFramework> = {
         ctaLabel: 'Select Domain Ready',
         isDecoyBridge: true,
         features: [
-          { text: '6 initial resume-to-JD practice questions', included: true },
-          { text: '4-part rubric scorecard (0–100)', included: true },
-          { text: 'Line-by-line resume & JD citation chips', included: true },
+          { text: '6 practice questions from your resume and the job', included: true },
+          { text: 'Score out of 100 across 4 areas', included: true },
+          { text: 'See the resume line and job requirement behind each question', included: true },
           {
             text: 'Technical & domain-specific answer rewrites',
             included: true,
           },
           {
-            text: 'Niche category selector, RFC/case-study uploads & URL context',
+            text: 'Choose your specialist area, add case studies, documents & links',
             included: false,
           },
           {
@@ -824,7 +824,7 @@ export const TIER_FRAMEWORKS: Record<TierFrameworkId, TierFramework> = {
         badgeLabel: 'Tier 3 · Domain Authority',
         name: 'Niche Specialist Pro',
         subtitle:
-          'Full Niche category engine, custom document & link ingestion, AI voice roasting, and scarcity-based salary scripts.',
+          'Full Niche category engine, your own documents & links, AI voice roasting, and scarcity-based salary scripts.',
         priceMonthly: '£79',
         billingNote: 'per month · only £10 more than Tier 2',
         positioning:
@@ -837,15 +837,15 @@ export const TIER_FRAMEWORKS: Record<TierFrameworkId, TierFramework> = {
         roiAnchor:
           'Negotiating a specialist scarcity premium pays for this tier 50x over.',
         features: [
-          { text: '6 initial resume-to-JD practice questions', included: true },
-          { text: '4-part rubric scorecard (0–100)', included: true },
-          { text: 'Line-by-line resume & JD citation chips', included: true },
+          { text: '6 practice questions from your resume and the job', included: true },
+          { text: 'Score out of 100 across 4 areas', included: true },
+          { text: 'See the resume line and job requirement behind each question', included: true },
           {
             text: 'Technical & domain-specific answer rewrites',
             included: true,
           },
           {
-            text: 'Niche category selector, RFC/case-study uploads & URL context',
+            text: 'Choose your specialist area, add case studies, documents & links',
             included: true,
             highlight: true,
           },
@@ -865,7 +865,7 @@ export const TIER_FRAMEWORKS: Record<TierFrameworkId, TierFramework> = {
     subheadline:
       'Executive panels skip textbook questions and press directly on capital allocation, unit economics, 90-day turnarounds, and board governance.',
     tagline:
-      'C-Suite focus: Upload board decks, 10-Ks, and investor memos to rehearse high-heat executive cross-examination aloud.',
+      'C-Suite focus: Upload board decks, annual reports, and investor memos to rehearse high-heat executive cross-examination aloud.',
     pillars: [
       {
         categoryTag: 'C-Suite Category',
@@ -874,8 +874,8 @@ export const TIER_FRAMEWORKS: Record<TierFrameworkId, TierFramework> = {
           'Select CEO, CPO, CTO, CFO, COO, CRO, CISO, or Board Director so every question tests P&L ownership, capital allocation, and org design.',
       },
       {
-        categoryTag: 'Board Decks & 10-Ks',
-        title: '2. Ingest board decks, 10-Ks & investor memos',
+        categoryTag: 'Board Decks & annual reports',
+        title: '2. Ingest board decks, annual reports & investor memos',
         description:
           'Upload quarterly board packs, earnings transcripts, or strategy memos and link investor updates to simulate real boardroom questioning.',
       },
@@ -883,11 +883,11 @@ export const TIER_FRAMEWORKS: Record<TierFrameworkId, TierFramework> = {
         categoryTag: 'Executive Roast',
         title: '3. 60-second Executive Roast with AI voice partners',
         description:
-          'Practise aloud with Elena Vance (Managing Partner) or Marcus Sterling (CPTO) at Heat 4/4 to defend your thesis under board pressure.',
+          'Practise aloud with Elena Vance (Managing Partner) or Marcus Sterling (Chief Product & Technology Officer) at Heat 4/4 to defend your thesis under board pressure.',
       },
       {
-        categoryTag: 'Executive Comp',
-        title: '4. Board composure metrics & executive comp scripts',
+        categoryTag: 'Executive Pay',
+        title: '4. Board composure metrics & executive pay scripts',
         description:
           'Scores vocal steadiness, concise 60-second framing, and equips you with base, bonus, and equity negotiation scripts.',
       },
@@ -895,29 +895,29 @@ export const TIER_FRAMEWORKS: Record<TierFrameworkId, TierFramework> = {
     tiers: [
       {
         level: 'tier1',
-        badgeLabel: 'Tier 1 · IC Screening',
+        badgeLabel: 'Tier 1 · Screening',
         name: 'Standard Screen',
-        subtitle: 'Basic screening practice built for individual contributors.',
+        subtitle: 'Basic screening practice built for non-managers.',
         priceMonthly: '£19',
         billingNote: 'per month · entry tier',
-        positioning: 'Standard resume-to-JD questions without executive context.',
+        positioning: 'Standard questions from your resume and the job, without an executive focus.',
         psychologicalNudge:
           'Answering a C-Suite panel like a mid-level manager is the fastest way to lose board confidence.',
         ctaLabel: 'Stay on Standard Screen',
         features: [
-          { text: '6 initial resume-to-JD practice questions', included: true },
-          { text: 'Basic 0–100 answer score on first draft', included: true },
-          { text: 'Line-by-line resume & JD citation chips', included: true },
+          { text: '6 practice questions from your resume and the job', included: true },
+          { text: 'A basic score out of 100 for your first answer', included: true },
+          { text: 'See the resume line and job requirement behind each question', included: true },
           {
             text: 'Leadership & P&L answer framing rewrites',
             included: false,
           },
           {
-            text: 'Dedicated C-Suite seat category, board deck & 10-K uploads',
+            text: 'Dedicated C-Suite seat category, board deck & annual report uploads',
             included: false,
           },
           {
-            text: 'Executive Roast AI Voice Interviewer & equity/comp scripts',
+            text: 'Executive Roast AI Voice Interviewer & pay & equity scripts',
             included: false,
           },
         ],
@@ -930,25 +930,25 @@ export const TIER_FRAMEWORKS: Record<TierFrameworkId, TierFramework> = {
         priceMonthly: '£69',
         billingNote: 'per month · director tier',
         positioning:
-          'Covers functional leadership questions, but leaves out boardroom voice roasting and investor deck ingestion.',
+          'Covers functional leadership questions, but leaves out boardroom voice roasting and investor document uploads.',
         psychologicalNudge:
           'Prepares you for functional rounds, but stops short of live CEO, PE Operating Partner, and Board cross-examination.',
         ctaLabel: 'Select Department Lead',
         isDecoyBridge: true,
         features: [
-          { text: '6 initial resume-to-JD practice questions', included: true },
-          { text: '4-part rubric scorecard (0–100)', included: true },
-          { text: 'Line-by-line resume & JD citation chips', included: true },
+          { text: '6 practice questions from your resume and the job', included: true },
+          { text: 'Score out of 100 across 4 areas', included: true },
+          { text: 'See the resume line and job requirement behind each question', included: true },
           {
             text: 'Leadership & P&L answer framing rewrites',
             included: true,
           },
           {
-            text: 'Dedicated C-Suite seat category, board deck & 10-K uploads',
+            text: 'Dedicated C-Suite seat category, board deck & annual report uploads',
             included: false,
           },
           {
-            text: 'Executive Roast AI Voice Interviewer & equity/comp scripts',
+            text: 'Executive Roast AI Voice Interviewer & pay & equity scripts',
             included: false,
           },
         ],
@@ -958,7 +958,7 @@ export const TIER_FRAMEWORKS: Record<TierFrameworkId, TierFramework> = {
         badgeLabel: 'Tier 3 · Boardroom Elite',
         name: 'C-Suite & Board',
         subtitle:
-          'Full C-Suite seat category, board deck & 10-K uploads, 60s Executive Roast voice grilling, and executive comp scripts.',
+          'Full C-Suite seat category, board deck & annual report uploads, 60s Executive Roast voice grilling, and executive pay scripts.',
         priceMonthly: '£79',
         billingNote: 'per month · only £10 more than Tier 2',
         positioning:
@@ -971,20 +971,20 @@ export const TIER_FRAMEWORKS: Record<TierFrameworkId, TierFramework> = {
         roiAnchor:
           'A single executive base or equity negotiation pays for this tier 50x over.',
         features: [
-          { text: '6 initial resume-to-JD practice questions', included: true },
-          { text: '4-part rubric scorecard (0–100)', included: true },
-          { text: 'Line-by-line resume & JD citation chips', included: true },
+          { text: '6 practice questions from your resume and the job', included: true },
+          { text: 'Score out of 100 across 4 areas', included: true },
+          { text: 'See the resume line and job requirement behind each question', included: true },
           {
             text: 'Leadership & P&L answer framing rewrites',
             included: true,
           },
           {
-            text: 'Dedicated C-Suite seat category, board deck & 10-K uploads',
+            text: 'Dedicated C-Suite seat category, board deck & annual report uploads',
             included: true,
             highlight: true,
           },
           {
-            text: 'Executive Roast AI Voice Interviewer & equity/comp scripts',
+            text: 'Executive Roast AI Voice Interviewer & pay & equity scripts',
             included: true,
             highlight: true,
           },

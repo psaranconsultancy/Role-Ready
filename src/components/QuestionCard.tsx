@@ -20,6 +20,7 @@ import { FeedbackPanel, getScoreBand } from './FeedbackPanel';
 import { ErrorBanner } from './ErrorBanner';
 import { GrillFollowUp } from './GrillFollowUp';
 import { useSpeechToText } from '../lib/useSpeechToText';
+import { QUESTION_TYPE_LABELS } from '../lib/sessionReport';
 
 interface QuestionCardProps {
   question: Question;
@@ -35,12 +36,6 @@ interface QuestionCardProps {
   ) => void;
 }
 
-const QUESTION_TYPE_LABELS: Record<Question['type'], string> = {
-  behavioural: 'Behavioral',
-  technical: 'Technical',
-  role_fit: 'Role fit',
-  situational: 'Situational',
-};
 
 export const QuestionCard: React.FC<QuestionCardProps> = ({
   question,
@@ -178,10 +173,10 @@ export const QuestionCard: React.FC<QuestionCardProps> = ({
       {(question.resume_refs.length > 0 || question.jd_refs.length > 0) && (
         <div
           className="mt-4 flex flex-wrap items-center gap-2 rounded-2xl border border-black/[0.06] bg-[#f5f5f7] px-3.5 py-2.5"
-          aria-label="Question evidence citations"
+          aria-label="Where this question comes from"
         >
-          <span className="text-xs font-semibold text-[#6e6e73]">
-            Cites:
+          <span className="basis-full text-xs font-semibold text-[#6e6e73]">
+            Based on:
           </span>
           {question.resume_refs.map((refId) => (
             <ReferenceChip
@@ -234,7 +229,7 @@ export const QuestionCard: React.FC<QuestionCardProps> = ({
               htmlFor={textareaId}
               className="text-xs font-semibold text-[#1d1d1f]"
             >
-              Your answer (cover Situation, Task, Action, and Result with a metric)
+              Your answer: the situation, what you did, and the result (with a number if you can)
             </label>
             <div className="flex items-center gap-2 text-xs tabular-nums">
               <span
@@ -256,7 +251,7 @@ export const QuestionCard: React.FC<QuestionCardProps> = ({
                       : 'text-[#86868b]'
                 }
               >
-                {charCount}/4,000 chars
+                {charCount}/4,000 characters
               </span>
             </div>
           </div>
@@ -315,7 +310,7 @@ export const QuestionCard: React.FC<QuestionCardProps> = ({
             disabled={submitting}
             value={answerText}
             onChange={(e) => setAnswerText(e.target.value)}
-            placeholder="Describe the Situation and Task, the specific Actions you took, and the measurable Result… Not sure what the question means? Say so and we'll rephrase it."
+            placeholder="Describe the situation, what you personally did, and the result. Include a number if you can. Not sure what the question means? Say so and we'll rephrase it."
             className="mt-2 block w-full rounded-[18px] border border-black/15 bg-[#f5f5f7]/60 p-4 text-base leading-relaxed text-[#1d1d1f] placeholder:text-[#86868b] focus:border-[#0071e3] focus:bg-white focus:outline-none disabled:opacity-60"
           />
 
@@ -335,8 +330,8 @@ export const QuestionCard: React.FC<QuestionCardProps> = ({
               <div className="flex items-center gap-2.5 text-xs font-semibold text-[#0071e3]">
                 <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />
                 <span>
-                  Scoring your answer against your resume lines and the job
-                  requirements…
+                  Checking your answer against your resume and what the job
+                  asks for…
                 </span>
               </div>
               <div className="mt-3 grid grid-cols-4 gap-2">

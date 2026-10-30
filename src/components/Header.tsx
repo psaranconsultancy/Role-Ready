@@ -3,7 +3,7 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { PlusCircle, Clock, LogOut, Sparkles, ArrowRight, Flame } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { isMockMode } from '../lib/api';
-import { TierPricingSection } from './TierPricingSection';
+import { ComingNextSection } from './ComingNextSection';
 import { Logo } from './Logo';
 
 export const Header: React.FC = () => {
@@ -139,7 +139,7 @@ export const Header: React.FC = () => {
               type="button"
               onClick={() => setShowPricingModal(true)}
               className="inline-flex items-center gap-1.5 whitespace-nowrap rounded-full border border-[#ff9f0a]/35 bg-[#ff9f0a]/10 px-2.5 py-0.5 text-xs font-medium text-[#ff9f0a] transition-colors hover:bg-[#ff9f0a]/20"
-              title="See what's coming next: a spoken AI interviewer, Niche & C-Suite sets and salary scripts"
+              title="See what's coming next: a spoken AI interviewer, specialist and executive question sets, and salary scripts"
             >
               <Flame className="h-3 w-3" aria-hidden="true" />
               <span>Coming soon</span>
@@ -161,7 +161,7 @@ export const Header: React.FC = () => {
                   to="/new"
                   className="btn-pill-primary px-3.5 py-1 text-xs font-semibold"
                 >
-                  New session
+                  New practice
                 </Link>
                 <span
                   className="max-w-[150px] truncate text-xs text-[#a1a1a6]"
@@ -347,7 +347,7 @@ export const Header: React.FC = () => {
       )}
 
       {showPricingModal && (
-        <TierPricingSection
+        <ComingNextSection
           mode="modal"
           onCloseModal={() => setShowPricingModal(false)}
         />

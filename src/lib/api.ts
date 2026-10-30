@@ -364,7 +364,7 @@ export async function parseResume(sessionId: string): Promise<ParseResumeRespons
     try {
       return mockParseResume(user.id, sessionId);
     } catch (err) {
-      throw toApiError(err, 'parse_failed', 'Could not parse your resume.');
+      throw toApiError(err, 'parse_failed', 'Could not read your resume.');
     }
   }
 
@@ -378,7 +378,7 @@ export async function parseResume(sessionId: string): Promise<ParseResumeRespons
     throw await extractFunctionApiError(
       error,
       'parse_failed',
-      'Could not extract text from the uploaded PDF.'
+      'Could not read the text in your PDF. Try saving it again as a PDF and re-uploading.'
     );
   }
   return data;
