@@ -22,7 +22,7 @@ const STATUS_BADGE: Record<
   { label: string; className: string }
 > = {
   draft: {
-    label: 'Draft',
+    label: 'Setup unfinished',
     className: 'border-black/15 bg-black/[0.05] text-[#6e6e73]',
   },
   ready: {
