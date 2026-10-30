@@ -318,7 +318,7 @@ export const QuestionCard: React.FC<QuestionCardProps> = ({
             value={answerText}
             onChange={(e) => setAnswerText(e.target.value)}
             placeholder="Describe the situation, what you personally did, and the result. Include a number if you can. Not sure what the question means? Say so and we'll rephrase it."
-            className="mt-2 block w-full rounded-[18px] border border-black/15 bg-[#f5f5f7]/60 p-4 text-base leading-relaxed text-[#1d1d1f] placeholder:text-[#86868b] focus:border-[#0071e3] focus:bg-white focus:outline-none disabled:opacity-60"
+            className="mt-2 block w-full rounded-[18px] border border-black/15 bg-[#f5f5f7]/60 p-4 text-base leading-relaxed text-[#1d1d1f] placeholder:text-[#aeaeb2] focus:border-[#0071e3] focus:bg-white focus:outline-none disabled:opacity-60"
           />
 
           {speech.listening && speech.interim && (

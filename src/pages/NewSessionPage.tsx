@@ -496,7 +496,7 @@ export const NewSessionPage: React.FC = () => {
                   value={roleTitle}
                   onChange={(e) => setRoleTitle(e.target.value)}
                   placeholder="e.g. Senior Product Analyst"
-                  className="mt-1.5 block min-h-[44px] w-full rounded-2xl border border-black/15 bg-[#f5f5f7]/60 px-4 py-2.5 text-base text-[#1d1d1f] placeholder:text-[#86868b] focus:border-[#0071e3] focus:bg-white focus:outline-none"
+                  className="mt-1.5 block min-h-[44px] w-full rounded-2xl border border-black/15 bg-[#f5f5f7]/60 px-4 py-2.5 text-base text-[#1d1d1f] placeholder:text-[#aeaeb2] focus:border-[#0071e3] focus:bg-white focus:outline-none"
                 />
               </div>
               <div>
@@ -513,7 +513,7 @@ export const NewSessionPage: React.FC = () => {
                   value={company}
                   onChange={(e) => setCompany(e.target.value)}
                   placeholder="e.g. FinFlow"
-                  className="mt-1.5 block min-h-[44px] w-full rounded-2xl border border-black/15 bg-[#f5f5f7]/60 px-4 py-2.5 text-base text-[#1d1d1f] placeholder:text-[#86868b] focus:border-[#0071e3] focus:bg-white focus:outline-none"
+                  className="mt-1.5 block min-h-[44px] w-full rounded-2xl border border-black/15 bg-[#f5f5f7]/60 px-4 py-2.5 text-base text-[#1d1d1f] placeholder:text-[#aeaeb2] focus:border-[#0071e3] focus:bg-white focus:outline-none"
                 />
               </div>
             </div>
@@ -559,7 +559,7 @@ export const NewSessionPage: React.FC = () => {
                 if (jdError) setJdError(null);
               }}
               placeholder="Paste the full job description here (responsibilities, skills and tools)…"
-              className="mt-4 block w-full rounded-[18px] border border-black/15 bg-[#f5f5f7]/60 p-4 text-base leading-relaxed text-[#1d1d1f] placeholder:text-[#86868b] focus:border-[#0071e3] focus:bg-white focus:outline-none"
+              className="mt-4 block w-full rounded-[18px] border border-black/15 bg-[#f5f5f7]/60 p-4 text-base leading-relaxed text-[#1d1d1f] placeholder:text-[#aeaeb2] focus:border-[#0071e3] focus:bg-white focus:outline-none"
             />
 
             {jdError && (
@@ -625,6 +625,9 @@ export const NewSessionPage: React.FC = () => {
                   }
                   className="mt-1.5 block min-h-[44px] w-full rounded-2xl border border-black/15 bg-[#f5f5f7]/60 px-3.5 py-2 text-sm text-[#1d1d1f] focus:border-[#0071e3] focus:bg-white focus:outline-none"
                 >
+                  <option value="" disabled>
+                    e.g. {INDUSTRY_OPTIONS[0]}
+                  </option>
                   {INDUSTRY_OPTIONS.map((opt) => (
                     <option key={opt} value={opt}>
                       {opt}
@@ -652,6 +655,9 @@ export const NewSessionPage: React.FC = () => {
                   }
                   className="mt-1.5 block min-h-[44px] w-full rounded-2xl border border-black/15 bg-[#f5f5f7]/60 px-3.5 py-2 text-sm text-[#1d1d1f] focus:border-[#0071e3] focus:bg-white focus:outline-none"
                 >
+                  <option value="" disabled>
+                    e.g. {DEPARTMENT_OPTIONS[0]}
+                  </option>
                   {DEPARTMENT_OPTIONS.map((opt) => (
                     <option key={opt} value={opt}>
                       {opt}
@@ -679,6 +685,9 @@ export const NewSessionPage: React.FC = () => {
                   }
                   className="mt-1.5 block min-h-[44px] w-full rounded-2xl border border-black/15 bg-[#f5f5f7]/60 px-3.5 py-2 text-sm text-[#1d1d1f] focus:border-[#0071e3] focus:bg-white focus:outline-none"
                 >
+                  <option value="" disabled>
+                    e.g. {SENIORITY_OPTIONS[0]}
+                  </option>
                   {SENIORITY_OPTIONS.map((opt) => (
                     <option key={opt} value={opt}>
                       {opt}
@@ -709,6 +718,9 @@ export const NewSessionPage: React.FC = () => {
                   }
                   className="mt-1.5 block min-h-[44px] w-full rounded-xl border border-black/15 bg-white px-3.5 py-2 text-sm text-[#1d1d1f] focus:border-[#0071e3] focus:outline-none"
                 >
+                  <option value="" disabled>
+                    e.g. {NICHE_CATEGORY_OPTIONS[0]}
+                  </option>
                   {NICHE_CATEGORY_OPTIONS.map((opt) => (
                     <option key={opt} value={opt}>
                       {opt}
@@ -736,6 +748,9 @@ export const NewSessionPage: React.FC = () => {
                   }
                   className="mt-1.5 block min-h-[44px] w-full rounded-xl border border-black/15 bg-white px-3.5 py-2 text-sm text-[#1d1d1f] focus:border-[#0071e3] focus:outline-none"
                 >
+                  <option value="" disabled>
+                    e.g. {CSUITE_CATEGORY_OPTIONS[0]}
+                  </option>
                   {CSUITE_CATEGORY_OPTIONS.map((opt) => (
                     <option key={opt} value={opt}>
                       {opt}
@@ -764,7 +779,7 @@ export const NewSessionPage: React.FC = () => {
                   })
                 }
                 placeholder="e.g. business payments, launching in new countries, AI products…"
-                className="mt-1.5 block min-h-[44px] w-full rounded-2xl border border-black/15 bg-[#f5f5f7]/60 px-4 py-2.5 text-base text-[#1d1d1f] placeholder:text-[#86868b] focus:border-[#0071e3] focus:bg-white focus:outline-none"
+                className="mt-1.5 block min-h-[44px] w-full rounded-2xl border border-black/15 bg-[#f5f5f7]/60 px-4 py-2.5 text-base text-[#1d1d1f] placeholder:text-[#aeaeb2] focus:border-[#0071e3] focus:bg-white focus:outline-none"
               />
             </div>
 
@@ -848,7 +863,7 @@ export const NewSessionPage: React.FC = () => {
                     value={newContextLink}
                     onChange={(e) => setNewContextLink(e.target.value)}
                     placeholder="https://company.com/strategy-memo"
-                    className="min-h-[36px] flex-1 rounded-xl border border-black/15 bg-white px-3 py-1 text-xs text-[#1d1d1f] placeholder:text-[#86868b] focus:border-[#0071e3] focus:outline-none"
+                    className="min-h-[36px] flex-1 rounded-xl border border-black/15 bg-white px-3 py-1 text-xs text-[#1d1d1f] placeholder:text-[#aeaeb2] focus:border-[#0071e3] focus:outline-none"
                   />
                   <button
                     type="button"
