@@ -668,7 +668,7 @@ export const GrillMeDeepDivePanel: React.FC<GrillMeDeepDivePanelProps> = ({
                 })
               }
               placeholder="e.g. Post-merger integration, Series C international expansion, SOC2 & enterprise risk…"
-              className="mt-1.5 block min-h-[40px] w-full rounded-xl border border-white/15 bg-black/50 px-3.5 py-2 text-xs text-white placeholder:text-[#86868b] focus:border-[#2997ff] focus:outline-none"
+              className="mt-1.5 block min-h-[40px] w-full rounded-xl border border-white/15 bg-black/50 px-3.5 py-2 text-xs text-white placeholder:text-[#aeaeb2] focus:border-[#2997ff] focus:outline-none"
             />
           </div>
 
@@ -730,7 +730,7 @@ export const GrillMeDeepDivePanel: React.FC<GrillMeDeepDivePanelProps> = ({
                   value={newLinkUrl}
                   onChange={(e) => setNewLinkUrl(e.target.value)}
                   placeholder="https://company.com/investor-memo"
-                  className="min-h-[34px] flex-1 rounded-lg border border-white/15 bg-black/60 px-2.5 py-1 text-xs text-white placeholder:text-[#86868b] focus:border-[#2997ff] focus:outline-none"
+                  className="min-h-[34px] flex-1 rounded-lg border border-white/15 bg-black/60 px-2.5 py-1 text-xs text-white placeholder:text-[#aeaeb2] focus:border-[#2997ff] focus:outline-none"
                 />
                 <button
                   type="button"
@@ -1136,7 +1136,7 @@ export const GrillMeDeepDivePanel: React.FC<GrillMeDeepDivePanelProps> = ({
                           }))
                         }
                         placeholder="Speak via mic above or type your defence (measures timing, filler words & calm under pressure)…"
-                        className="min-h-[40px] flex-1 rounded-xl border border-white/15 bg-black/50 px-3.5 py-2 text-xs text-white placeholder:text-[#86868b] focus:border-[#2997ff] focus:outline-none"
+                        className="min-h-[40px] flex-1 rounded-xl border border-white/15 bg-black/50 px-3.5 py-2 text-xs text-white placeholder:text-[#aeaeb2] focus:border-[#2997ff] focus:outline-none"
                       />
                       <button
                         type="button"

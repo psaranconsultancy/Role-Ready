@@ -125,7 +125,9 @@ export async function extractFunctionApiError(
       }
     }
   }
-  return toApiError(err, fallbackCode, fallbackMessage);
+  // No structured body (timeout, network, gateway error): the client's own message is
+  // developer text such as "Edge Function returned a non-2xx status code", so use ours.
+  return { error: { code: fallbackCode, message: fallbackMessage } };
 }
 
 function validateAuthInput(email: string, password: string): void {
@@ -414,7 +416,7 @@ export async function generateQuestions(
     throw await extractFunctionApiError(
       error,
       'llm_failed',
-      'Failed to generate tailored questions.'
+      'We could not write your questions this time. Please try again.'
     );
   }
   return data;
@@ -592,13 +594,14 @@ export async function getSession(id: string): Promise<{
   ]);
 
   if (sessionRes.error || !sessionRes.data) {
-    throw toApiError(sessionRes.error, 'not_found', 'Session not found.');
+    // PostgREST text (e.g. a malformed id) is not for users.
+    throw { error: { code: 'not_found', message: 'Session not found.' } } satisfies ApiError;
   }
   if (questionsRes.error) {
-    throw toApiError(questionsRes.error, 'bad_request', 'Could not load session questions.');
+    throw { error: { code: 'bad_request', message: 'Could not load session questions.' } } satisfies ApiError;
   }
   if (answersRes.error) {
-    throw toApiError(answersRes.error, 'bad_request', 'Could not load session answers.');
+    throw { error: { code: 'bad_request', message: 'Could not load session answers.' } } satisfies ApiError;
   }
 
   return {

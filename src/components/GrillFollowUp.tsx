@@ -326,7 +326,7 @@ export const GrillFollowUp: React.FC<GrillFollowUpProps> = ({
                 disabled={loading !== null}
                 onChange={(e) => setReply(e.target.value)}
                 placeholder="Answer the follow-up directly. Name what you did and the number."
-                className="mt-2 block w-full rounded-[18px] border border-white/15 bg-black/40 p-4 text-base leading-relaxed text-white placeholder:text-[#86868b] focus:border-[#2997ff] focus:outline-none disabled:opacity-60"
+                className="mt-2 block w-full rounded-[18px] border border-white/15 bg-black/40 p-4 text-base leading-relaxed text-white placeholder:text-[#aeaeb2] focus:border-[#2997ff] focus:outline-none disabled:opacity-60"
               />
               <div className="mt-3 flex flex-wrap items-center justify-between gap-3">
                 <span className="text-xs text-[#a1a1a6]">

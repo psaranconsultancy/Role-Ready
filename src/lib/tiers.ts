@@ -22,15 +22,16 @@ export interface RoleGrillContext {
   sharedLinks: string[];
 }
 
+// Starts empty: the examples show as grey hint text in the form instead.
 export const DEFAULT_GRILL_CONTEXT: RoleGrillContext = {
-  industry: 'FinTech & Payments',
-  department: 'Product Management',
-  seniority: 'VP / SVP / Managing Director',
-  nicheCategory: 'Regulated FinTech & Cross-Border Payments',
-  cSuiteCategory: 'Chief Product Officer (CPO) / VP Product',
-  nicheFocus: 'Business payments, customer sign-up checks, and checkout',
-  uploadedFiles: ['FinFlow_Q4_Board_Strategy_Deck.pdf'],
-  sharedLinks: ['https://finflow.io/investor-relations/series-c-memo'],
+  industry: '',
+  department: '',
+  seniority: '',
+  nicheCategory: '',
+  cSuiteCategory: '',
+  nicheFocus: '',
+  uploadedFiles: [],
+  sharedLinks: [],
 };
 
 export const INDUSTRY_OPTIONS = [
@@ -996,7 +997,7 @@ export const TIER_FRAMEWORKS: Record<TierFrameworkId, TierFramework> = {
 
 const TIER_STORAGE_KEY = 'roleready_subscription_tier_v1';
 const FRAMEWORK_STORAGE_KEY = 'roleready_tier_framework_v2';
-const CONTEXT_STORAGE_KEY = 'roleready_grill_context_v2';
+const CONTEXT_STORAGE_KEY = 'roleready_grill_context_v3';
 const HEAT_STORAGE_KEY = 'roleready_grill_heat_v1';
 const GENDER_STORAGE_KEY = 'roleready_interviewer_gender_v1';
 const TIER_CHANGE_EVENT = 'roleready:tier-change';

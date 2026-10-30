@@ -9,9 +9,11 @@ import {
   FileText,
   Briefcase,
   FolderOpen,
+  Loader2,
+  RotateCcw,
 } from 'lucide-react';
 import type { Session, Question, Feedback, ApiError } from '@contracts';
-import { getSession, toApiError } from '../lib/api';
+import { generateQuestions, getSession, parseResume, toApiError } from '../lib/api';
 import { QuestionCard } from '../components/QuestionCard';
 import { SessionSummary } from '../components/SessionSummary';
 import { ErrorBanner } from '../components/ErrorBanner';
@@ -22,7 +24,7 @@ const STATUS_BADGE: Record<
   { label: string; className: string }
 > = {
   draft: {
-    label: 'Draft',
+    label: 'Setup unfinished',
     className: 'border-black/15 bg-black/[0.05] text-[#6e6e73]',
   },
   ready: {
@@ -50,6 +52,8 @@ export const SessionPage: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<ApiError | null>(null);
   const [showReferences, setShowReferences] = useState(false);
+  const [finishing, setFinishing] = useState(false);
+  const [finishError, setFinishError] = useState<ApiError | null>(null);
 
   const loadSessionData = useCallback(async () => {
     if (!id) return;
@@ -104,6 +108,24 @@ export const SessionPage: React.FC = () => {
     });
   };
 
+  // A session whose setup stopped part-way (e.g. the coach timed out) has no questions yet.
+  const finishSetup = async () => {
+    if (!session) return;
+    setFinishing(true);
+    setFinishError(null);
+    try {
+      if (!session.resume_lines?.length) await parseResume(session.id);
+      await generateQuestions(session.id);
+      await loadSessionData();
+    } catch (err) {
+      setFinishError(
+        toApiError(err, 'llm_failed', 'We could not finish setting up this session. Please try again.')
+      );
+    } finally {
+      setFinishing(false);
+    }
+  };
+
   const scrollToQuestion = (position: number) => {
     const el = document.getElementById(`question-${position}`);
     if (el) {
@@ -118,7 +140,7 @@ export const SessionPage: React.FC = () => {
           <div className="bento-card-light h-28 p-6" />
           <div className="grid gap-6 lg:grid-cols-12">
             <div className="bento-card-light hidden h-80 lg:col-span-3 lg:block" />
-            <div className="space-y-6 lg:col-span-9">
+            <div className="min-w-0 space-y-6 lg:col-span-9">
               <div className="bento-card-light h-64 p-6" />
               <div className="bento-card-light h-64 p-6" />
             </div>
@@ -321,13 +343,51 @@ export const SessionPage: React.FC = () => {
           </div>
         )}
 
+        {questions.length === 0 && (
+          <div data-ui="setup-unfinished" className="bento-card-light p-6 text-center sm:p-8">
+            <h2 className="font-display text-xl font-bold text-[#1d1d1f]">
+              This session's questions aren't ready yet
+            </h2>
+            <p className="mx-auto mt-1 max-w-md text-sm text-[#6e6e73]">
+              Setup stopped before your six questions were written. Finish it
+              now, or start a new practice session.
+            </p>
+            {finishError && (
+              <div className="mt-4 text-left">
+                <ErrorBanner error={finishError} />
+              </div>
+            )}
+            <div className="mt-6 flex flex-col items-center justify-center gap-3 sm:flex-row">
+              <button
+                type="button"
+                onClick={finishSetup}
+                disabled={finishing}
+                className="btn-pill-primary min-h-[42px] px-6 py-2 text-xs font-semibold disabled:opacity-60"
+              >
+                {finishing ? (
+                  <Loader2 className="h-3.5 w-3.5 animate-spin" aria-hidden="true" />
+                ) : (
+                  <RotateCcw className="h-3.5 w-3.5" aria-hidden="true" />
+                )}
+                <span>{finishing ? 'Writing your questions…' : 'Finish setting up'}</span>
+              </button>
+              <Link
+                to="/new"
+                className="btn-pill-secondary-light min-h-[42px] px-6 py-2 text-xs font-semibold"
+              >
+                Start a new session
+              </Link>
+            </div>
+          </div>
+        )}
+
         {/* Two-Column Workspace: Left Rail (Desktop) + Main Questions */}
         <div className="grid gap-6 lg:grid-cols-12 lg:items-start">
           {/* Desktop Sticky Question Navigator Rail */}
           <aside
             data-ui="question-nav"
             aria-label="Question navigator"
-            className="bento-card-light hidden p-4 lg:sticky lg:top-28 lg:col-span-3 lg:block"
+            className={`bento-card-light hidden p-4 lg:sticky lg:top-28 lg:col-span-3 ${questions.length ? 'lg:block' : ''}`}
           >
             <p className="px-2 text-xs font-semibold text-[#86868b]">
               Questions in this session
@@ -378,7 +438,7 @@ export const SessionPage: React.FC = () => {
           </aside>
 
           {/* Question Cards List */}
-          <div className="space-y-6 lg:col-span-9">
+          <div className="min-w-0 space-y-6 lg:col-span-9">
             {questions.map((q) => (
               <QuestionCard
                 key={q.id}
