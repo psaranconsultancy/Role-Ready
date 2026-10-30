@@ -6,6 +6,9 @@ import type {
   GenerateQuestionsResponse,
   ScoreAnswerResponse,
   ApiError,
+  GrillHeat,
+  GrillFollowUpResponse,
+  GrillReplyResponse,
 } from '@contracts';
 import { supabase } from './supabase';
 import {
@@ -18,6 +21,8 @@ import {
   mockGetSession,
   mockListSessions,
   mockDeleteSession,
+  mockGrillFollowUp,
+  mockGrillReply,
   type MockUser,
 } from '../mocks/mockStore';
 
@@ -457,6 +462,91 @@ export async function scoreAnswer(
       error,
       'llm_failed',
       'Could not score your answer. Please retry.'
+    );
+  }
+  return data;
+}
+
+/** Grill Me: one tougher follow-up on an already scored answer. */
+export async function askGrillFollowUp(
+  questionId: string,
+  heat: GrillHeat
+): Promise<GrillFollowUpResponse> {
+  const user = await getUser();
+  if (!user) {
+    const err: ApiError = {
+      error: { code: 'unauthorized', message: 'You must be signed in.' },
+    };
+    throw err;
+  }
+
+  if (isMockMode()) {
+    await fakeDelay(700, 1300);
+    try {
+      return mockGrillFollowUp(user.id, questionId, heat);
+    } catch (err) {
+      throw toApiError(err, 'llm_failed', 'Grill Me could not respond. Please retry.');
+    }
+  }
+
+  const { data, error } = await supabase.functions.invoke<GrillFollowUpResponse>(
+    'grill-followup',
+    { body: { question_id: questionId, heat } }
+  );
+  if (error || !data) {
+    throw await extractFunctionApiError(
+      error,
+      'llm_failed',
+      'Grill Me could not respond. Please retry.'
+    );
+  }
+  return data;
+}
+
+/** Grill Me: judges the candidate's reply to a follow-up. Nothing is saved. */
+export async function judgeGrillReply(
+  questionId: string,
+  heat: GrillHeat,
+  followup: string,
+  reply: string
+): Promise<GrillReplyResponse> {
+  const trimmed = reply.trim();
+  if (trimmed.length < 20 || trimmed.length > 2000) {
+    const err: ApiError = {
+      error: {
+        code: 'bad_request',
+        message: 'Your reply must be between 20 and 2,000 characters.',
+      },
+    };
+    throw err;
+  }
+
+  const user = await getUser();
+  if (!user) {
+    const err: ApiError = {
+      error: { code: 'unauthorized', message: 'You must be signed in.' },
+    };
+    throw err;
+  }
+
+  if (isMockMode()) {
+    await fakeDelay(750, 1400);
+    try {
+      return mockGrillReply(user.id, questionId, heat, trimmed);
+    } catch (err) {
+      throw toApiError(err, 'llm_failed', 'Grill Me could not judge your reply. Please retry.');
+    }
+  }
+
+  const { data, error } = await supabase.functions.invoke<GrillReplyResponse>(
+    'grill-followup',
+    { body: { question_id: questionId, heat, followup, reply: trimmed } }
+  );
+  if (error || !data) {
+    throw await extractFunctionApiError(
+      error,
+      'llm_failed',
+      'Grill Me could not judge your reply. Please retry.'
     );
   }
   return data;

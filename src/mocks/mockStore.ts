@@ -7,6 +7,9 @@ import type {
   ParseResumeResponse,
   GenerateQuestionsResponse,
   ResumeLine,
+  GrillHeat,
+  GrillFollowUpResponse,
+  GrillReplyResponse,
 } from '@contracts';
 import {
   SAMPLE_RESUME_LINES,
@@ -450,4 +453,95 @@ export function mockDeleteSession(userId: string, sessionId: string): void {
     questions: store.questions.filter((q) => q.session_id !== sessionId),
     answers: store.answers.filter((a) => !qIds.has(a.question_id)),
   });
+}
+
+// ---------- Grill Me (mock) ----------
+
+const MOCK_GRILL_OPENERS: Record<GrillHeat, string> = {
+  1: "That's a good start.",
+  2: 'Let me press on that a little.',
+  3: "I'm not convinced yet.",
+  4: "Let's be blunt.",
+};
+
+export function mockGrillFollowUp(
+  userId: string,
+  questionId: string,
+  heat: GrillHeat
+): GrillFollowUpResponse {
+  const store = loadStore(userId);
+  const question = store.questions.find((q) => q.id === questionId);
+  const answer = store.answers.find((a) => a.question_id === questionId);
+  if (!question || !answer) {
+    throw {
+      error: {
+        code: 'bad_request' as const,
+        message: 'Answer this question and get your score first.',
+      },
+    };
+  }
+  const session = store.sessions.find((s) => s.id === question.session_id);
+  const lines = session?.resume_lines ?? SAMPLE_RESUME_LINES;
+  const line =
+    lines.find((l) => question.resume_refs.includes(l.id)) ?? lines[0];
+  const claim = answer.unsupported_claims[0];
+  const lineText = line.text.replace(/[.\s]+$/, '');
+
+  const followup = claim
+    ? `${MOCK_GRILL_OPENERS[heat]} You said "${claim}", but I can't see that on your resume. Where does that number come from, and what exactly did you do to get it?`
+    : heat >= 3
+      ? `${MOCK_GRILL_OPENERS[heat]} Your resume says "${lineText}". Which part of that result would not have happened without you personally, and how do you know?`
+      : `${MOCK_GRILL_OPENERS[heat]} Can you walk me through the one decision you made in "${lineText}" that mattered most, and the result it led to?`;
+
+  return {
+    followup,
+    presses_on: claim
+      ? 'A claim your resume does not back up'
+      : 'Your own part in the result',
+    resume_refs: line ? [line.id] : [],
+  };
+}
+
+export function mockGrillReply(
+  userId: string,
+  questionId: string,
+  heat: GrillHeat,
+  reply: string
+): GrillReplyResponse {
+  if (reply.includes('#fail')) {
+    throw {
+      error: {
+        code: 'llm_failed' as const,
+        message: 'Grill Me timed out while judging your reply. Please try again.',
+      },
+    };
+  }
+  const store = loadStore(userId);
+  const question = store.questions.find((q) => q.id === questionId);
+  const session = question
+    ? store.sessions.find((s) => s.id === question.session_id)
+    : undefined;
+  const lines = session?.resume_lines ?? SAMPLE_RESUME_LINES;
+  const line =
+    lines.find((l) => question?.resume_refs.includes(l.id)) ?? lines[0];
+
+  const lineText = line.text.replace(/[.\s]+$/, '');
+  const words = reply.trim().split(/\s+/).length;
+  const hasNumber = /\d/.test(reply);
+  const bar = heat >= 3 ? 45 : 30;
+  const verdict: GrillReplyResponse['verdict'] =
+    hasNumber && words >= bar ? 'held_up' : hasNumber || words >= bar ? 'partly' : 'cracked';
+
+  const feedback =
+    verdict === 'held_up'
+      ? 'You answered the question directly and backed it with a number from your own work.'
+      : verdict === 'partly'
+        ? 'There is substance here, but you need both a specific number and your own action to fully answer the challenge.'
+        : 'This dodges the question. Name what you did yourself and the result, using a number from your resume.';
+
+  return {
+    verdict,
+    feedback,
+    better_reply: `Fair question. On my resume I list "${lineText}". My part was the decision itself: I scoped the work, made the call on what to build first, and tracked the result week by week. That is the number I would stand behind in a reference check.`,
+  };
 }
