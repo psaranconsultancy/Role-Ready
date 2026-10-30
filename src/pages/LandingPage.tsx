@@ -44,52 +44,6 @@ export const LandingPage: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-[#f5f5f7] text-[#1d1d1f]">
-      {/* Sticky Product Local Sub-Navigation */}
-      <div className="frosted-localnav-dark sticky top-12 z-40 h-[52px] w-full text-[#f5f5f7]">
-        <div className="mx-auto flex h-full max-w-[1080px] items-center justify-between px-4 sm:px-6">
-          <span className="font-display text-base font-semibold tracking-tight text-[#f5f5f7] sm:text-[17px]">
-            RoleReady
-          </span>
-          <div className="flex items-center gap-5">
-            <a
-              href="#how-it-works"
-              className="hidden text-xs text-[#f5f5f7]/75 transition-colors hover:text-white sm:inline"
-            >
-              How it works
-            </a>
-            <a
-              href="#grounded-architecture"
-              className="hidden text-xs text-[#f5f5f7]/75 transition-colors hover:text-white sm:inline"
-            >
-              Why it works
-            </a>
-            <a
-              href="#pricing-tiers"
-              className="hidden text-xs text-[#f5f5f7]/75 transition-colors hover:text-white sm:inline"
-            >
-              Plans &amp; Grill Me
-            </a>
-            {user ? (
-              <Link
-                to="/history"
-                className="btn-pill-primary px-3.5 py-1 text-xs font-semibold"
-              >
-                Open dashboard
-              </Link>
-            ) : (
-              <button
-                type="button"
-                onClick={handleStartDemo}
-                disabled={startingDemo}
-                className="btn-pill-primary px-3.5 py-1 text-xs font-semibold"
-              >
-                {startingDemo ? 'Opening…' : 'Try the demo'}
-              </button>
-            )}
-          </div>
-        </div>
-      </div>
-
       {/* 1. Flagship Dark Hero Showcase with Ambient Video + 60fps Canvas */}
       <section className="relative overflow-hidden bg-black px-4 pb-20 pt-14 text-[#f5f5f7] sm:px-6 sm:pb-28 sm:pt-20">
         <AmbientHeroCanvas
