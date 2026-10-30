@@ -1,7 +1,13 @@
 type Provider = "gemini" | "anthropic";
 
 const DEFAULT_GEMINI_MODEL = "gemini-3.8-flash";
+// Used when the main model is overloaded (503) or rate limited (429), so a live demo still answers.
+const DEFAULT_GEMINI_FALLBACK_MODEL = "gemini-2.5-flash";
 const DEFAULT_ANTHROPIC_MODEL = "claude-sonnet-4-6";
+// Edge functions allow up to 150 s per request. The main Gemini model gets a short
+// budget so a hung or overloaded call still leaves time for the fallback model.
+const REQUEST_TIMEOUT_MS = 60_000;
+const PRIMARY_GEMINI_TIMEOUT_MS = 20_000;
 
 export class LlmError extends Error {
   constructor(message: string) {
@@ -29,9 +35,18 @@ export async function generateJson<T>(
       : `${userPrompt}\n\nYour previous response was invalid. Return only corrected JSON matching the requested schema.`;
     // Retry malformed model output once, but do not spend another full request
     // timeout retrying an unavailable provider.
-    const raw = provider === "gemini"
-      ? await callGemini(systemPrompt, repairPrompt)
-      : await callAnthropic(systemPrompt, repairPrompt);
+    let raw: string;
+    try {
+      raw = provider === "gemini"
+        ? await callGemini(systemPrompt, repairPrompt)
+        : await callAnthropic(systemPrompt, repairPrompt);
+    } catch (error) {
+      if (error instanceof DOMException && error.name === "TimeoutError") {
+        console.error("LLM request timed out", error);
+        throw new LlmError("The AI took too long to respond. Please try again.");
+      }
+      throw error;
+    }
     try {
       const parsed = parseJson(raw);
       if (validate(parsed)) return parsed;
@@ -48,30 +63,56 @@ export async function generateJson<T>(
 async function callGemini(systemPrompt: string, userPrompt: string): Promise<string> {
   const apiKey = Deno.env.get("GEMINI_API_KEY");
   if (!apiKey) throw new LlmError("GEMINI_API_KEY is not configured.");
-  const model = Deno.env.get("GEMINI_MODEL") ?? DEFAULT_GEMINI_MODEL;
-  const response = await fetch(
-    `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent`,
-    {
-      method: "POST",
-      headers: { "Content-Type": "application/json", "x-goog-api-key": apiKey },
-      body: JSON.stringify({
-        systemInstruction: { parts: [{ text: systemPrompt }] },
-        contents: [{ role: "user", parts: [{ text: userPrompt }] }],
-        generationConfig: { temperature: 0.2, responseMimeType: "application/json" },
-      }),
-      signal: AbortSignal.timeout(25_000),
-    },
-  );
-  if (!response.ok) {
-    const detail = await response.text();
-    console.error("Gemini request failed", response.status, detail.slice(0, 500));
-    throw new LlmError("The AI provider request failed.");
+  const primary = Deno.env.get("GEMINI_MODEL") ?? DEFAULT_GEMINI_MODEL;
+  const fallback = Deno.env.get("GEMINI_FALLBACK_MODEL") ?? DEFAULT_GEMINI_FALLBACK_MODEL;
+  const models = fallback && fallback !== primary ? [primary, fallback] : [primary];
+
+  for (const [index, model] of models.entries()) {
+    const hasFallback = index < models.length - 1;
+    let response: Response;
+    try {
+      response = await fetch(
+        `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json", "x-goog-api-key": apiKey },
+          body: JSON.stringify({
+            systemInstruction: { parts: [{ text: systemPrompt }] },
+            contents: [{ role: "user", parts: [{ text: userPrompt }] }],
+            generationConfig: {
+              temperature: 0.2,
+              responseMimeType: "application/json",
+              // Gemini 3 models think at "high" by default, which is slow; these are structured extraction tasks.
+              ...(model.startsWith("gemini-3") ? { thinkingConfig: { thinkingLevel: "low" } } : {}),
+            },
+          }),
+          signal: AbortSignal.timeout(hasFallback ? PRIMARY_GEMINI_TIMEOUT_MS : REQUEST_TIMEOUT_MS),
+        },
+      );
+    } catch (error) {
+      if (hasFallback && error instanceof DOMException && error.name === "TimeoutError") {
+        console.error("Gemini request timed out, trying fallback", model);
+        continue;
+      }
+      throw error;
+    }
+    if (!response.ok) {
+      const detail = await response.text();
+      console.error("Gemini request failed", model, response.status, detail.slice(0, 500));
+      const busy = response.status === 429 || response.status === 503;
+      if (busy && hasFallback) continue;
+      throw new LlmError(busy
+        ? "The AI service is busy right now. Please try again in a moment."
+        : "The AI provider request failed.");
+    }
+    const payload = await response.json();
+    const text = payload?.candidates?.[0]?.content?.parts
+      ?.map((part: { text?: string }) => part.text ?? "").join("");
+    if (typeof text !== "string" || !text.trim()) throw new LlmError("The AI returned an empty response.");
+    if (index > 0) console.log("Gemini answered with fallback model", model);
+    return text;
   }
-  const payload = await response.json();
-  const text = payload?.candidates?.[0]?.content?.parts
-    ?.map((part: { text?: string }) => part.text ?? "").join("");
-  if (typeof text !== "string" || !text.trim()) throw new LlmError("The AI returned an empty response.");
-  return text;
+  throw new LlmError("The AI provider request failed.");
 }
 
 async function callAnthropic(systemPrompt: string, userPrompt: string): Promise<string> {
@@ -92,7 +133,7 @@ async function callAnthropic(systemPrompt: string, userPrompt: string): Promise<
       system: `${systemPrompt}\nReturn only a valid JSON object, with no markdown fences or commentary.`,
       messages: [{ role: "user", content: userPrompt }],
     }),
-    signal: AbortSignal.timeout(25_000),
+    signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS),
   });
   if (!response.ok) {
     const detail = await response.text();
