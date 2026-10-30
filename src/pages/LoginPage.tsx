@@ -265,7 +265,7 @@ export const LoginPage: React.FC = () => {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="alex.rivera@roleready.app"
-                className="mt-1.5 block min-h-[44px] w-full rounded-2xl border border-black/15 bg-[#f5f5f7]/60 px-4 py-2.5 text-base text-[#1d1d1f] placeholder:text-[#86868b] focus:border-[#0071e3] focus:bg-white focus:outline-none focus:placeholder:text-transparent"
+                className="mt-1.5 block min-h-[44px] w-full rounded-2xl border border-black/15 bg-[#f5f5f7]/60 px-4 py-2.5 text-base text-[#1d1d1f] placeholder:text-[#aeaeb2] focus:border-[#0071e3] focus:bg-white focus:outline-none"
               />
             </div>
 
@@ -287,7 +287,7 @@ export const LoginPage: React.FC = () => {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="••••••••••••"
-                className="mt-1.5 block min-h-[44px] w-full rounded-2xl border border-black/15 bg-[#f5f5f7]/60 px-4 py-2.5 text-base text-[#1d1d1f] placeholder:text-[#86868b] focus:border-[#0071e3] focus:bg-white focus:outline-none focus:placeholder:text-transparent"
+                className="mt-1.5 block min-h-[44px] w-full rounded-2xl border border-black/15 bg-[#f5f5f7]/60 px-4 py-2.5 text-base text-[#1d1d1f] placeholder:text-[#aeaeb2] focus:border-[#0071e3] focus:bg-white focus:outline-none"
               />
             </div>
 

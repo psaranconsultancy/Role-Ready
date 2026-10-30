@@ -45,6 +45,12 @@
 }
 
 @layer base {
+  /* Example text in every box is a grey hint that clears as soon as the box is tapped. */
+  input:focus::placeholder,
+  textarea:focus::placeholder {
+    color: transparent;
+  }
+
   *, *::before, *::after {
     box-sizing: border-box;
     -webkit-tap-highlight-color: transparent;
