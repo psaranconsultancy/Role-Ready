@@ -431,3 +431,23 @@ export function mockListSessions(userId: string): Session[] {
     (a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
   );
 }
+
+export function mockDeleteSession(userId: string, sessionId: string): void {
+  const store = loadStore(userId);
+  if (!store.sessions.some((s) => s.id === sessionId)) {
+    throw {
+      error: {
+        code: 'not_found' as const,
+        message: 'We could not find that interview session.',
+      },
+    };
+  }
+  const qIds = new Set(
+    store.questions.filter((q) => q.session_id === sessionId).map((q) => q.id)
+  );
+  saveStore({
+    sessions: store.sessions.filter((s) => s.id !== sessionId),
+    questions: store.questions.filter((q) => q.session_id !== sessionId),
+    answers: store.answers.filter((a) => !qIds.has(a.question_id)),
+  });
+}
