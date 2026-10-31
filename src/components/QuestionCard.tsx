@@ -456,7 +456,13 @@ export const QuestionCard: React.FC<QuestionCardProps> = ({
               <button
                 type="button"
                 disabled={submitting}
-                onClick={speech.listening ? speech.stop : speech.start}
+                onClick={() => {
+                  if (speech.listening) return speech.stop();
+                  void speech.start();
+                  document
+                    .getElementById(textareaId)
+                    ?.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+                }}
                 aria-pressed={speech.listening}
                 className={`inline-flex min-h-[38px] items-center gap-1.5 rounded-full border px-4 py-1.5 text-xs font-semibold transition-colors disabled:opacity-50 ${
                   speech.listening
@@ -510,7 +516,7 @@ export const QuestionCard: React.FC<QuestionCardProps> = ({
           />
 
           {speech.listening && speech.interim && (
-            <p className="mt-1.5 text-xs italic text-[#6e6e73]">
+            <p className="mt-1.5 text-sm text-[#0f766e]">
               Hearing: {speech.interim}
             </p>
           )}
