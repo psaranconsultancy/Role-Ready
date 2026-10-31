@@ -16,6 +16,7 @@ import { ErrorBanner } from '../components/ErrorBanner';
 import { getScoreBand } from '../components/FeedbackPanel';
 import { ScoreRing } from '../components/ScoreRing';
 import { AmbientHeroCanvas } from '../components/AmbientHeroCanvas';
+import { ProgressChart } from '../components/ProgressChart';
 
 const STATUS_BADGE: Record<
   Session['status'],
@@ -219,6 +220,10 @@ export const HistoryPage: React.FC = () => {
               )}
             </div>
           </div>
+        )}
+
+        {!loading && completedSessions.length > 0 && (
+          <ProgressChart sessions={sessions} />
         )}
 
         {error && <ErrorBanner error={error} onRetry={fetchHistory} />}
