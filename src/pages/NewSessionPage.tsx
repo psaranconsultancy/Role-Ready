@@ -34,6 +34,7 @@ import {
   SAMPLE_JD_TEXT,
 } from '../mocks/fixtures';
 import { ErrorBanner } from '../components/ErrorBanner';
+import { InterviewerPicker } from '../components/InterviewerPicker';
 
 type GenerationStage = 'idle' | 'parsing' | 'generating';
 
@@ -915,6 +916,8 @@ export const NewSessionPage: React.FC = () => {
             </div>
             </fieldset>
           </section>
+
+          <InterviewerPicker />
 
           {/* Submit Action Bar */}
           <div className="flex flex-col items-center justify-between gap-4 pt-2 sm:flex-row">
