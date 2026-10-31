@@ -35,6 +35,7 @@ const IDLE_CHECK_IN_MS = 60_000;
 const CHECK_IN_LINE =
   "Just checking in. Would you like a bit more time, or shall we move on to the next question?";
 const MORE_TIME_LINE = 'Of course. Take all the time you need.';
+const PAUSE_LINE = "I'll pause the interview here. Press Resume interview whenever you're ready.";
 
 const REPHRASE_REQUEST =
   "I don't understand the question. Can you rephrase it in plainer words?";
@@ -58,6 +59,8 @@ interface QuestionCardProps {
   /** Position of the next unanswered question, for the "Next question" button. */
   nextPosition?: number | null;
   onGoToQuestion?: (position: number) => void;
+  /** Called when the check-in also goes unanswered: pause the interview. */
+  onPause?: () => void;
 }
 
 
@@ -68,6 +71,7 @@ export const QuestionCard: React.FC<QuestionCardProps> = ({
   jdRequirements,
   onScored,
   isCurrent = false,
+  onPause,
   nextPosition = null,
   onGoToQuestion,
 }) => {
@@ -131,6 +135,23 @@ export const QuestionCard: React.FC<QuestionCardProps> = ({
     if (checkIn && (speech.listening || answerText.trim().length > 0)) setCheckIn(false);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [speech.listening, answerText]);
+
+  // No reply to the check-in for another minute: pause the interview.
+  useEffect(() => {
+    if (!checkIn || !isCurrent || speech.listening) return;
+    const t = window.setTimeout(() => {
+      setCheckIn(false);
+      voice.speak(PAUSE_LINE, `pause:${question.id}`);
+      onPause?.();
+    }, IDLE_CHECK_IN_MS);
+    return () => window.clearTimeout(t);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [checkIn, isCurrent, speech.listening]);
+
+  // Paused or moved on: drop the check-in.
+  useEffect(() => {
+    if (!isCurrent) setCheckIn(false);
+  }, [isCurrent]);
 
   const giveMoreTime = () => {
     setCheckIn(false);
