@@ -101,7 +101,7 @@ export const QuestionCard: React.FC<QuestionCardProps> = ({
 
   useEffect(() => {
     if (idleTimer.current) window.clearTimeout(idleTimer.current);
-    if (!waitingForAnswer || checkIn || speech.listening || speakingHere) return;
+    if (!waitingForAnswer || checkIn || speech.listening || speakingHere || voice.liveActive) return;
     idleTimer.current = window.setTimeout(() => {
       setCheckIn(true);
       voice.speak(CHECK_IN_LINE, `ci:${question.id}`);
@@ -111,7 +111,7 @@ export const QuestionCard: React.FC<QuestionCardProps> = ({
     };
     // Any typing restarts the clock.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [waitingForAnswer, checkIn, speech.listening, speakingHere, answerText]);
+  }, [waitingForAnswer, checkIn, speech.listening, speakingHere, answerText, voice.liveActive]);
 
   // Typing or speaking an answer means they're still going: drop the prompt.
   useEffect(() => {

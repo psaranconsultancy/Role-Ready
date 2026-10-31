@@ -1,5 +1,5 @@
 import { supabase } from './supabase';
-import { stopSpeaking } from './interviewerVoice';
+import { getVoiceState, setLiveActive } from './interviewerVoice';
 
 // Live interview (beta): a real two-way spoken interview with Gemini Live.
 // The browser asks our `live-token` edge function for a short-lived,
@@ -104,12 +104,15 @@ export class LiveInterview {
   private lines: LiveLine[] = [];
   private ended = false;
   private speakingTimer: number | null = null;
+  private quietTimer: number | null = null;
+  private lastActivity = 0;
+  private status: LiveStatus = 'idle';
 
   constructor(private cb: Callbacks) {}
 
   async start(sessionId: string) {
     this.ended = false;
-    stopSpeaking();
+    setLiveActive(true);
     this.cb.onStatus('connecting');
     try {
       // 1. Mic first, so a blocked mic fails before we spend a token.
@@ -120,7 +123,7 @@ export class LiveInterview {
       // 2. A single-use token for this session.
       const { data, error } = await supabase.functions.invoke<{ token: string; model: string }>(
         'live-token',
-        { body: { session_id: sessionId } }
+        { body: { session_id: sessionId, voice: getVoiceState().gender } }
       );
       if (error || !data?.token) throw new Error('token');
 
@@ -176,7 +179,21 @@ export class LiveInterview {
 
       // 6. Ask the interviewer to open.
       this.ws?.send(JSON.stringify({ realtimeInput: { text: 'Hello, I am ready to start the interview.' } }));
-      this.cb.onStatus('listening');
+      this.setStatus('listening');
+
+      // Never leave the candidate stuck: after 45 quiet seconds on their turn,
+      // the interviewer checks in (more time, or move on).
+      this.lastActivity = Date.now();
+      this.quietTimer = window.setInterval(() => {
+        if (this.ended || this.status !== 'listening') return;
+        if (Date.now() - this.lastActivity < 45000) return;
+        this.lastActivity = Date.now();
+        if (this.ws?.readyState === WebSocket.OPEN) {
+          this.ws.send(JSON.stringify({
+            realtimeInput: { text: '[The candidate has gone quiet for a while. Check in kindly.]' },
+          }));
+        }
+      }, 5000);
     } catch (err) {
       const name = (err as { name?: string })?.name;
       const message =
@@ -210,7 +227,10 @@ export class LiveInterview {
     for (const part of sc.modelTurn?.parts ?? []) {
       if (part.inlineData?.data) this.play(base64ToFloat(part.inlineData.data));
     }
-    if (sc.inputTranscription?.text) this.append('you', sc.inputTranscription.text);
+    if (sc.inputTranscription?.text) {
+      this.lastActivity = Date.now();
+      this.append('you', sc.inputTranscription.text);
+    }
     if (sc.outputTranscription?.text) this.append('interviewer', sc.outputTranscription.text);
   }
 
@@ -239,10 +259,11 @@ export class LiveInterview {
     src.onended = () => {
       this.sources = this.sources.filter((s) => s !== src);
     };
-    this.cb.onStatus('speaking');
+    this.lastActivity = Date.now();
+    this.setStatus('speaking');
     if (this.speakingTimer) window.clearTimeout(this.speakingTimer);
     this.speakingTimer = window.setTimeout(() => {
-      if (!this.ended) this.cb.onStatus('listening');
+      if (!this.ended) { this.lastActivity = Date.now(); this.setStatus('listening'); }
     }, Math.max(0, (this.playHead - ctx.currentTime) * 1000) + 150);
   }
 
@@ -252,7 +273,7 @@ export class LiveInterview {
     });
     this.sources = [];
     this.playHead = 0;
-    if (!this.ended) this.cb.onStatus('listening');
+    if (!this.ended) { this.lastActivity = Date.now(); this.setStatus('listening'); }
   }
 
   private finish(message?: string) {
@@ -262,11 +283,19 @@ export class LiveInterview {
     this.cb.onStatus('ended', message);
   }
 
+  private setStatus(s: LiveStatus, message?: string) {
+    this.status = s;
+    this.cb.onStatus(s, message);
+  }
+
   stop() {
     this.finish();
   }
 
   private cleanup() {
+    setLiveActive(false);
+    if (this.quietTimer) window.clearInterval(this.quietTimer);
+    this.quietTimer = null;
     if (this.speakingTimer) window.clearTimeout(this.speakingTimer);
     this.stopPlayback();
     try { this.node?.disconnect(); } catch { /* ignore */ }
