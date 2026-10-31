@@ -7,6 +7,7 @@ import { isMockMode, toApiError } from '../lib/api';
 import { ErrorBanner } from '../components/ErrorBanner';
 import { Logo } from '../components/Logo';
 import { AmbientHeroCanvas } from '../components/AmbientHeroCanvas';
+import { PasswordInput } from '../components/PasswordInput';
 
 export const LoginPage: React.FC = () => {
   const { user, loading: authLoading, signIn, signUp, signInDemo } = useAuth();
@@ -276,9 +277,8 @@ export const LoginPage: React.FC = () => {
               >
                 Password
               </label>
-              <input
+              <PasswordInput
                 id="auth-password"
-                type="password"
                 autoComplete={
                   mode === 'signin' ? 'current-password' : 'new-password'
                 }
