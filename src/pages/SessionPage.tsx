@@ -132,7 +132,7 @@ export const SessionPage: React.FC = () => {
       (q) => q.id !== feedback.question_id && !answersByQuestionId[q.id]
     );
     // When the interviewer moves on, the page moves with her: to the next
-    // question, or to the summary at the top once all six are done.
+    // question, or to the summary at the top once every question is done.
     const moveOn = () => {
       if (nextOpen) {
         scrollToQuestion(nextOpen.position);
@@ -140,7 +140,7 @@ export const SessionPage: React.FC = () => {
       } else if (sessionCompleted && sessionOverall !== null) {
         window.scrollTo({ top: 0, behavior: 'smooth' });
         voice.speak(
-          `That's all six questions. Your overall score is ${sessionOverall} out of 100. Well done.`,
+          `That's all ${questions.length} questions. Your overall score is ${sessionOverall} out of 100. Well done.`,
           `fb:${feedback.question_id}`
         );
       }
@@ -256,7 +256,7 @@ export const SessionPage: React.FC = () => {
     );
   }
 
-  const totalQuestions = questions.length || 6;
+  const totalQuestions = questions.length || session.question_count || 6;
   const answeredCount = questions.filter((q) =>
     Boolean(answersByQuestionId[q.id])
   ).length;
@@ -409,7 +409,7 @@ export const SessionPage: React.FC = () => {
       </div>
 
       <main className="mx-auto max-w-[1080px] space-y-6 px-4 pt-6 sm:px-6 sm:pt-8">
-        {/* Session Summary Banner when all 6 questions are answered */}
+        {/* Session Summary Banner when every question is answered */}
         {allAnswered && computedOverall !== null && (
           <SessionSummary
             session={session}
@@ -506,7 +506,7 @@ export const SessionPage: React.FC = () => {
               This session's questions aren't ready yet
             </h2>
             <p className="mx-auto mt-1 max-w-md text-sm text-[#6e6e73]">
-              Setup stopped before your six questions were written. Finish it
+              Setup stopped before your questions were written. Finish it
               now, or start a new practice session.
             </p>
             {finishError && (

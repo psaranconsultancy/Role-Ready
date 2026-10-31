@@ -23,16 +23,22 @@ export interface Session {
   jd_requirements: JdRequirement[] | null;
   status: SessionStatus;
   overall_score: number | null;        // 0-100, average of answer.overall, set when completed
+  question_count?: number | null;      // 5, 10 or 15 (sessions before 31 Oct have 6)
+  question_focus?: QuestionFocus | null;
   created_at: string;
   completed_at: string | null;
 }
 
 export type QuestionType = "behavioural" | "technical" | "role_fit" | "situational";
+// What the candidate asked for on the setup page. "mixed" blends all four types.
+export type QuestionFocus = "mixed" | "behavioural" | "technical" | "situational";
+export const QUESTION_COUNTS = [5, 10, 15] as const;
+export const DEFAULT_QUESTION_COUNT = 5;
 
 export interface Question {
   id: string;
   session_id: string;
-  position: number;                    // 1..6
+  position: number;                    // 1..question_count (max 15)
   text: string;
   type: QuestionType;
   why_asking: string;                  // one sentence shown under the question
@@ -72,14 +78,15 @@ export interface ParseResumeRequest { session_id: string }
 export interface ParseResumeResponse { resume_lines: ResumeLine[]; jd_requirements: JdRequirement[] }
 
 // 2. generate-questions  (owner: Person C)
-// Creates exactly 6 questions, inserts them, sets session.status = "ready".
-// Calling it again replaces the 6 questions (only while no answers exist).
-export interface GenerateQuestionsRequest { session_id: string }
+// Creates `count` questions (default 6, allowed 1..15) of the chosen focus,
+// inserts them, sets session.status = "ready".
+// Calling it again replaces the questions (only while no answers exist).
+export interface GenerateQuestionsRequest { session_id: string; count?: number; focus?: QuestionFocus }
 export interface GenerateQuestionsResponse { questions: Question[] }
 
 // 3. score-answer  (owner: Person D)
 // Scores one answer, upserts the answers row (one per question; re-answering overwrites).
-// Sets session.status = "in_progress", or "completed" + overall_score once all 6 are answered.
+// Sets session.status = "in_progress", or "completed" + overall_score once every question in the session is answered.
 export interface ScoreAnswerRequest { question_id: string; answer_text: string }   // answer_text 20..4000 chars
 export interface ScoreAnswerResponse extends Feedback {
   session_completed: boolean;

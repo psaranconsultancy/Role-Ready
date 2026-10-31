@@ -79,6 +79,8 @@ export function mockCreateSession(params: {
   jdText: string;
   roleTitle?: string;
   company?: string;
+  questionCount?: number;
+  questionFocus?: Session['question_focus'];
 }): Session {
   const store = loadStore(params.userId);
   const id = `session-${Date.now()}`;
@@ -93,6 +95,8 @@ export function mockCreateSession(params: {
     jd_requirements: null,
     status: 'draft',
     overall_score: null,
+    question_count: params.questionCount ?? 6,
+    question_focus: params.questionFocus ?? 'mixed',
     created_at: new Date().toISOString(),
     completed_at: null,
   };
@@ -123,7 +127,8 @@ export function mockParseResume(userId: string, sessionId: string): ParseResumeR
 
 export function mockGenerateQuestions(
   userId: string,
-  sessionId: string
+  sessionId: string,
+  count?: number
 ): GenerateQuestionsResponse {
   const store = loadStore(userId);
   const session = store.sessions.find((s) => s.id === sessionId);
@@ -137,7 +142,15 @@ export function mockGenerateQuestions(
   }
   // Remove any existing questions for this session if no answers exist
   store.questions = store.questions.filter((q) => q.session_id !== sessionId);
-  const generated = buildQuestionsForSession(sessionId);
+  // The sample set has six questions; cycle them to fill 10 or 15 in mock mode.
+  const base = buildQuestionsForSession(sessionId);
+  const total = count ?? session.question_count ?? base.length;
+  const generated = Array.from({ length: total }, (_, i) => ({
+    ...base[i % base.length],
+    id: i < base.length ? base[i].id : `${base[i % base.length].id}-${i + 1}`,
+    position: i + 1,
+  }));
+  session.question_count = total;
   store.questions.push(...generated);
   session.status = 'ready';
   saveStore(store);
@@ -399,11 +412,11 @@ export function mockScoreAnswer(
   const sessionQuestionIds = new Set(sessionQuestions.map((q) => q.id));
   const sessionAnswers = store.answers.filter((a) => sessionQuestionIds.has(a.question_id));
 
-  const allSixAnswered =
+  const allAnswered =
     sessionQuestions.length > 0 && sessionAnswers.length >= sessionQuestions.length;
 
   let sessionOverall: number | null = null;
-  if (allSixAnswered) {
+  if (allAnswered) {
     const total = sessionAnswers.reduce((acc, a) => acc + a.overall, 0);
     sessionOverall = Math.round(total / sessionAnswers.length);
     session.status = 'completed';
@@ -417,7 +430,7 @@ export function mockScoreAnswer(
 
   return {
     ...feedback,
-    session_completed: allSixAnswered,
+    session_completed: allAnswered,
     session_overall: sessionOverall,
   };
 }
