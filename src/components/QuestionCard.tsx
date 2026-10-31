@@ -24,6 +24,8 @@ import { FeedbackPanel, getScoreBand } from './FeedbackPanel';
 import { ErrorBanner } from './ErrorBanner';
 import { GrillFollowUp } from './GrillFollowUp';
 import { useSpeechToText } from '../lib/useSpeechToText';
+import { saveAnswerRecording, useAnswerRecorder } from '../lib/answerRecorder';
+import { AnswerReplay } from './AnswerReplay';
 import { QUESTION_TYPE_LABELS } from '../lib/sessionReport';
 import { useInterviewerVoice, questionScript, prefetchSpeech } from '../lib/interviewerVoice';
 
@@ -86,6 +88,14 @@ export const QuestionCard: React.FC<QuestionCardProps> = ({
     setAnswerText((prev) => (prev.trim() ? `${prev.trimEnd()} ${text}` : text))
   );
 
+  // Records the spoken answer too, for "Play your answer" (desktop only).
+  const recorder = useAnswerRecorder(speech.listening);
+  // Answer box emptied: the draft recording no longer matches it.
+  useEffect(() => {
+    if (!speech.listening && answerText.trim() === '' && recorder.takes.length) recorder.discard();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [answerText, speech.listening]);
+
   // Check in when the candidate goes quiet on the current question.
   const [checkIn, setCheckIn] = useState(false);
   const [skipping, setSkipping] = useState(false);
@@ -133,6 +143,8 @@ export const QuestionCard: React.FC<QuestionCardProps> = ({
     try {
       const res = await skipQuestion(question);
       const { session_completed, session_overall, ...feedback } = res;
+      recorder.discard();
+      saveAnswerRecording(question.id, []);
       setCheckIn(false);
       setAnswerText(feedback.answer_text);
       setIsEditing(false);
@@ -192,6 +204,7 @@ export const QuestionCard: React.FC<QuestionCardProps> = ({
         // A request to explain the question, not an answer: show plainer wording, keep editing.
         setClarified(res.clarification);
         setAnswerText('');
+        recorder.discard();
         voice.speak(
           `Let me put that another way. ${res.clarification.rephrased_question} ${res.clarification.hint}`,
           `cl:${question.id}`
@@ -199,6 +212,8 @@ export const QuestionCard: React.FC<QuestionCardProps> = ({
         return;
       }
       setClarified(null);
+      // Keep this answer's recording for replay (or clear an older one).
+      saveAnswerRecording(question.id, await recorder.takeWhenDone());
       const { session_completed, session_overall, ...feedback } = res;
       onScored(feedback, session_completed, session_overall);
       setIsEditing(false);
@@ -622,6 +637,7 @@ export const QuestionCard: React.FC<QuestionCardProps> = ({
             </span>
             <span className="tabular-nums">{wordCount} words</span>
           </div>
+          <AnswerReplay questionId={question.id} />
           <p className="whitespace-pre-wrap text-sm leading-relaxed text-[#0f172a]">
             {answerText}
           </p>
