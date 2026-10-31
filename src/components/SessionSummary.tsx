@@ -42,6 +42,7 @@ export const SessionSummary: React.FC<SessionSummaryProps> = ({
   const [emailState, setEmailState] = useState<EmailState>('idle');
   const [emailNote, setEmailNote] = useState<string | null>(null);
   const [address, setAddress] = useState(mailTo);
+  const [addressError, setAddressError] = useState<string | null>(null);
   const autoTried = useRef(false);
 
   const sendEmail = async (to: string) => {
@@ -201,10 +202,17 @@ export const SessionSummary: React.FC<SessionSummaryProps> = ({
 
       {emailState === 'form' && (
         <form
+          noValidate
           className="mt-3 flex flex-wrap items-center gap-2"
           onSubmit={(e) => {
             e.preventDefault();
-            if (address.trim()) void sendEmail(address.trim());
+            const a = address.trim();
+            if (!/^[^\s@]+@[^\s@]+\.[^\s@.]{2,}$/.test(a)) {
+              setAddressError(a ? 'That email address doesn’t look right. Check for a typo.' : 'Please enter your email address.');
+              return;
+            }
+            setAddressError(null);
+            void sendEmail(a);
           }}
         >
           <label htmlFor="report-email" className="sr-only">
@@ -217,7 +225,15 @@ export const SessionSummary: React.FC<SessionSummaryProps> = ({
             autoComplete="email"
             autoFocus
             value={address}
-            onChange={(e) => setAddress(e.target.value)}
+            onChange={(e) => {
+              setAddress(e.target.value);
+              if (addressError) setAddressError(null);
+            }}
+            inputMode="email"
+            autoCapitalize="none"
+            spellCheck={false}
+            maxLength={254}
+            aria-invalid={addressError ? true : undefined}
             placeholder="you@example.com"
             className="min-h-[40px] w-full max-w-xs rounded-full border border-white/20 bg-white/[0.08] px-4 text-sm text-white placeholder:text-[#86868b] focus:border-[#38bdf8] focus:outline-none"
           />
@@ -235,6 +251,11 @@ export const SessionSummary: React.FC<SessionSummaryProps> = ({
           >
             Cancel
           </button>
+          {addressError && (
+            <p role="alert" className="w-full text-xs font-medium text-[#fca5a5]">
+              {addressError}
+            </p>
+          )}
         </form>
       )}
 
