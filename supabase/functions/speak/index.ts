@@ -15,7 +15,8 @@ const apiError = (code: string, message: string, status: number) =>
 // its own built-in voice if this is slow or fails, so the interview never stalls.
 
 const DEFAULT_TTS_MODEL = "gemini-3.8-flash-tts";
-const DEFAULT_VOICE = "Sulafat";
+const DEFAULT_VOICE = "Sulafat"; // female interviewer
+const DEFAULT_MALE_VOICE = "Achird"; // male interviewer
 const STYLE =
   "a warm, friendly, encouraging job interviewer with a natural British accent, speaking at a relaxed conversational pace";
 const MAX_CHARS = 1200;
@@ -50,7 +51,7 @@ async function synthesise(apiKey: string, model: string, voice: string, text: st
 Deno.serve(async (request) => {
   if (request.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });
   if (request.method !== "POST") return apiError("bad_request", "Use POST for this endpoint.", 405);
-  let body: { text?: string };
+  let body: { text?: string; voice?: string };
   try { body = await request.json(); } catch { return apiError("bad_request", "Request body must be JSON.", 400); }
   const text = typeof body?.text === "string" ? body.text.trim() : "";
   if (!text || text.length > MAX_CHARS) return apiError("bad_request", "Send between 1 and 1200 characters of text.", 400);
@@ -71,7 +72,9 @@ Deno.serve(async (request) => {
   if (authError || !auth.user) return apiError("unauthorized", "Please sign in and try again.", 401);
 
   const model = Deno.env.get("GEMINI_TTS_MODEL") ?? DEFAULT_TTS_MODEL;
-  const voice = Deno.env.get("GEMINI_TTS_VOICE") ?? DEFAULT_VOICE;
+  const voice = body.voice === "male"
+    ? Deno.env.get("GEMINI_TTS_VOICE_MALE") ?? DEFAULT_MALE_VOICE
+    : Deno.env.get("GEMINI_TTS_VOICE") ?? DEFAULT_VOICE;
   // Try the main voice model, then the lighter one if it is busy or out of quota.
   // If a model rejects the style hint (400), retry it with the hint in the text.
   const models = [...new Set([model, "gemini-3.8-flash-lite-tts"])];

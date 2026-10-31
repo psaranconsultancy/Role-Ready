@@ -12,6 +12,7 @@ import {
   Loader2,
   RotateCcw,
   Volume2,
+  UserRound,
   VolumeX,
 } from 'lucide-react';
 import type { Session, Question, Feedback, ApiError } from '@contracts';
@@ -342,6 +343,30 @@ export const SessionPage: React.FC = () => {
                 <span className="sr-only sm:hidden">
                   {voice.enabled ? 'Interviewer voice on' : 'Interviewer voice off'}
                 </span>
+              </button>
+            )}
+            {voice.supported && voice.enabled && questions.length > 0 && (
+              <button
+                type="button"
+                data-ui="interviewer-gender-toggle"
+                onClick={() => {
+                  const next = voice.gender === 'female' ? 'male' : 'female';
+                  voice.setGender(next);
+                  const firstOpen = questions.find((q) => !answersByQuestionId[q.id]);
+                  voice.speak(
+                    firstOpen
+                      ? `Hi, I'll be your interviewer from here. ${questionScript(firstOpen.position, firstOpen.text)}`
+                      : "Hi, I'll be your interviewer from here.",
+                    firstOpen ? `q:${firstOpen.id}` : 'gender',
+                    true
+                  );
+                }}
+                title={`Interviewer voice: ${voice.gender}. Click to switch to a ${voice.gender === 'female' ? 'male' : 'female'} interviewer.`}
+                aria-label={`Interviewer voice is ${voice.gender}. Switch to ${voice.gender === 'female' ? 'male' : 'female'}.`}
+                className="inline-flex min-h-[32px] items-center gap-1 rounded-full border border-[#0ea5e9]/35 bg-[#0ea5e9]/10 px-3 py-1 text-xs font-semibold text-[#0369a1] transition-colors hover:bg-[#0ea5e9]/15"
+              >
+                <UserRound className="h-3.5 w-3.5" aria-hidden="true" />
+                {voice.gender === 'female' ? 'Female' : 'Male'}
               </button>
             )}
             <span className="text-xs font-semibold tabular-nums text-[#0f172a]">
