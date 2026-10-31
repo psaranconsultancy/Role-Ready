@@ -19,7 +19,10 @@ const STATUS_TEXT: Record<LiveStatus, string> = {
   error: '',
 };
 
-export const LiveInterviewPanel: React.FC<{ sessionId: string }> = ({ sessionId }) => {
+export const LiveInterviewPanel: React.FC<{ sessionId: string; onStart?: () => void }> = ({
+  sessionId,
+  onStart,
+}) => {
   const [status, setStatus] = useState<LiveStatus>('idle');
   const [message, setMessage] = useState<string | null>(null);
   const [lines, setLines] = useState<LiveLine[]>([]);
@@ -36,6 +39,7 @@ export const LiveInterviewPanel: React.FC<{ sessionId: string }> = ({ sessionId 
   const active = status === 'connecting' || status === 'listening' || status === 'speaking';
 
   const start = () => {
+    onStart?.();
     setLines([]);
     setMessage(null);
     const live = new LiveInterview({

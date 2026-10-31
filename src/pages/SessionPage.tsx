@@ -102,8 +102,23 @@ export const SessionPage: React.FC = () => {
   // visit. Browsers only allow speech after a click, which the user has already
   // made to get here; if it is blocked, nothing happens.
   const greetedRef = useRef<string | null>(null);
+  // A fresh session waits for "Start interview", so the candidate can get
+  // ready first. A session with answers already in it carries straight on.
+  // Coming back to a session also waits for "Resume interview", and the
+  // interview pauses itself if the candidate goes quiet for two minutes.
+  const [startPressed, setStartPressed] = useState(false);
+  const [pausedForIdle, setPausedForIdle] = useState(false);
+  const interviewStarted = startPressed;
+  const pauseInterview = () => {
+    greetedRef.current = null;
+    setPausedForIdle(true);
+    setStartPressed(false);
+    // Show the paused card at the top of the page.
+    window.setTimeout(() => window.scrollTo({ top: 0, behavior: 'smooth' }), 50);
+  };
   useEffect(() => {
     if (!session || !questions.length || greetedRef.current === session.id) return;
+    if (!interviewStarted) return;
     greetedRef.current = session.id;
     const firstOpen = questions.find((q) => !answersByQuestionId[q.id]);
     if (!firstOpen || !voice.enabled) return;
@@ -114,9 +129,9 @@ export const SessionPage: React.FC = () => {
     voice.speak(intro + questionScript(firstOpen.position, firstOpen.text), `q:${firstOpen.id}`);
     // Show the question she is asking.
     if (firstOpen.position > 1) window.setTimeout(() => scrollToQuestion(firstOpen.position), 150);
-    // Only run when the session's questions first arrive.
+    // Only run when the session's questions first arrive, or on Start.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [session?.id, questions.length]);
+  }, [session?.id, questions.length, interviewStarted]);
 
   // Stop talking when leaving the session page.
   useEffect(() => () => voice.stop(), []); // eslint-disable-line react-hooks/exhaustive-deps
@@ -421,8 +436,52 @@ export const SessionPage: React.FC = () => {
 
         {/* Live interview (beta): only when the live switch is on and the
             real backend is in use. */}
+        {questions.length > 0 && !interviewStarted && !allAnswered && (
+          <div
+            data-ui="start-interview-gate"
+            className="bento-card-light flex flex-col gap-4 px-5 py-5 outline outline-2 outline-[#0ea5e9]/40 sm:flex-row sm:items-center sm:justify-between sm:px-6"
+          >
+            <div>
+              <h2 className="text-base font-bold text-[#0f172a]">
+                {pausedForIdle
+                  ? 'Interview paused'
+                  : answeredCount > 0
+                    ? `Welcome back: ${answeredCount} of ${totalQuestions} answered`
+                    : `Your ${questions.length} questions are ready`}
+              </h2>
+              <p className="mt-1 text-sm text-[#6e6e73]">
+                {pausedForIdle
+                  ? "We paused after two quiet minutes. Your answers so far are saved. Resume whenever you're ready, now or later."
+                  : answeredCount > 0
+                    ? 'Your answers so far are saved. Press Resume interview to carry on from the next question.'
+                    : 'Take a moment to get settled. Nothing is timed or read aloud until you press Start interview.'}
+              </p>
+            </div>
+            <button
+              type="button"
+              data-tip={answeredCount > 0 ? 'Carry on from the next open question' : 'Begin the interview: the interviewer asks question 1'}
+              onClick={() => {
+                setPausedForIdle(false);
+                setStartPressed(true);
+                const firstOpen = questions.find((q) => !answersByQuestionId[q.id]);
+                if (firstOpen) scrollToQuestion(firstOpen.position);
+              }}
+              className="btn-pill-primary min-h-[44px] shrink-0 px-6 text-sm font-semibold"
+            >
+              {answeredCount > 0 || pausedForIdle ? 'Resume interview' : 'Start interview'}
+            </button>
+          </div>
+        )}
+
         {questions.length > 0 && !isMockMode() && isLiveInterviewEnabled() && (
-          <LiveInterviewPanel sessionId={session.id} />
+          <LiveInterviewPanel
+            sessionId={session.id}
+            onStart={() => {
+              // The live interviewer does the talking, so skip the read-aloud greeting.
+              greetedRef.current = session.id;
+              setStartPressed(true);
+            }}
+          />
         )}
 
         {/* Extracted Evidence Drawer */}
@@ -601,7 +660,7 @@ export const SessionPage: React.FC = () => {
             {questions.map((q) => (
               <QuestionCard
                 key={q.id}
-                isCurrent={q.id === currentOpenId}
+                isCurrent={interviewStarted && q.id === currentOpenId}
                 nextPosition={
                   questions.find(
                     (o) => o.position > q.position && !answersByQuestionId[o.id]
@@ -621,6 +680,7 @@ export const SessionPage: React.FC = () => {
                 roleTitle={session.role_title}
                 company={session.company}
                 onScored={handleQuestionScored}
+                onPause={pauseInterview}
               />
             ))}
           </div>
