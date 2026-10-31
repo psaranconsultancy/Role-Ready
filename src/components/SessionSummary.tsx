@@ -129,7 +129,7 @@ export const SessionSummary: React.FC<SessionSummaryProps> = ({
           <div>
             <div className="inline-flex items-center gap-1.5 rounded-full bg-[#14b8a6]/20 px-3 py-0.5 text-xs font-semibold text-[#14b8a6]">
               <Award className="h-3.5 w-3.5" aria-hidden="true" />
-              <span>All 6 questions answered · {band.label}</span>
+              <span>All {questions.length} questions answered · {band.label}</span>
             </div>
             <h2 className="mt-2 font-display text-2xl font-bold tracking-tight tabular-nums text-white sm:text-3xl">
               Session average: {overallScore}/100
@@ -287,8 +287,8 @@ export const SessionSummary: React.FC<SessionSummaryProps> = ({
         </p>
       )}
 
-      {/* 6-Question Score Tiles */}
-      <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
+      {/* One score tile per question (5, 6, 10 or 15) */}
+      <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
         {questions.map((q) => {
           const ans = answersByQuestionId[q.id];
           const qScore = ans?.overall ?? 0;

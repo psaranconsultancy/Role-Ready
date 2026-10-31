@@ -15,6 +15,7 @@ import {
 import type { ApiError } from '@contracts';
 import {
   createSession,
+  extractJobDetails,
   deleteSession,
   parseResume,
   generateQuestions,
@@ -37,6 +38,8 @@ import { guessJobSpecDetails } from '../lib/jobSpecDetails';
 import { normaliseLink } from '../lib/validation';
 import { ErrorBanner } from '../components/ErrorBanner';
 import { InterviewerPicker } from '../components/InterviewerPicker';
+import { QuestionPlanPicker, loadQuestionPlan, FOCUS_OPTIONS, type QuestionPlan } from '../components/QuestionPlanPicker';
+import { DEFAULT_QUESTION_COUNT } from '@contracts';
 import {
   JOB_SPEC_ACCEPT,
   JobSpecReadError,
@@ -72,6 +75,9 @@ export const NewSessionPage: React.FC = () => {
   const [jdError, setJdError] = useState<string | null>(null);
   const [apiError, setApiError] = useState<ApiError | null>(null);
   const [stage, setStage] = useState<GenerationStage>('idle');
+  const [plan, setPlan] = useState<QuestionPlan>(() =>
+    loadQuestionPlan({ count: DEFAULT_QUESTION_COUNT, focus: 'mixed' })
+  );
   // Session made by an earlier attempt; a retry carries on with it instead of
   // creating another one (which would leave an empty draft in History).
   const [pending, setPending] = useState<{ id: string; parsed: boolean } | null>(null);
@@ -79,25 +85,46 @@ export const NewSessionPage: React.FC = () => {
 
   // Fill in the role and company from the job spec. Only fills a field that is
   // empty or still holds our own earlier guess, so a typed value is never lost.
+  // A quick in-browser guess appears at once; then the AI reads the spec and
+  // replaces it with the real job title and company (or clears a wrong guess).
   const autoRoleRef = useRef<string | null>(null);
   const autoCompanyRef = useRef<string | null>(null);
+  const aiRequestRef = useRef(0);
+  const [aiReading, setAiReading] = useState(false);
+  const applyGuess = (guess: { roleTitle: string | null; company: string | null }) => {
+    setRoleTitle((cur) => {
+      const ours = !cur.trim() || cur === autoRoleRef.current;
+      if (!ours) return cur;
+      autoRoleRef.current = guess.roleTitle;
+      return guess.roleTitle ?? '';
+    });
+    setCompany((cur) => {
+      const ours = !cur.trim() || cur === autoCompanyRef.current;
+      if (!ours) return cur;
+      autoCompanyRef.current = guess.company;
+      return guess.company ?? '';
+    });
+  };
   useEffect(() => {
-    const t = window.setTimeout(() => {
-      const guess = jdText.trim().length >= 40 ? guessJobSpecDetails(jdText) : { roleTitle: null, company: null };
-      setRoleTitle((cur) => {
-        const ours = !cur.trim() || cur === autoRoleRef.current;
-        if (!ours) return cur;
-        autoRoleRef.current = guess.roleTitle;
-        return guess.roleTitle ?? '';
-      });
-      setCompany((cur) => {
-        const ours = !cur.trim() || cur === autoCompanyRef.current;
-        if (!ours) return cur;
-        autoCompanyRef.current = guess.company;
-        return guess.company ?? '';
-      });
+    const text = jdText.trim();
+    const quick = window.setTimeout(() => {
+      applyGuess(text.length >= 40 ? guessJobSpecDetails(jdText) : { roleTitle: null, company: null });
     }, 350);
-    return () => window.clearTimeout(t);
+    const requestId = ++aiRequestRef.current;
+    setAiReading(false);
+    const ai = window.setTimeout(async () => {
+      if (text.length < 200) return;
+      setAiReading(true);
+      const result = await extractJobDetails(jdText);
+      if (requestId !== aiRequestRef.current) return; // the spec changed meanwhile
+      setAiReading(false);
+      if (result) applyGuess(result);
+    }, 1200);
+    return () => {
+      window.clearTimeout(quick);
+      window.clearTimeout(ai);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [jdText]);
   const filledFromSpec =
     (!!roleTitle && roleTitle === autoRoleRef.current) ||
@@ -273,6 +300,8 @@ export const NewSessionPage: React.FC = () => {
           jdText,
           roleTitle: roleTitle.trim() || undefined,
           company: company.trim() || undefined,
+          questionCount: plan.count,
+          questionFocus: plan.focus,
         });
         sessionId = created.id;
         setPending({ id: sessionId, parsed: false });
@@ -284,7 +313,7 @@ export const NewSessionPage: React.FC = () => {
       }
 
       setStage('generating');
-      await generateQuestions(sessionId);
+      await generateQuestions(sessionId, plan);
 
       navigate(`/session/${sessionId}`);
     } catch (err) {
@@ -358,7 +387,7 @@ export const NewSessionPage: React.FC = () => {
               }`}
             >
               <span className="font-bold tabular-nums">2</span>
-              <span>6 questions</span>
+              <span>{plan.count} questions</span>
             </span>
           </div>
         </div>
@@ -373,7 +402,7 @@ export const NewSessionPage: React.FC = () => {
             </h2>
             <p className="mt-1.5 text-sm text-[#6e6e73] sm:text-base">
               Upload your PDF resume and add the job spec (upload the file or
-              paste the text) to get six questions tailored to both.
+              paste the text) to get questions tailored to both.
             </p>
           </div>
 
@@ -502,7 +531,9 @@ export const NewSessionPage: React.FC = () => {
           {/* 1. Resume PDF Upload Bento Card */}
           <section
             data-ui="upload-card"
-            className="bento-card-light p-6 sm:p-8"
+            className={`bento-card-light p-6 sm:p-8 transition-shadow ${
+              fileError ? 'outline outline-2 outline-offset-2 outline-[#d70015]' : ''
+            }`}
           >
             <div className="flex items-center justify-between gap-2">
               <label
@@ -559,7 +590,9 @@ export const NewSessionPage: React.FC = () => {
                 className={`mt-4 flex cursor-pointer flex-col items-center justify-center rounded-[20px] border-2 border-dashed px-6 py-9 text-center transition-colors ${
                   dragOver
                     ? 'border-[#0284c7] bg-[#0284c7]/[0.06]'
-                    : 'border-black/15 bg-[#f1f5f9]/70 hover:border-[#0284c7]/60 hover:bg-[#f1f5f9]'
+                    : fileError
+                      ? 'border-[#d70015] bg-[#fff1f2]'
+                      : 'border-black/15 bg-[#f1f5f9]/70 hover:border-[#0284c7]/60 hover:bg-[#f1f5f9]'
                 }`}
               >
                 <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#0284c7]/10 text-[#0369a1]">
@@ -635,7 +668,11 @@ export const NewSessionPage: React.FC = () => {
               handleJobSpecFile(e.dataTransfer.files[0]);
             }}
             className={`bento-card-light p-6 sm:p-8 transition-shadow ${
-              jdDragOver ? 'ring-2 ring-[#0284c7] ring-offset-2' : ''
+              jdDragOver
+                ? 'ring-2 ring-[#0284c7] ring-offset-2'
+                : jdError
+                  ? 'outline outline-2 outline-offset-2 outline-[#d70015]'
+                  : ''
             }`}
           >
             <div className="flex flex-wrap items-center justify-between gap-2">
@@ -759,7 +796,8 @@ export const NewSessionPage: React.FC = () => {
                 if (jdError) setJdError(null);
               }}
               placeholder="Paste the full job description here (responsibilities, skills and tools)…"
-              className="mt-3 block w-full rounded-[18px] border border-black/15 bg-[#f1f5f9]/60 p-4 text-base leading-relaxed text-[#0f172a] placeholder:text-[#aeaeb2] focus:border-[#0284c7] focus:bg-white focus:outline-none"
+              aria-invalid={jdError ? true : undefined}
+              className="mt-3 block w-full rounded-[18px] border border-black/15 aria-[invalid=true]:border-2 aria-[invalid=true]:border-[#d70015] aria-[invalid=true]:focus:border-[#d70015] bg-[#f1f5f9]/60 p-4 text-base leading-relaxed text-[#0f172a] placeholder:text-[#aeaeb2] focus:border-[#0284c7] focus:bg-white focus:outline-none"
             />
 
             {jdError && (
@@ -797,10 +835,17 @@ export const NewSessionPage: React.FC = () => {
                 (optional)
               </span>
             </h3>
-            {filledFromSpec && (
-              <p data-ui="role-autofill-note" className="mt-1.5 text-xs text-[#0f766e]">
-                Filled in from your job spec. Change it if it's not right.
+            {aiReading ? (
+              <p data-ui="role-autofill-note" className="mt-1.5 inline-flex items-center gap-1.5 text-xs text-[#0369a1]">
+                <Loader2 className="h-3 w-3 animate-spin" aria-hidden="true" />
+                Reading the job title and company from your job spec…
               </p>
+            ) : (
+              filledFromSpec && (
+                <p data-ui="role-autofill-note" className="mt-1.5 text-xs text-[#0f766e]">
+                  Filled in from your job spec. Change it if it's not right.
+                </p>
+              )
             )}
             <div className="mt-4 grid gap-4 sm:grid-cols-2">
               <div>
@@ -842,6 +887,8 @@ export const NewSessionPage: React.FC = () => {
             </div>
           </section>
 
+          <QuestionPlanPicker value={plan} onChange={setPlan} disabled={isBusy} />
+
           {/* 4. Deep Context: Industry, Department, C-Suite Level, Uploads & Links */}
           <section
             data-ui="deep-context-card"
@@ -862,7 +909,7 @@ export const NewSessionPage: React.FC = () => {
             </div>
             <p id="deep-context-coming-soon" className="mt-1 text-xs text-[#6e6e73]">
               Coming soon, and optional: you don&apos;t need any of this for your
-              six questions today. When it ships, you can pick your industry, department, seniority,
+              questions today. When it ships, you can pick your industry, department, seniority,
               specialist area and executive role, or attach presentations, case
               studies and company links. Grill With Docs will use them to ask
               tougher follow-up questions and build you a downloadable summary
@@ -1204,8 +1251,9 @@ export const NewSessionPage: React.FC = () => {
                   Still needed: {missing}.
                 </span>
               )}
-              Creates 6 tailored questions (2 behavioural, 2 technical, 2
-              role-specific).
+              {plan.focus === 'mixed'
+                ? `Creates ${plan.count} tailored questions, mixing behavioural, technical, situational and role fit.`
+                : `Creates ${plan.count} tailored ${FOCUS_OPTIONS.find((o) => o.value === plan.focus)?.label.toLowerCase()} questions.`}
             </p>
             <button data-tip="Read your resume and the job spec, then write your tailored questions"
               type="submit"
@@ -1226,7 +1274,7 @@ export const NewSessionPage: React.FC = () => {
                 </>
               ) : (
                 <>
-                  <span>Generate 6 questions</span>
+                  <span>Generate {plan.count} questions</span>
                   <ArrowRight className="h-4 w-4" aria-hidden="true" />
                 </>
               )}

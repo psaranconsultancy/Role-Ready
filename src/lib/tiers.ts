@@ -369,7 +369,7 @@ export const TIER_FRAMEWORKS: Record<TierFrameworkId, TierFramework> = {
           'Covers surface-level questions only. Candidates rejected in final panel rounds usually stop their practice here.',
         ctaLabel: 'Stay on Essential Prep',
         features: [
-          { text: '6 practice questions from your resume and the job', included: true },
+          { text: '5, 10 or 15 practice questions from your resume and the job', included: true },
           { text: 'A basic score out of 100 for your first answer', included: true },
           { text: 'See the resume line and job requirement behind each question', included: true },
           {
@@ -400,7 +400,7 @@ export const TIER_FRAMEWORKS: Record<TierFrameworkId, TierFramework> = {
         ctaLabel: 'Select Interview Ready',
         isDecoyBridge: true,
         features: [
-          { text: '6 practice questions from your resume and the job', included: true },
+          { text: '5, 10 or 15 practice questions from your resume and the job', included: true },
           { text: 'Score out of 100 across 4 areas', included: true },
           { text: 'See the resume line and job requirement behind each question', included: true },
           {
@@ -435,7 +435,7 @@ export const TIER_FRAMEWORKS: Record<TierFrameworkId, TierFramework> = {
         roiAnchor:
           'A single successful offer negotiation pays for this tier 50x over.',
         features: [
-          { text: '6 practice questions from your resume and the job', included: true },
+          { text: '5, 10 or 15 practice questions from your resume and the job', included: true },
           { text: 'Score out of 100 across 4 areas', included: true },
           { text: 'See the resume line and job requirement behind each question', included: true },
           {
@@ -503,7 +503,7 @@ export const TIER_FRAMEWORKS: Record<TierFrameworkId, TierFramework> = {
           'Keeps you at the same preparation level as everyone else in the general applicant pool.',
         ctaLabel: 'Stay as Applicant',
         features: [
-          { text: '6 practice questions from your resume and the job', included: true },
+          { text: '5, 10 or 15 practice questions from your resume and the job', included: true },
           { text: 'A basic score out of 100 for your first answer', included: true },
           { text: 'See the resume line and job requirement behind each question', included: true },
           {
@@ -534,7 +534,7 @@ export const TIER_FRAMEWORKS: Record<TierFrameworkId, TierFramework> = {
         ctaLabel: 'Select Shortlist',
         isDecoyBridge: true,
         features: [
-          { text: '6 practice questions from your resume and the job', included: true },
+          { text: '5, 10 or 15 practice questions from your resume and the job', included: true },
           { text: 'Score out of 100 across 4 areas', included: true },
           { text: 'See the resume line and job requirement behind each question', included: true },
           {
@@ -569,7 +569,7 @@ export const TIER_FRAMEWORKS: Record<TierFrameworkId, TierFramework> = {
         roiAnchor:
           'A single successful offer negotiation pays for this tier 50x over.',
         features: [
-          { text: '6 practice questions from your resume and the job', included: true },
+          { text: '5, 10 or 15 practice questions from your resume and the job', included: true },
           { text: 'Score out of 100 across 4 areas', included: true },
           { text: 'See the resume line and job requirement behind each question', included: true },
           {
@@ -637,7 +637,7 @@ export const TIER_FRAMEWORKS: Record<TierFrameworkId, TierFramework> = {
           'When five finalists have similar resumes, bare-minimum preparation is the fastest way to lose the role.',
         ctaLabel: 'Stay on Baseline',
         features: [
-          { text: '6 practice questions from your resume and the job', included: true },
+          { text: '5, 10 or 15 practice questions from your resume and the job', included: true },
           { text: 'A basic score out of 100 for your first answer', included: true },
           { text: 'See the resume line and job requirement behind each question', included: true },
           {
@@ -669,7 +669,7 @@ export const TIER_FRAMEWORKS: Record<TierFrameworkId, TierFramework> = {
         ctaLabel: 'Select Competitive Edge',
         isDecoyBridge: true,
         features: [
-          { text: '6 practice questions from your resume and the job', included: true },
+          { text: '5, 10 or 15 practice questions from your resume and the job', included: true },
           { text: 'Score out of 100 across 4 areas', included: true },
           { text: 'See the resume line and job requirement behind each question', included: true },
           {
@@ -704,7 +704,7 @@ export const TIER_FRAMEWORKS: Record<TierFrameworkId, TierFramework> = {
         roiAnchor:
           'A single successful offer negotiation pays for this tier 50x over.',
         features: [
-          { text: '6 practice questions from your resume and the job', included: true },
+          { text: '5, 10 or 15 practice questions from your resume and the job', included: true },
           { text: 'Score out of 100 across 4 areas', included: true },
           { text: 'See the resume line and job requirement behind each question', included: true },
           {
@@ -772,7 +772,7 @@ export const TIER_FRAMEWORKS: Record<TierFrameworkId, TierFramework> = {
           'Specialist hiring managers spot generic, textbook answers within the first 90 seconds.',
         ctaLabel: 'Stay on Generalist Prep',
         features: [
-          { text: '6 practice questions from your resume and the job', included: true },
+          { text: '5, 10 or 15 practice questions from your resume and the job', included: true },
           { text: 'A basic score out of 100 for your first answer', included: true },
           { text: 'See the resume line and job requirement behind each question', included: true },
           {
@@ -803,7 +803,7 @@ export const TIER_FRAMEWORKS: Record<TierFrameworkId, TierFramework> = {
         ctaLabel: 'Select Domain Ready',
         isDecoyBridge: true,
         features: [
-          { text: '6 practice questions from your resume and the job', included: true },
+          { text: '5, 10 or 15 practice questions from your resume and the job', included: true },
           { text: 'Score out of 100 across 4 areas', included: true },
           { text: 'See the resume line and job requirement behind each question', included: true },
           {
@@ -838,7 +838,7 @@ export const TIER_FRAMEWORKS: Record<TierFrameworkId, TierFramework> = {
         roiAnchor:
           'Negotiating a specialist scarcity premium pays for this tier 50x over.',
         features: [
-          { text: '6 practice questions from your resume and the job', included: true },
+          { text: '5, 10 or 15 practice questions from your resume and the job', included: true },
           { text: 'Score out of 100 across 4 areas', included: true },
           { text: 'See the resume line and job requirement behind each question', included: true },
           {
@@ -906,7 +906,7 @@ export const TIER_FRAMEWORKS: Record<TierFrameworkId, TierFramework> = {
           'Answering a C-Suite panel like a mid-level manager is the fastest way to lose board confidence.',
         ctaLabel: 'Stay on Standard Screen',
         features: [
-          { text: '6 practice questions from your resume and the job', included: true },
+          { text: '5, 10 or 15 practice questions from your resume and the job', included: true },
           { text: 'A basic score out of 100 for your first answer', included: true },
           { text: 'See the resume line and job requirement behind each question', included: true },
           {
@@ -937,7 +937,7 @@ export const TIER_FRAMEWORKS: Record<TierFrameworkId, TierFramework> = {
         ctaLabel: 'Select Department Lead',
         isDecoyBridge: true,
         features: [
-          { text: '6 practice questions from your resume and the job', included: true },
+          { text: '5, 10 or 15 practice questions from your resume and the job', included: true },
           { text: 'Score out of 100 across 4 areas', included: true },
           { text: 'See the resume line and job requirement behind each question', included: true },
           {
@@ -972,7 +972,7 @@ export const TIER_FRAMEWORKS: Record<TierFrameworkId, TierFramework> = {
         roiAnchor:
           'A single executive base or equity negotiation pays for this tier 50x over.',
         features: [
-          { text: '6 practice questions from your resume and the job', included: true },
+          { text: '5, 10 or 15 practice questions from your resume and the job', included: true },
           { text: 'Score out of 100 across 4 areas', included: true },
           { text: 'See the resume line and job requirement behind each question', included: true },
           {
