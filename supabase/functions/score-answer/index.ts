@@ -4,7 +4,6 @@ import { apiError, corsHeaders, isUuid, jsonResponse } from "../_shared/http.ts"
 import { ownedSession, userClient } from "../_shared/session.ts";
 
 const SCORE_KEYS: Array<keyof Scores> = ["relevance", "evidence", "structure", "impact"];
-const QUESTIONS_PER_SESSION = 6;
 
 interface ScoreResult {
   scores: Scores;
@@ -139,10 +138,14 @@ Deno.serve(async (request) => {
     }, { onConflict: "question_id" });
     if (upsertError) throw upsertError;
 
-    const { data: answered, error: answeredError } = await client.from("answers")
-      .select("overall").eq("session_id", session.id);
+    const [{ data: answered, error: answeredError }, { count: questionCount, error: countError }] = await Promise.all([
+      client.from("answers").select("overall").eq("session_id", session.id),
+      client.from("questions").select("id", { count: "exact", head: true }).eq("session_id", session.id),
+    ]);
     if (answeredError) throw answeredError;
-    const sessionCompleted = (answered?.length ?? 0) >= QUESTIONS_PER_SESSION;
+    if (countError) throw countError;
+    // The session is done once every one of its questions (5, 6, 10 or 15) has an answer.
+    const sessionCompleted = (answered?.length ?? 0) >= (questionCount ?? 6);
     const sessionOverall = sessionCompleted
       ? Math.round(answered!.reduce((total, row) => total + (row.overall as number), 0) / answered!.length)
       : null;

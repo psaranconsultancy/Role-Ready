@@ -130,7 +130,11 @@ export async function downloadReportPdf(input: ReportInput): Promise<void> {
         CW - 12
       )
     : [];
-  const bandH = 66 + focusLines.length * lineH(10);
+  // Up to 8 tiles fit on one row; 10 or 15 questions wrap onto a second row.
+  const TILES_PER_ROW = 8;
+  const tileRows = Math.max(1, Math.ceil(questions.length / TILES_PER_ROW));
+  const extraTileH = (tileRows - 1) * 14;
+  const bandH = 66 + extraTileH + focusLines.length * lineH(10);
   doc.setFillColor(INK);
   doc.roundedRect(M, y, CW, bandH, 4, 4, 'F');
 
@@ -164,11 +168,11 @@ export async function downloadReportPdf(input: ReportInput): Promise<void> {
 
   // Per-question tiles
   const tileGap = 2.5;
-  const n = Math.max(1, questions.length);
+  const n = Math.max(1, Math.ceil(questions.length / tileRows));
   const tileW = (CW - 12 - tileGap * (n - 1)) / n;
   questions.forEach((q, i) => {
-    const tx = M + 6 + i * (tileW + tileGap);
-    const ty = y + 47;
+    const tx = M + 6 + (i % n) * (tileW + tileGap);
+    const ty = y + 47 + Math.floor(i / n) * 14;
     doc.setFillColor('#1e293b');
     doc.roundedRect(tx, ty, tileW, 12, 2, 2, 'F');
     const s = answersByQuestionId[q.id]?.overall;
@@ -183,7 +187,7 @@ export async function downloadReportPdf(input: ReportInput): Promise<void> {
   });
   if (focusLines.length) {
     font(10, 'normal', '#f8fafc');
-    focusLines.forEach((ln, i) => doc.text(ln, M + 6, y + 66 + i * lineH(10)));
+    focusLines.forEach((ln, i) => doc.text(ln, M + 6, y + 66 + extraTileH + i * lineH(10)));
   }
   y += bandH + 6;
 

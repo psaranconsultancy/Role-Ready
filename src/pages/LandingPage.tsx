@@ -61,7 +61,7 @@ export const LandingPage: React.FC = () => {
             </h1>
 
             <p className="mx-auto mt-5 max-w-2xl text-[17px] leading-[1.45] text-[#d2d2d7] sm:text-[21px]">
-              Upload your resume and the job spec, and practise six
+              Upload your resume and the job spec, and practise 5, 10 or 15
               questions built from both. Every question shows the exact line
               from your resume and the job requirement it tests, and every
               answer gets a score out of 100 and a stronger example answer.
@@ -334,11 +334,11 @@ export const LandingPage: React.FC = () => {
               </span>
             </div>
             <h3 className="mt-4 font-display text-xl font-bold text-[#0f172a]">
-              Answer 6 tailored questions
+              Answer 5, 10 or 15 tailored questions
             </h3>
             <p className="mt-2 text-sm leading-relaxed text-[#6e6e73]">
-              Practise two behavioural, two technical, and two role-specific
-              questions. Each question has tags you can tap to see the exact
+              Pick behavioural, technical, situational or a mix of all of
+              them. Each question has tags you can tap to see the exact
               resume line and job requirement it is testing.
             </p>
           </div>

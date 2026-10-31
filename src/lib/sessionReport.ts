@@ -110,7 +110,7 @@ export function buildReportHtml(input: ReportInput): string {
   header .meta { color: #a1a1a6; font-size: 13px; }
   .overall { display: flex; gap: 20px; align-items: baseline; margin-top: 16px; flex-wrap: wrap; }
   .overall b { font-size: 40px; line-height: 1; }
-  .tiles { display: grid; grid-template-columns: repeat(6, 1fr); gap: 8px; margin-top: 16px; }
+  .tiles { display: grid; grid-template-columns: repeat(auto-fill, minmax(72px, 1fr)); gap: 8px; margin-top: 16px; }
   .tile { background: rgba(255,255,255,.08); border-radius: 12px; padding: 8px 10px; font-size: 12px; color: #a1a1a6; }
   .tile b { display: block; color: #fff; font-size: 18px; }
   .focus { margin-top: 16px; font-size: 13px; color: #f8fafc; }
