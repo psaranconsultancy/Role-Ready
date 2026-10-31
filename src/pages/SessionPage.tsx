@@ -15,12 +15,14 @@ import {
   VolumeX,
 } from 'lucide-react';
 import type { Session, Question, Feedback, ApiError } from '@contracts';
-import { generateQuestions, getSession, parseResume, toApiError } from '../lib/api';
+import { generateQuestions, getSession, isMockMode, parseResume, toApiError } from '../lib/api';
 import { QuestionCard } from '../components/QuestionCard';
 import { SessionSummary } from '../components/SessionSummary';
 import { ErrorBanner } from '../components/ErrorBanner';
 import { QUESTION_TYPE_LABELS } from '../lib/sessionReport';
 import { getScoreBand } from '../components/FeedbackPanel';
+import { LiveInterviewPanel } from '../components/LiveInterviewPanel';
+import { isLiveInterviewEnabled } from '../lib/liveInterview';
 import {
   useInterviewerVoice,
   feedbackScript,
@@ -358,6 +360,12 @@ export const SessionPage: React.FC = () => {
             questions={questions}
             answersByQuestionId={answersByQuestionId}
           />
+        )}
+
+        {/* Live interview (beta): only when the live switch is on and the
+            real backend is in use. */}
+        {questions.length > 0 && !isMockMode() && isLiveInterviewEnabled() && (
+          <LiveInterviewPanel sessionId={session.id} />
         )}
 
         {/* Extracted Evidence Drawer */}
