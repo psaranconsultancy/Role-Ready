@@ -324,7 +324,7 @@ export const LoginPage: React.FC = () => {
                   if (emailError) setEmailError(null);
                 }}
                 placeholder="alex.rivera@roleready.app"
-                className="mt-1.5 block min-h-[44px] w-full rounded-2xl border border-black/15 aria-[invalid=true]:border-[#d70015] bg-[#f1f5f9]/60 px-4 py-2.5 text-base text-[#0f172a] placeholder:text-[#aeaeb2] focus:border-[#0284c7] focus:bg-white focus:outline-none"
+                className="mt-1.5 block min-h-[44px] w-full rounded-2xl border border-black/15 aria-[invalid=true]:border-2 aria-[invalid=true]:border-[#d70015] aria-[invalid=true]:focus:border-[#d70015] bg-[#f1f5f9]/60 px-4 py-2.5 text-base text-[#0f172a] placeholder:text-[#aeaeb2] focus:border-[#0284c7] focus:bg-white focus:outline-none"
               />
               {emailError && (
                 <p id="auth-email-error" role="alert" className="mt-1.5 text-xs font-medium text-[#d70015]">
@@ -356,7 +356,7 @@ export const LoginPage: React.FC = () => {
                   if (passwordError) setPasswordError(null);
                 }}
                 placeholder="••••••••••••"
-                className="mt-1.5 block min-h-[44px] w-full rounded-2xl border border-black/15 aria-[invalid=true]:border-[#d70015] bg-[#f1f5f9]/60 px-4 py-2.5 text-base text-[#0f172a] placeholder:text-[#aeaeb2] focus:border-[#0284c7] focus:bg-white focus:outline-none"
+                className="mt-1.5 block min-h-[44px] w-full rounded-2xl border border-black/15 aria-[invalid=true]:border-2 aria-[invalid=true]:border-[#d70015] aria-[invalid=true]:focus:border-[#d70015] bg-[#f1f5f9]/60 px-4 py-2.5 text-base text-[#0f172a] placeholder:text-[#aeaeb2] focus:border-[#0284c7] focus:bg-white focus:outline-none"
               />
               {passwordError ? (
                 <p id="auth-password-error" role="alert" className="mt-1.5 text-xs font-medium text-[#d70015]">

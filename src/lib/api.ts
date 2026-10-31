@@ -453,6 +453,27 @@ export async function generateQuestions(
   return data;
 }
 
+/**
+ * Asks the AI for the job title and company named in a job spec. Returns null
+ * when it can't (mock mode, signed out, or the AI is busy) so the caller keeps
+ * its quick in-browser guess.
+ */
+export async function extractJobDetails(
+  jdText: string
+): Promise<{ roleTitle: string | null; company: string | null } | null> {
+  if (isMockMode()) return null;
+  try {
+    const { data, error } = await supabase.functions.invoke<{
+      role_title: string | null;
+      company: string | null;
+    }>('extract-job-details', { body: { jd_text: jdText.slice(0, 8000) } });
+    if (error || !data) return null;
+    return { roleTitle: data.role_title ?? null, company: data.company ?? null };
+  } catch {
+    return null;
+  }
+}
+
 export async function scoreAnswer(
   questionId: string,
   answerText: string
