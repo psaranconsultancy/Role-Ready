@@ -34,6 +34,7 @@ import {
   SAMPLE_JD_TEXT,
 } from '../mocks/fixtures';
 import { guessJobSpecDetails } from '../lib/jobSpecDetails';
+import { normaliseLink } from '../lib/validation';
 import { ErrorBanner } from '../components/ErrorBanner';
 import { InterviewerPicker } from '../components/InterviewerPicker';
 import {
@@ -61,6 +62,7 @@ export const NewSessionPage: React.FC = () => {
   const [company, setCompany] = useState('');
   const [jdText, setJdText] = useState('');
   const [newContextLink, setNewContextLink] = useState('');
+  const [linkError, setLinkError] = useState<string | null>(null);
   // Name of the job spec file the text was read from, if any.
   const [jdSourceName, setJdSourceName] = useState<string | null>(null);
   const [jdReading, setJdReading] = useState(false);
@@ -217,20 +219,43 @@ export const NewSessionPage: React.FC = () => {
     }
   };
 
+  const addContextLink = () => {
+    if (!newContextLink.trim()) return;
+    const link = normaliseLink(newContextLink);
+    if (!link) {
+      setLinkError('That doesn’t look like a web address. Try something like company.com/about.');
+      return;
+    }
+    if (!grillContext.sharedLinks.includes(link)) {
+      updateGrillContext({ ...grillContext, sharedLinks: [...grillContext.sharedLinks, link] });
+    }
+    setNewContextLink('');
+    setLinkError(null);
+  };
+
   const trimmedJdLength = jdText.trim().length;
   const isJdValid = trimmedJdLength >= 200;
-  const canSubmit = Boolean(file) && isJdValid && stage === 'idle' && !jdReading;
+  // The button stays pressable: pressing it with something missing says what,
+  // and takes the candidate to it, rather than sitting greyed out.
+  const canSubmit = stage === 'idle' && !jdReading;
+  const missing = !file ? 'your resume' : !isJdValid ? 'the job description' : null;
 
   const runPipeline = async () => {
     setFileError(null);
     setJdError(null);
     setApiError(null);
 
+    const showField = (id: string) => {
+      const el = document.getElementById(id);
+      el?.closest('section')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    };
     if (!file) {
       setFileError('Please upload your resume as a PDF file.');
+      showField('resume-upload');
       return;
     }
     if (trimmedJdLength < 200) {
+      showField('jd-textarea');
       setJdError(
         trimmedJdLength === 0
           ? 'Please upload the job spec or paste the job description.'
@@ -745,6 +770,11 @@ export const NewSessionPage: React.FC = () => {
                 {jdError}
               </p>
             )}
+            {!jdError && !jdReading && trimmedJdLength > 0 && trimmedJdLength < 200 && (
+              <p className="mt-2.5 text-xs text-[#6e6e73]">
+                {trimmedJdLength} of at least 200 characters. Paste a little more of the posting.
+              </p>
+            )}
 
             {!jdText.trim() && !jdReading && (
               <button
@@ -782,6 +812,7 @@ export const NewSessionPage: React.FC = () => {
                 </label>
                 <input
                   id="role-title"
+                  maxLength={100}
                   type="text"
                   disabled={isBusy}
                   value={roleTitle}
@@ -799,6 +830,7 @@ export const NewSessionPage: React.FC = () => {
                 </label>
                 <input
                   id="company-name"
+                  maxLength={100}
                   type="text"
                   disabled={isBusy}
                   value={company}
@@ -1007,6 +1039,7 @@ export const NewSessionPage: React.FC = () => {
               </label>
               <input
                 id="new-niche-focus"
+                maxLength={150}
                 type="text"
                 disabled={isBusy}
                 value={grillContext.nicheFocus}
@@ -1096,34 +1129,41 @@ export const NewSessionPage: React.FC = () => {
                 <div className="mt-2 flex gap-1.5">
                   <input
                     type="url"
+                    inputMode="url"
+                    autoCapitalize="none"
+                    spellCheck={false}
+                    maxLength={500}
                     aria-label="Add context link URL"
+                    aria-invalid={linkError ? true : undefined}
                     disabled={isBusy}
                     value={newContextLink}
-                    onChange={(e) => setNewContextLink(e.target.value)}
+                    onChange={(e) => {
+                      setNewContextLink(e.target.value);
+                      if (linkError) setLinkError(null);
+                    }}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter') {
+                        e.preventDefault();
+                        addContextLink();
+                      }
+                    }}
                     placeholder="https://company.com/strategy-memo"
-                    className="min-h-[36px] flex-1 rounded-xl border border-black/15 bg-white px-3 py-1 text-xs text-[#0f172a] placeholder:text-[#aeaeb2] focus:border-[#0284c7] focus:outline-none"
+                    className="min-h-[36px] flex-1 rounded-xl border border-black/15 bg-white px-3 py-1 text-xs text-[#0f172a] placeholder:text-[#aeaeb2] focus:border-[#0284c7] focus:outline-none aria-[invalid=true]:border-[#d70015]"
                   />
                   <button
                     type="button"
                     disabled={isBusy}
-                    onClick={() => {
-                      const trimmed = newContextLink.trim();
-                      if (
-                        trimmed &&
-                        !grillContext.sharedLinks.includes(trimmed)
-                      ) {
-                        updateGrillContext({
-                          ...grillContext,
-                          sharedLinks: [...grillContext.sharedLinks, trimmed],
-                        });
-                        setNewContextLink('');
-                      }
-                    }}
+                    onClick={addContextLink}
                     className="rounded-xl bg-[#0284c7] px-3 py-1 text-xs font-semibold text-white hover:bg-[#0369a1]"
                   >
                     Add
                   </button>
                 </div>
+                {linkError && (
+                  <p role="alert" className="mt-1.5 text-xs font-medium text-[#d70015]">
+                    {linkError}
+                  </p>
+                )}
                 <div className="mt-2 flex flex-wrap gap-1.5">
                   {grillContext.sharedLinks.map((url) => (
                     <span
@@ -1159,6 +1199,11 @@ export const NewSessionPage: React.FC = () => {
           {/* Submit Action Bar */}
           <div className="flex flex-col items-center justify-between gap-4 pt-2 sm:flex-row">
             <p className="text-xs text-[#6e6e73]">
+              {missing && !isBusy && (
+                <span className="mb-1 block font-semibold text-[#b45309]">
+                  Still needed: {missing}.
+                </span>
+              )}
               Creates 6 tailored questions (2 behavioural, 2 technical, 2
               role-specific).
             </p>
