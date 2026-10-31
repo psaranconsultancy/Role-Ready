@@ -61,7 +61,7 @@ export const LandingPage: React.FC = () => {
             </h1>
 
             <p className="mx-auto mt-5 max-w-2xl text-[17px] leading-[1.45] text-[#d2d2d7] sm:text-[21px]">
-              Upload your resume, paste the job description, and practise six
+              Upload your resume and the job spec, and practise six
               questions built from both. Every question shows the exact line
               from your resume and the job requirement it tests, and every
               answer gets a score out of 100 and a stronger example answer.
@@ -304,7 +304,7 @@ export const LandingPage: React.FC = () => {
               Add your resume and the job
             </h3>
             <p className="mt-2 text-sm leading-relaxed text-[#6e6e73]">
-              Drop your PDF resume (up to 5 MB) and paste the job description.
+              Drop in your PDF resume (up to 5 MB), then upload the job spec or paste its text.
               RoleReady reads your resume line by line and picks out what the
               job is asking for.
             </p>
