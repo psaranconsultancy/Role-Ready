@@ -175,6 +175,25 @@ export async function signUp(email: string, password: string): Promise<SignUpRes
   if (error || !data.user) {
     throw toApiError(error, 'unauthorized', error?.message || 'Could not create account.');
   }
+  // Supabase answers a sign-up for an email that already has an account with a
+  // stand-in user that has no identities, and sends no email. Sign them in
+  // instead, so an existing user never waits for an email that is not coming.
+  if (!data.session && (data.user.identities?.length ?? 1) === 0) {
+    const signedIn = await supabase.auth.signInWithPassword({ email: email.trim(), password });
+    if (!signedIn.error && signedIn.data.user) {
+      return { id: signedIn.data.user.id, email: signedIn.data.user.email ?? email.trim() };
+    }
+    if (signedIn.error && /not confirmed/i.test(signedIn.error.message)) {
+      return { id: data.user.id, email: email.trim(), needsConfirmation: true };
+    }
+    const err: ApiError = {
+      error: {
+        code: 'bad_request',
+        message: 'You already have an account with this email. Sign in with your password instead.',
+      },
+    };
+    throw err;
+  }
   // With "Confirm email" on, there is no session until the link is clicked.
   if (!data.session) {
     return { id: data.user.id, email: data.user.email ?? email.trim(), needsConfirmation: true };
@@ -222,6 +241,15 @@ export async function signIn(email: string, password: string): Promise<AppUser> 
     email: email.trim(),
     password,
   });
+  if (error && /invalid login credentials/i.test(error.message)) {
+    const err: ApiError = {
+      error: {
+        code: 'unauthorized',
+        message: "That email and password don't match an account. Check both, or choose Sign up if you're new.",
+      },
+    };
+    throw err;
+  }
   if (error || !data.user) {
     throw toApiError(error, 'unauthorized', error?.message || 'Invalid email or password.');
   }
