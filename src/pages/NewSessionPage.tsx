@@ -74,6 +74,25 @@ export const NewSessionPage: React.FC = () => {
   const [pending, setPending] = useState<{ id: string; parsed: boolean } | null>(null);
   useEffect(() => setPending(null), [file, jdText, roleTitle, company]);
 
+  // A file dropped just outside a drop zone would otherwise make the browser
+  // open it and leave this page, losing what the candidate has filled in.
+  useEffect(() => {
+    const stop = (e: DragEvent) => {
+      // Drop zones handle (and preventDefault) their own events first.
+      if (e.defaultPrevented) return;
+      if (e.dataTransfer && Array.from(e.dataTransfer.types).includes('Files')) {
+        e.preventDefault();
+        if (e.type === 'dragover') e.dataTransfer.dropEffect = 'none';
+      }
+    };
+    window.addEventListener('dragover', stop);
+    window.addEventListener('drop', stop);
+    return () => {
+      window.removeEventListener('dragover', stop);
+      window.removeEventListener('drop', stop);
+    };
+  }, []);
+
   const validateAndSelectFile = (selected: File | null) => {
     setFileError(null);
     setApiError(null);
@@ -545,7 +564,27 @@ export const NewSessionPage: React.FC = () => {
           {/* 2. Job Spec: upload a file or paste the text */}
           <section
             data-ui="job-spec-card"
-            className="bento-card-light p-6 sm:p-8"
+            // A file dropped anywhere on this card (drop zone, text box or the
+            // "file read" banner) is read as the job spec.
+            onDragOver={(e) => {
+              if (!Array.from(e.dataTransfer.types).includes('Files')) return;
+              e.preventDefault();
+              e.dataTransfer.dropEffect = 'copy';
+              if (!isBusy && !jdReading) setJdDragOver(true);
+            }}
+            onDragLeave={(e) => {
+              if (!e.currentTarget.contains(e.relatedTarget as Node | null)) setJdDragOver(false);
+            }}
+            onDrop={(e) => {
+              if (!e.dataTransfer.files?.length) return;
+              e.preventDefault();
+              setJdDragOver(false);
+              if (isBusy || jdReading) return;
+              handleJobSpecFile(e.dataTransfer.files[0]);
+            }}
+            className={`bento-card-light p-6 sm:p-8 transition-shadow ${
+              jdDragOver ? 'ring-2 ring-[#0284c7] ring-offset-2' : ''
+            }`}
           >
             <div className="flex flex-wrap items-center justify-between gap-2">
               <label
@@ -611,17 +650,6 @@ export const NewSessionPage: React.FC = () => {
               </div>
             ) : (
               <div
-                onDragOver={(e) => {
-                  e.preventDefault();
-                  if (!isBusy && !jdReading) setJdDragOver(true);
-                }}
-                onDragLeave={() => setJdDragOver(false)}
-                onDrop={(e) => {
-                  e.preventDefault();
-                  setJdDragOver(false);
-                  if (isBusy || jdReading) return;
-                  handleJobSpecFile(e.dataTransfer.files?.[0] ?? null);
-                }}
                 onClick={() =>
                   !isBusy && !jdReading && jdFileInputRef.current?.click()
                 }
