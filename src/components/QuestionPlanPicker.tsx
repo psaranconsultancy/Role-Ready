@@ -72,7 +72,7 @@ export const QuestionPlanPicker: React.FC<{
         </p>
         <div role="radiogroup" aria-labelledby="question-count-label" className="mt-2 flex flex-wrap gap-2">
           {QUESTION_COUNTS.map((count) => (
-            <button
+            <button data-tip={`${count} questions, about ${count * 2} minutes`}
               key={count}
               type="button"
               role="radio"
@@ -94,7 +94,7 @@ export const QuestionPlanPicker: React.FC<{
         </p>
         <div role="radiogroup" aria-labelledby="question-focus-label" className="mt-2 flex flex-wrap gap-2">
           {FOCUS_OPTIONS.map((o) => (
-            <button
+            <button data-tip={o.hint}
               key={o.value}
               type="button"
               role="radio"
