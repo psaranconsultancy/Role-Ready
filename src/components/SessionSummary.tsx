@@ -9,7 +9,7 @@ import {
   QUESTION_TYPE_LABELS,
 } from '../lib/sessionReport';
 import { downloadReportPdf } from '../lib/sessionReportPdf';
-import { emailReport } from '../lib/api';
+import { emailReport, isSkippedAnswer } from '../lib/api';
 import { useAuth } from '../context/AuthContext';
 
 interface SessionSummaryProps {
@@ -104,6 +104,10 @@ export const SessionSummary: React.FC<SessionSummaryProps> = ({
     }
   };
 
+  const skippedCount = questions.filter((q) =>
+    isSkippedAnswer(answersByQuestionId[q.id]),
+  ).length;
+
   const weakestQuestion = [...questions].sort((a, b) => {
     const scoreA = answersByQuestionId[a.id]?.overall ?? 100;
     const scoreB = answersByQuestionId[b.id]?.overall ?? 100;
@@ -129,7 +133,12 @@ export const SessionSummary: React.FC<SessionSummaryProps> = ({
           <div>
             <div className="inline-flex items-center gap-1.5 rounded-full bg-[#14b8a6]/20 px-3 py-0.5 text-xs font-semibold text-[#14b8a6]">
               <Award className="h-3.5 w-3.5" aria-hidden="true" />
-              <span>All {questions.length} questions answered · {band.label}</span>
+              <span>
+                {skippedCount > 0
+                  ? `${questions.length - skippedCount} of ${questions.length} answered · ${skippedCount} skipped`
+                  : `All ${questions.length} questions answered`}{' '}
+                · {band.label}
+              </span>
             </div>
             <h2 className="mt-2 font-display text-2xl font-bold tracking-tight tabular-nums text-white sm:text-3xl">
               Session average: {overallScore}/100
