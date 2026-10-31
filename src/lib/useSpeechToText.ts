@@ -62,7 +62,14 @@ export function useSpeechToText(onFinalText: (text: string) => void) {
   const onFinalRef = useRef(onFinalText);
   onFinalRef.current = onFinalText;
 
+  // True from "Speak your answer" until the candidate presses Stop. Chrome
+  // ends recognition by itself after a few quiet seconds; while this is true
+  // we quietly start it again, so the candidate never has to click twice.
+  const wantRef = useRef(false);
+  const restartsRef = useRef(0);
+
   const stop = useCallback(() => {
+    wantRef.current = false;
     recognitionRef.current?.stop();
   }, []);
 
@@ -96,6 +103,14 @@ export function useSpeechToText(onFinalText: (text: string) => void) {
       }
     }
 
+    wantRef.current = true;
+    restartsRef.current = 0;
+    // Give the speakers a moment to fall silent so the mic starts clean.
+    await new Promise((r) => window.setTimeout(r, 150));
+    if (wantRef.current) begin(Ctor);
+  }, []);
+
+  const begin = (Ctor: SpeechRecognitionCtor) => {
     const rec = new Ctor();
     rec.lang = navigator.language || 'en-GB';
     rec.continuous = true;
@@ -121,7 +136,10 @@ export function useSpeechToText(onFinalText: (text: string) => void) {
             fresh = text.slice(lastFinal.length).trim();
           }
           if (text) lastFinal = text;
-          if (fresh) onFinalRef.current(fresh);
+          if (fresh) {
+            restartsRef.current = 0;
+            onFinalRef.current(fresh);
+          }
         } else {
           pending += result[0].transcript;
         }
@@ -137,6 +155,7 @@ export function useSpeechToText(onFinalText: (text: string) => void) {
     rec.onerror = (e) => {
       // "no-speech" and "aborted" just end the take; nothing to report.
       if (e.error !== 'no-speech' && e.error !== 'aborted') {
+        wantRef.current = false;
         setError(
           ERROR_MESSAGES[e.error] ??
             'Speech-to-text stopped unexpectedly. Try again, or type your answer.'
@@ -145,8 +164,18 @@ export function useSpeechToText(onFinalText: (text: string) => void) {
     };
     rec.onend = () => {
       recognitionRef.current = null;
-      setListening(false);
       setInterim('');
+      // Ended on its own (a pause, or Chrome's time limit): keep listening.
+      // Give up after about two quiet minutes so the mic is not left on.
+      if (wantRef.current && restartsRef.current < 15) {
+        restartsRef.current += 1;
+        window.setTimeout(() => {
+          if (wantRef.current && !recognitionRef.current) begin(Ctor);
+        }, 200);
+        return;
+      }
+      wantRef.current = false;
+      setListening(false);
     };
 
     recognitionRef.current = rec;
@@ -155,12 +184,19 @@ export function useSpeechToText(onFinalText: (text: string) => void) {
       setListening(true);
     } catch {
       recognitionRef.current = null;
+      wantRef.current = false;
       setListening(false);
       setError('Could not start the microphone. Try again, or type your answer.');
     }
-  }, []);
+  };
 
-  useEffect(() => () => recognitionRef.current?.abort(), []);
+  useEffect(
+    () => () => {
+      wantRef.current = false;
+      recognitionRef.current?.abort();
+    },
+    []
+  );
 
   return { supported, listening, interim, error, start, stop };
 }
