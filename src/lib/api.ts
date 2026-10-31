@@ -700,6 +700,30 @@ export async function getSession(id: string): Promise<{
   };
 }
 
+/** Emails the session report. `to` is optional: it defaults to the account's email. */
+export async function emailReport(sessionId: string, to?: string): Promise<{ sent_to: string }> {
+  const user = await getUser();
+  if (!user) {
+    const err: ApiError = { error: { code: 'unauthorized', message: 'You must be signed in.' } };
+    throw err;
+  }
+  if (isMockMode()) {
+    await fakeDelay(700, 1200);
+    return { sent_to: to?.trim() || user.email };
+  }
+  const { data, error } = await supabase.functions.invoke<{ sent_to: string }>('email-report', {
+    body: { session_id: sessionId, ...(to?.trim() ? { to: to.trim() } : {}) },
+  });
+  if (error || !data) {
+    throw await extractFunctionApiError(
+      error,
+      'bad_request',
+      "We couldn't send the email just now. Download the PDF instead."
+    );
+  }
+  return data;
+}
+
 export async function deleteSession(id: string): Promise<void> {
   const user = await getUser();
   if (!user) {
