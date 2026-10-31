@@ -33,6 +33,7 @@ import {
   SAMPLE_COMPANY,
   SAMPLE_JD_TEXT,
 } from '../mocks/fixtures';
+import { guessJobSpecDetails } from '../lib/jobSpecDetails';
 import { ErrorBanner } from '../components/ErrorBanner';
 import { InterviewerPicker } from '../components/InterviewerPicker';
 import {
@@ -73,6 +74,32 @@ export const NewSessionPage: React.FC = () => {
   // creating another one (which would leave an empty draft in History).
   const [pending, setPending] = useState<{ id: string; parsed: boolean } | null>(null);
   useEffect(() => setPending(null), [file, jdText, roleTitle, company]);
+
+  // Fill in the role and company from the job spec. Only fills a field that is
+  // empty or still holds our own earlier guess, so a typed value is never lost.
+  const autoRoleRef = useRef<string | null>(null);
+  const autoCompanyRef = useRef<string | null>(null);
+  useEffect(() => {
+    const t = window.setTimeout(() => {
+      const guess = jdText.trim().length >= 40 ? guessJobSpecDetails(jdText) : { roleTitle: null, company: null };
+      setRoleTitle((cur) => {
+        const ours = !cur.trim() || cur === autoRoleRef.current;
+        if (!ours) return cur;
+        autoRoleRef.current = guess.roleTitle;
+        return guess.roleTitle ?? '';
+      });
+      setCompany((cur) => {
+        const ours = !cur.trim() || cur === autoCompanyRef.current;
+        if (!ours) return cur;
+        autoCompanyRef.current = guess.company;
+        return guess.company ?? '';
+      });
+    }, 350);
+    return () => window.clearTimeout(t);
+  }, [jdText]);
+  const filledFromSpec =
+    (!!roleTitle && roleTitle === autoRoleRef.current) ||
+    (!!company && company === autoCompanyRef.current);
 
   // A file dropped just outside a drop zone would otherwise make the browser
   // open it and leave this page, losing what the candidate has filled in.
@@ -740,6 +767,11 @@ export const NewSessionPage: React.FC = () => {
                 (optional)
               </span>
             </h3>
+            {filledFromSpec && (
+              <p data-ui="role-autofill-note" className="mt-1.5 text-xs text-[#0f766e]">
+                Filled in from your job spec. Change it if it's not right.
+              </p>
+            )}
             <div className="mt-4 grid gap-4 sm:grid-cols-2">
               <div>
                 <label
