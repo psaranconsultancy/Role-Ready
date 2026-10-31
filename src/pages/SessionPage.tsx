@@ -112,6 +112,8 @@ export const SessionPage: React.FC = () => {
         ? `Hello, I'm your interviewer for ${session.role_title || 'this role'}. Let's begin. `
         : `Welcome back. Let's pick up where you left off. `;
     voice.speak(intro + questionScript(firstOpen.position, firstOpen.text), `q:${firstOpen.id}`);
+    // Show the question she is asking.
+    if (firstOpen.position > 1) window.setTimeout(() => scrollToQuestion(firstOpen.position), 150);
     // Only run when the session's questions first arrive.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [session?.id, questions.length]);
@@ -129,11 +131,20 @@ export const SessionPage: React.FC = () => {
     const nextOpen = questions.find(
       (q) => q.id !== feedback.question_id && !answersByQuestionId[q.id]
     );
-    const tail = nextOpen
-      ? ` When you're ready, ${questionScript(nextOpen.position, nextOpen.text)}`
-      : sessionCompleted && sessionOverall !== null
-        ? ` That's all six questions. Your overall score is ${sessionOverall} out of 100. Well done.`
-        : '';
+    // When the interviewer moves on, the page moves with her: to the next
+    // question, or to the summary at the top once all six are done.
+    const moveOn = () => {
+      if (nextOpen) {
+        scrollToQuestion(nextOpen.position);
+        voice.speak(`Next, ${questionScript(nextOpen.position, nextOpen.text)}`, `q:${nextOpen.id}`);
+      } else if (sessionCompleted && sessionOverall !== null) {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        voice.speak(
+          `That's all six questions. Your overall score is ${sessionOverall} out of 100. Well done.`,
+          `fb:${feedback.question_id}`
+        );
+      }
+    };
     if (isSkippedAnswer(feedback)) {
       // Skipped: move straight on to the next question.
       voice.speak(
@@ -145,10 +156,14 @@ export const SessionPage: React.FC = () => {
         nextOpen ? `q:${nextOpen.id}` : `fb:${feedback.question_id}`
       );
       if (nextOpen) window.setTimeout(() => scrollToQuestion(nextOpen.position), 150);
+      else if (sessionCompleted) window.setTimeout(() => window.scrollTo({ top: 0, behavior: 'smooth' }), 150);
     } else {
+      // Read the feedback while it is on screen, then move on together.
       voice.speak(
-        feedbackScript(feedback.overall, band.label, feedback.what_worked, feedback.one_fix) + tail,
-        `fb:${feedback.question_id}`
+        feedbackScript(feedback.overall, band.label, feedback.what_worked, feedback.one_fix),
+        `fb:${feedback.question_id}`,
+        false,
+        moveOn
       );
     }
 
@@ -309,6 +324,7 @@ export const SessionPage: React.FC = () => {
                   if (next) {
                     const firstOpen = questions.find((q) => !answersByQuestionId[q.id]);
                     if (firstOpen) {
+                      scrollToQuestion(firstOpen.position);
                       voice.speak(
                         questionScript(firstOpen.position, firstOpen.text),
                         `q:${firstOpen.id}`,
@@ -353,6 +369,7 @@ export const SessionPage: React.FC = () => {
                   const next = voice.gender === 'female' ? 'male' : 'female';
                   voice.setGender(next);
                   const firstOpen = questions.find((q) => !answersByQuestionId[q.id]);
+                  if (firstOpen) scrollToQuestion(firstOpen.position);
                   voice.speak(
                     firstOpen
                       ? `Hi, I'll be your interviewer from here. ${questionScript(firstOpen.position, firstOpen.text)}`
