@@ -5,19 +5,21 @@ import { getVoiceState, setLiveActive } from './interviewerVoice';
 // The browser asks our `live-token` edge function for a short-lived,
 // single-use token (the interviewer's instructions are locked into it on the
 // server), then streams microphone audio to Gemini over a WebSocket and plays
-// the interviewer's voice as it arrives. Off unless switched on (see
-// isLiveInterviewEnabled), so the normal typed flow is never at risk.
+// the interviewer's voice as it arrives. If it fails, the typed interview
+// below is unchanged.
 
+// On for everyone (Pro tested it with a real mic, 31 Oct). ?live=0 hides it
+// on this browser as an escape hatch; ?live=1 brings it back.
 export const isLiveInterviewEnabled = (): boolean => {
-  if (import.meta.env.VITE_LIVE_INTERVIEW === 'true') return true;
-  if (typeof window === 'undefined') return false;
+  if (import.meta.env.VITE_LIVE_INTERVIEW === 'false') return false;
+  if (typeof window === 'undefined') return true;
   try {
     const param = new URLSearchParams(window.location.search).get('live');
-    if (param === '1') localStorage.setItem('roleready.liveInterview', 'on');
-    if (param === '0') localStorage.removeItem('roleready.liveInterview');
-    return localStorage.getItem('roleready.liveInterview') === 'on';
+    if (param === '0') localStorage.setItem('roleready.liveInterview', 'off');
+    if (param === '1') localStorage.removeItem('roleready.liveInterview');
+    return localStorage.getItem('roleready.liveInterview') !== 'off';
   } catch {
-    return false;
+    return true;
   }
 };
 

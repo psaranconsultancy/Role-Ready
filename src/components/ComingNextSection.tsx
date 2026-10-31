@@ -1,19 +1,14 @@
 import React from 'react';
-import { Clock, Flame, Mic, Briefcase, PoundSterling, FileStack, X } from 'lucide-react';
+import { Clock, Flame, Briefcase, PoundSterling, FileStack, X } from 'lucide-react';
 
 interface ComingNextSectionProps {
   mode?: 'section' | 'modal';
   onCloseModal?: () => void;
 }
 
-// A short, honest roadmap: what is live today, and the four things we plan to
+// A short, honest roadmap: what is live today, and the three things we plan to
 // build next. No tiers or prices until those features exist.
 const COMING_NEXT = [
-  {
-    Icon: Mic,
-    title: 'Live two-way voice interview',
-    text: 'A real-time conversation with a male or female AI voice that listens and replies as you talk.',
-  },
   {
     Icon: Briefcase,
     title: 'Specialist and executive question sets',
@@ -51,7 +46,7 @@ export const ComingNextSection: React.FC<ComingNextSectionProps> = ({
         </p>
       </div>
 
-      <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="mt-10 grid gap-4 sm:grid-cols-3">
         {COMING_NEXT.map(({ Icon, title, text }) => (
           <div
             key={title}

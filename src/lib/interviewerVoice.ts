@@ -226,7 +226,7 @@ export const stopSpeaking = () => {
  * "Stop". With `force` it speaks even when the voice is switched off (used by
  * the per-question "Hear it" button, which is an explicit request).
  */
-export const speak = (text: string, id: string, force = false) => {
+export const speak = (text: string, id: string, force = false, onDone?: () => void) => {
   if (!state.supported || state.liveActive) return;
   if (!state.enabled && !force) return;
   const clean = text.trim();
@@ -238,11 +238,15 @@ export const speak = (text: string, id: string, force = false) => {
   const chunks = splitIntoChunks(clean);
   setState({ speakingId: id });
 
+  let done = false;
   const finish = () => {
-    if (token !== runToken) return;
+    if (token !== runToken || done) return;
+    done = true;
     live.utterances = [];
     stopAudio();
     setState({ speakingId: null });
+    // Finished on its own (not cut off): let the page move on with the interviewer.
+    onDone?.();
   };
 
   if (naturalEnabled()) {

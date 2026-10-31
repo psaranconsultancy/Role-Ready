@@ -452,8 +452,8 @@ export const GrillFollowUp: React.FC<GrillFollowUpProps> = ({
       <p className="mt-6 flex items-start gap-1.5 border-t border-white/10 pt-4 text-xs text-[#a1a1a6]">
         <Clock className="mt-0.5 h-3.5 w-3.5 shrink-0 text-[#ff9f0a]" aria-hidden="true" />
         <span>
-          Coming soon: a live two-way voice interview with a male or female voice,
-          specialist and executive question sets, and salary negotiation scripts.
+          Coming soon: specialist and executive question sets, Grill With Docs,
+          and salary negotiation scripts.
         </span>
       </p>
     </section>
