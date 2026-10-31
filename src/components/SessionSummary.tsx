@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { RotateCcw, Award, FileDown, Mail, Loader2 } from 'lucide-react';
+import React, { useEffect, useRef, useState } from 'react';
+import { RotateCcw, Award, FileDown, Mail, Loader2, Check, Send } from 'lucide-react';
 import type { Question, Feedback, Session } from '@contracts';
 import { getScoreBand } from './FeedbackPanel';
 import { ScoreRing } from './ScoreRing';
@@ -9,6 +9,7 @@ import {
   QUESTION_TYPE_LABELS,
 } from '../lib/sessionReport';
 import { downloadReportPdf } from '../lib/sessionReportPdf';
+import { emailReport } from '../lib/api';
 import { useAuth } from '../context/AuthContext';
 
 interface SessionSummaryProps {
@@ -27,8 +28,63 @@ export const SessionSummary: React.FC<SessionSummaryProps> = ({
   const band = getScoreBand(overallScore);
   const { user } = useAuth();
   const reportInput = { session, questions, answersByQuestionId, overallScore };
+  // Demo accounts have no real inbox, so leave "To" empty for them.
+  const mailTo =
+    user?.email?.includes('@') && !user.email.endsWith('@roleready.app')
+      ? user.email
+      : '';
   const [makingPdf, setMakingPdf] = useState(false);
   const [pdfNote, setPdfNote] = useState<string | null>(null);
+
+  // Email report: sent automatically to a real account email when the session
+  // has just finished, and on demand with "Email me this report".
+  type EmailState = 'idle' | 'form' | 'sending' | 'sent' | 'error';
+  const [emailState, setEmailState] = useState<EmailState>('idle');
+  const [emailNote, setEmailNote] = useState<string | null>(null);
+  const [address, setAddress] = useState(mailTo);
+  const autoTried = useRef(false);
+
+  const sendEmail = async (to: string) => {
+    setEmailState('sending');
+    setEmailNote(`Emailing your report to ${to}…`);
+    try {
+      const res = await emailReport(session.id, to);
+      setEmailState('sent');
+      setEmailNote(`Report emailed to ${res.sent_to}. Check your inbox (and spam, just in case).`);
+      try {
+        sessionStorage.setItem(`rr_emailed_${session.id}`, '1');
+      } catch {
+        /* storage is optional */
+      }
+    } catch (err) {
+      const msg =
+        (err as { error?: { message?: string } })?.error?.message ??
+        "We couldn't send the email just now. Download the PDF instead.";
+      setEmailState('error');
+      setEmailNote(msg);
+    }
+  };
+
+  useEffect(() => {
+    if (autoTried.current || !mailTo || !session.completed_at) return;
+    autoTried.current = true;
+    const fresh = Date.now() - new Date(session.completed_at).getTime() < 5 * 60_000;
+    let already = false;
+    try {
+      already = sessionStorage.getItem(`rr_emailed_${session.id}`) === '1';
+    } catch {
+      /* storage is optional */
+    }
+    if (fresh && !already) void sendEmail(mailTo);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [mailTo, session.completed_at, session.id]);
+
+  const onEmailClick = () => {
+    if (emailState === 'sending') return;
+    if (mailTo && emailState !== 'error') return void sendEmail(mailTo);
+    setEmailState('form');
+    setEmailNote(null);
+  };
 
   // Build the PDF in the browser and download it. If that fails for any
   // reason, open the printable page instead so the candidate still gets a copy.
@@ -46,11 +102,6 @@ export const SessionSummary: React.FC<SessionSummaryProps> = ({
       setMakingPdf(false);
     }
   };
-  // Demo accounts have no real inbox, so leave "To" empty for them.
-  const mailTo =
-    user?.email?.includes('@') && !user.email.endsWith('@roleready.app')
-      ? user.email
-      : '';
 
   const weakestQuestion = [...questions].sort((a, b) => {
     const scoreA = answersByQuestionId[a.id]?.overall ?? 100;
@@ -120,17 +171,100 @@ export const SessionSummary: React.FC<SessionSummaryProps> = ({
           )}
           <span>{makingPdf ? 'Making your PDF…' : 'Download report (PDF)'}</span>
         </button>
-        <a
-          href={buildReportMailto(reportInput, mailTo)}
-          className="inline-flex min-h-[40px] items-center gap-1.5 rounded-full border border-white/20 bg-white/[0.08] px-4 py-2 text-xs font-semibold text-white transition-colors hover:bg-white/15"
+        <button
+          type="button"
+          data-ui="email-report"
+          onClick={onEmailClick}
+          disabled={emailState === 'sending'}
+          aria-busy={emailState === 'sending'}
+          className="inline-flex min-h-[40px] items-center gap-1.5 rounded-full border border-white/20 bg-white/[0.08] px-4 py-2 text-xs font-semibold text-white transition-colors hover:bg-white/15 disabled:opacity-70"
         >
-          <Mail className="h-3.5 w-3.5" aria-hidden="true" />
-          <span>Email it to me</span>
-        </a>
+          {emailState === 'sending' ? (
+            <Loader2 className="h-3.5 w-3.5 animate-spin" aria-hidden="true" />
+          ) : emailState === 'sent' ? (
+            <Check className="h-3.5 w-3.5 text-[#14b8a6]" aria-hidden="true" />
+          ) : (
+            <Mail className="h-3.5 w-3.5" aria-hidden="true" />
+          )}
+          <span>
+            {emailState === 'sending'
+              ? 'Sending…'
+              : emailState === 'sent'
+                ? 'Email it again'
+                : 'Email me this report'}
+          </span>
+        </button>
         <span className="text-xs text-[#a1a1a6]" role="status">
-          {pdfNote ?? 'The PDF has every score, fix and stronger answer. The email has your scores and fixes.'}
+          {pdfNote ?? 'The PDF and the email both have every score, fix and stronger answer.'}
         </span>
       </div>
+
+      {emailState === 'form' && (
+        <form
+          className="mt-3 flex flex-wrap items-center gap-2"
+          onSubmit={(e) => {
+            e.preventDefault();
+            if (address.trim()) void sendEmail(address.trim());
+          }}
+        >
+          <label htmlFor="report-email" className="sr-only">
+            Email address
+          </label>
+          <input
+            id="report-email"
+            type="email"
+            required
+            autoComplete="email"
+            autoFocus
+            value={address}
+            onChange={(e) => setAddress(e.target.value)}
+            placeholder="you@example.com"
+            className="min-h-[40px] w-full max-w-xs rounded-full border border-white/20 bg-white/[0.08] px-4 text-sm text-white placeholder:text-[#86868b] focus:border-[#38bdf8] focus:outline-none"
+          />
+          <button
+            type="submit"
+            className="btn-pill-primary min-h-[40px] px-5 py-2 text-xs font-semibold"
+          >
+            <Send className="h-3.5 w-3.5" aria-hidden="true" />
+            <span>Send</span>
+          </button>
+          <button
+            type="button"
+            onClick={() => setEmailState('idle')}
+            className="min-h-[40px] rounded-full px-3 text-xs font-semibold text-[#a1a1a6] hover:text-white"
+          >
+            Cancel
+          </button>
+        </form>
+      )}
+
+      {emailNote && emailState !== 'form' && (
+        <p
+          className={`mt-3 text-xs ${emailState === 'error' ? 'text-[#fdba74]' : emailState === 'sent' ? 'text-[#5eead4]' : 'text-[#a1a1a6]'}`}
+          role="status"
+        >
+          {emailNote}
+          {emailState === 'error' && (
+            <>
+              {' '}
+              <a
+                href={buildReportMailto(reportInput, address || mailTo)}
+                className="font-semibold text-white underline underline-offset-2"
+              >
+                Open it in my mail app instead
+              </a>
+              {' · '}
+              <button
+                type="button"
+                onClick={() => setEmailState('form')}
+                className="font-semibold text-white underline underline-offset-2"
+              >
+                Try another address
+              </button>
+            </>
+          )}
+        </p>
+      )}
 
       {/* 6-Question Score Tiles */}
       <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
