@@ -35,6 +35,14 @@ import {
 } from '../mocks/fixtures';
 import { ErrorBanner } from '../components/ErrorBanner';
 import { InterviewerPicker } from '../components/InterviewerPicker';
+import {
+  JOB_SPEC_ACCEPT,
+  JobSpecReadError,
+  readJobSpecFile,
+} from '../lib/jobSpecFile';
+
+const SAMPLE_JOB_SPEC_URL = '/samples/finflow-senior-product-analyst-job-spec.pdf';
+const SAMPLE_JOB_SPEC_NAME = 'FinFlow_Senior_Product_Analyst_Job_Spec.pdf';
 
 type GenerationStage = 'idle' | 'parsing' | 'generating';
 
@@ -42,6 +50,8 @@ export const NewSessionPage: React.FC = () => {
   const navigate = useNavigate();
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const extraContextFileRef = useRef<HTMLInputElement | null>(null);
+  const jdFileInputRef = useRef<HTMLInputElement | null>(null);
+  const jdTextareaRef = useRef<HTMLTextAreaElement | null>(null);
   const { grillContext, updateGrillContext } = useSubscriptionTier();
 
   const [file, setFile] = useState<File | null>(null);
@@ -50,6 +60,10 @@ export const NewSessionPage: React.FC = () => {
   const [company, setCompany] = useState('');
   const [jdText, setJdText] = useState('');
   const [newContextLink, setNewContextLink] = useState('');
+  // Name of the job spec file the text was read from, if any.
+  const [jdSourceName, setJdSourceName] = useState<string | null>(null);
+  const [jdReading, setJdReading] = useState(false);
+  const [jdDragOver, setJdDragOver] = useState(false);
 
   const [fileError, setFileError] = useState<string | null>(null);
   const [jdError, setJdError] = useState<string | null>(null);
@@ -83,22 +97,74 @@ export const NewSessionPage: React.FC = () => {
     setFile(selected);
   };
 
+  // Reads an uploaded job spec into the text box, where the candidate can
+  // check or edit it. Never blocks: on any problem we say why and let them paste.
+  const handleJobSpecFile = async (selected: File | null) => {
+    if (!selected) return;
+    setJdError(null);
+    setApiError(null);
+    setJdReading(true);
+    try {
+      const text = await readJobSpecFile(selected);
+      if (text.length < 200) {
+        if (text) setJdText(text);
+        setJdSourceName(null);
+        setJdError(
+          text
+            ? `We could only read ${text.length} characters from ${selected.name}. If it is a scanned copy, please paste the rest of the job description below.`
+            : `We could not find any text in ${selected.name}. If it is a scanned copy, please paste the job description below.`
+        );
+        jdTextareaRef.current?.focus();
+        return;
+      }
+      setJdText(text);
+      setJdSourceName(selected.name);
+    } catch (err) {
+      setJdError(
+        err instanceof JobSpecReadError
+          ? err.message
+          : 'We could not read that file. Please paste the job description instead.'
+      );
+      jdTextareaRef.current?.focus();
+    } finally {
+      setJdReading(false);
+      if (jdFileInputRef.current) jdFileInputRef.current.value = '';
+    }
+  };
+
+  const fetchSampleFile = async (url: string, name: string) => {
+    const response = await fetch(url);
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+    const blob = await response.blob();
+    return new File([blob], name, { type: 'application/pdf' });
+  };
+
+  const handleLoadSampleJobSpec = async () => {
+    try {
+      const sample = await fetchSampleFile(SAMPLE_JOB_SPEC_URL, SAMPLE_JOB_SPEC_NAME);
+      await handleJobSpecFile(sample);
+    } catch {
+      // The text is bundled, so the sample always works even if the file fails.
+      setJdText(SAMPLE_JD_TEXT);
+      setJdSourceName(SAMPLE_JOB_SPEC_NAME);
+    }
+  };
+
   const handleLoadSample = async () => {
     setFileError(null);
     setJdError(null);
     setApiError(null);
     setRoleTitle(SAMPLE_ROLE_TITLE);
     setCompany(SAMPLE_COMPANY);
-    setJdText(SAMPLE_JD_TEXT);
+    // The sample job spec goes through the same upload path a candidate uses.
+    void handleLoadSampleJobSpec();
     try {
       // A real text PDF, so the sample also works against the live backend.
-      const response = await fetch('/samples/alex-rivera-resume.pdf');
-      if (!response.ok) throw new Error(`HTTP ${response.status}`);
-      const blob = await response.blob();
       setFile(
-        new File([blob], 'Alex_Rivera_Product_Analyst_Resume.pdf', {
-          type: 'application/pdf',
-        })
+        await fetchSampleFile(
+          '/samples/alex-rivera-resume.pdf',
+          'Alex_Rivera_Product_Analyst_Resume.pdf'
+        )
       );
     } catch {
       setFileError('Could not load the sample resume. Please upload your own PDF.');
@@ -107,7 +173,7 @@ export const NewSessionPage: React.FC = () => {
 
   const trimmedJdLength = jdText.trim().length;
   const isJdValid = trimmedJdLength >= 200;
-  const canSubmit = Boolean(file) && isJdValid && stage === 'idle';
+  const canSubmit = Boolean(file) && isJdValid && stage === 'idle' && !jdReading;
 
   const runPipeline = async () => {
     setFileError(null);
@@ -120,7 +186,9 @@ export const NewSessionPage: React.FC = () => {
     }
     if (trimmedJdLength < 200) {
       setJdError(
-        `Job description must be at least 200 characters (currently ${trimmedJdLength}).`
+        trimmedJdLength === 0
+          ? 'Please upload the job spec or paste the job description.'
+          : `The job description needs at least 200 characters (currently ${trimmedJdLength}). Paste a little more of the posting.`
       );
       return;
     }
@@ -205,7 +273,7 @@ export const NewSessionPage: React.FC = () => {
               }`}
             >
               <span className="font-bold tabular-nums">1</span>
-              <span>Resume &amp; job</span>
+              <span>Resume &amp; job spec</span>
             </span>
             <ArrowRight
               className="h-3 w-3 text-[#86868b]"
@@ -233,8 +301,8 @@ export const NewSessionPage: React.FC = () => {
               Set up your interview
             </h2>
             <p className="mt-1.5 text-sm text-[#6e6e73] sm:text-base">
-              Upload your PDF resume and paste the job description to generate
-              six questions tailored to both.
+              Upload your PDF resume and add the job spec (upload the file or
+              paste the text) to get six questions tailored to both.
             </p>
           </div>
 
@@ -248,7 +316,7 @@ export const NewSessionPage: React.FC = () => {
               className="h-3.5 w-3.5 text-[#0369a1]"
               aria-hidden="true"
             />
-            <span>Use a sample resume &amp; job</span>
+            <span>Use a sample resume &amp; job spec</span>
           </button>
         </div>
 
@@ -474,10 +542,172 @@ export const NewSessionPage: React.FC = () => {
             )}
           </section>
 
-          {/* 2. Target Role & Company (Optional) */}
+          {/* 2. Job Spec: upload a file or paste the text */}
+          <section
+            data-ui="job-spec-card"
+            className="bento-card-light p-6 sm:p-8"
+          >
+            <div className="flex flex-wrap items-center justify-between gap-2">
+              <label
+                htmlFor="jd-textarea"
+                className="font-display text-lg font-bold text-[#0f172a]"
+              >
+                2. Job spec <span className="text-[#ff453a]">*</span>
+              </label>
+              <span
+                className={`inline-flex items-center gap-1.5 rounded-full px-3 py-0.5 text-xs font-semibold tabular-nums ${
+                  isJdValid
+                    ? 'bg-[#14b8a6]/15 text-[#0f766e]'
+                    : 'bg-black/[0.05] text-[#6e6e73]'
+                }`}
+              >
+                <span
+                  className={`h-1.5 w-1.5 rounded-full ${
+                    isJdValid ? 'bg-[#14b8a6]' : 'bg-[#86868b]'
+                  }`}
+                  aria-hidden="true"
+                />
+                {isJdValid ? 'Ready' : `${trimmedJdLength} / 200 characters`}
+              </span>
+            </div>
+            <p className="mt-1 text-xs text-[#6e6e73]">
+              Upload the job posting as a file, or paste its responsibilities
+              and requirements into the box below.
+            </p>
+
+            <input
+              ref={jdFileInputRef}
+              id="jd-upload"
+              type="file"
+              accept={JOB_SPEC_ACCEPT}
+              disabled={isBusy || jdReading}
+              onChange={(e) => handleJobSpecFile(e.target.files?.[0] ?? null)}
+              className="sr-only"
+            />
+
+            {jdSourceName && !jdReading ? (
+              <div className="mt-4 flex items-center justify-between gap-3 rounded-[18px] border border-[#14b8a6]/40 bg-[#14b8a6]/[0.08] px-4 py-3">
+                <div className="flex min-w-0 items-center gap-3">
+                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#14b8a6]/20 text-[#0f766e]">
+                    <CheckCircle2 className="h-5 w-5" aria-hidden="true" />
+                  </div>
+                  <div className="min-w-0">
+                    <p className="truncate text-sm font-semibold text-[#0f172a]">
+                      {jdSourceName}
+                    </p>
+                    <p className="text-xs text-[#6e6e73]">
+                      Job spec read. Check or edit the text below.
+                    </p>
+                  </div>
+                </div>
+                <button
+                  type="button"
+                  disabled={isBusy}
+                  onClick={() => jdFileInputRef.current?.click()}
+                  className="shrink-0 rounded-full bg-black/5 px-3 py-1.5 text-xs font-semibold text-[#0f172a] transition-colors hover:bg-black/10"
+                >
+                  Change file
+                </button>
+              </div>
+            ) : (
+              <div
+                onDragOver={(e) => {
+                  e.preventDefault();
+                  if (!isBusy && !jdReading) setJdDragOver(true);
+                }}
+                onDragLeave={() => setJdDragOver(false)}
+                onDrop={(e) => {
+                  e.preventDefault();
+                  setJdDragOver(false);
+                  if (isBusy || jdReading) return;
+                  handleJobSpecFile(e.dataTransfer.files?.[0] ?? null);
+                }}
+                onClick={() =>
+                  !isBusy && !jdReading && jdFileInputRef.current?.click()
+                }
+                role="button"
+                tabIndex={0}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    if (!jdReading) jdFileInputRef.current?.click();
+                  }
+                }}
+                aria-label="Upload job spec file"
+                aria-busy={jdReading}
+                className={`mt-4 flex cursor-pointer items-center gap-3 rounded-[18px] border-2 border-dashed px-4 py-4 transition-colors ${
+                  jdDragOver
+                    ? 'border-[#0284c7] bg-[#0284c7]/[0.06]'
+                    : 'border-black/15 bg-[#f1f5f9]/70 hover:border-[#0284c7]/60 hover:bg-[#f1f5f9]'
+                }`}
+              >
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#0284c7]/10 text-[#0369a1]">
+                  {jdReading ? (
+                    <Loader2 className="h-5 w-5 animate-spin" aria-hidden="true" />
+                  ) : (
+                    <Upload className="h-5 w-5" aria-hidden="true" />
+                  )}
+                </div>
+                <div className="min-w-0">
+                  <p className="text-sm font-semibold text-[#0f172a]">
+                    {jdReading
+                      ? 'Reading your job spec…'
+                      : 'Upload the job spec, or drag it here'}
+                  </p>
+                  <p className="text-xs text-[#86868b]">
+                    PDF, Word (.docx) or text file up to 5 MB
+                  </p>
+                </div>
+              </div>
+            )}
+
+            <div className="mt-4 flex items-center gap-3 text-xs font-medium text-[#86868b]">
+              <span className="h-px flex-1 bg-black/10" aria-hidden="true" />
+              <span>{jdSourceName ? 'Text from your file' : 'or paste the text'}</span>
+              <span className="h-px flex-1 bg-black/10" aria-hidden="true" />
+            </div>
+
+            <textarea
+              ref={jdTextareaRef}
+              id="jd-textarea"
+              rows={8}
+              disabled={isBusy || jdReading}
+              value={jdText}
+              onChange={(e) => {
+                setJdText(e.target.value);
+                if (!e.target.value.trim()) setJdSourceName(null);
+                if (jdError) setJdError(null);
+              }}
+              placeholder="Paste the full job description here (responsibilities, skills and tools)…"
+              className="mt-3 block w-full rounded-[18px] border border-black/15 bg-[#f1f5f9]/60 p-4 text-base leading-relaxed text-[#0f172a] placeholder:text-[#aeaeb2] focus:border-[#0284c7] focus:bg-white focus:outline-none"
+            />
+
+            {jdError && (
+              <p
+                role="alert"
+                className="mt-2.5 text-xs font-medium text-[#d70015]"
+              >
+                {jdError}
+              </p>
+            )}
+
+            {!jdText.trim() && !jdReading && (
+              <button
+                type="button"
+                disabled={isBusy}
+                onClick={handleLoadSampleJobSpec}
+                className="mt-2.5 inline-flex min-h-[32px] items-center gap-1.5 text-xs font-semibold text-[#0369a1] hover:underline"
+              >
+                <FileText className="h-3.5 w-3.5" aria-hidden="true" />
+                <span>No job spec to hand? Use our sample one</span>
+              </button>
+            )}
+          </section>
+
+          {/* 3. Target Role & Company (Optional) */}
           <section className="bento-card-light p-6 sm:p-8">
             <h3 className="font-display text-lg font-bold text-[#0f172a]">
-              2. Role and company{' '}
+              3. Role and company{' '}
               <span className="font-sans text-xs font-normal text-[#86868b]">
                 (optional)
               </span>
@@ -518,59 +748,6 @@ export const NewSessionPage: React.FC = () => {
                 />
               </div>
             </div>
-          </section>
-
-          {/* 3. Job Description Bento Card */}
-          <section className="bento-card-light p-6 sm:p-8">
-            <div className="flex flex-wrap items-center justify-between gap-2">
-              <label
-                htmlFor="jd-textarea"
-                className="font-display text-lg font-bold text-[#0f172a]"
-              >
-                3. Job description <span className="text-[#ff453a]">*</span>
-              </label>
-              <span
-                className={`inline-flex items-center gap-1.5 rounded-full px-3 py-0.5 text-xs font-semibold tabular-nums ${
-                  isJdValid
-                    ? 'bg-[#14b8a6]/15 text-[#0f766e]'
-                    : 'bg-black/[0.05] text-[#6e6e73]'
-                }`}
-              >
-                <span
-                  className={`h-1.5 w-1.5 rounded-full ${
-                    isJdValid ? 'bg-[#14b8a6]' : 'bg-[#86868b]'
-                  }`}
-                  aria-hidden="true"
-                />
-                {trimmedJdLength} / 200 characters
-              </span>
-            </div>
-            <p className="mt-1 text-xs text-[#6e6e73]">
-              Paste the responsibilities and requirements from the job posting
-              (at least 200 characters).
-            </p>
-
-            <textarea
-              id="jd-textarea"
-              rows={8}
-              disabled={isBusy}
-              value={jdText}
-              onChange={(e) => {
-                setJdText(e.target.value);
-                if (jdError) setJdError(null);
-              }}
-              placeholder="Paste the full job description here (responsibilities, skills and tools)…"
-              className="mt-4 block w-full rounded-[18px] border border-black/15 bg-[#f1f5f9]/60 p-4 text-base leading-relaxed text-[#0f172a] placeholder:text-[#aeaeb2] focus:border-[#0284c7] focus:bg-white focus:outline-none"
-            />
-
-            {jdError && (
-              <p
-                role="alert"
-                className="mt-2.5 text-xs font-medium text-[#d70015]"
-              >
-                {jdError}
-              </p>
-            )}
           </section>
 
           {/* 4. Deep Context: Industry, Department, C-Suite Level, Uploads & Links */}
