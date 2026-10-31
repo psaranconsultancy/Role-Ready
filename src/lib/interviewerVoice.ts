@@ -170,6 +170,19 @@ export const speak = (text: string, id: string, force = false) => {
 
   // Chrome can drop a speak() that comes straight after cancel(); wait a beat.
   window.setTimeout(() => sayChunk(0, true), 80);
+
+  // Chrome sometimes never fires the last `end` event, which would leave the
+  // interviewer "speaking" for ever (and the idle check-in never starting).
+  // Two quiet checks in a row mean it has finished.
+  let quietChecks = 0;
+  const watchdog = window.setInterval(() => {
+    if (token !== runToken || state.speakingId !== id) return window.clearInterval(watchdog);
+    quietChecks = !synth.speaking && !synth.pending ? quietChecks + 1 : 0;
+    if (quietChecks >= 2) {
+      window.clearInterval(watchdog);
+      finish();
+    }
+  }, 1000);
 };
 
 export const setVoiceEnabled = (enabled: boolean) => {
