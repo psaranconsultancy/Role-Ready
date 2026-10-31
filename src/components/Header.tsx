@@ -139,7 +139,7 @@ export const Header: React.FC = () => {
               type="button"
               onClick={() => setShowPricingModal(true)}
               className="inline-flex items-center gap-1.5 whitespace-nowrap rounded-full border border-[#ff9f0a]/35 bg-[#ff9f0a]/10 px-2.5 py-0.5 text-xs font-medium text-[#ff9f0a] transition-colors hover:bg-[#ff9f0a]/20"
-              title="See what's coming next: a spoken AI interviewer, specialist and executive question sets, and salary scripts"
+              title="See what's coming next: a live two-way voice interview, specialist and executive question sets, and salary scripts"
             >
               <Flame className="h-3 w-3" aria-hidden="true" />
               <span>Coming soon</span>

@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState, useCallback, useRef } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import {
   ArrowLeft,
@@ -11,6 +11,8 @@ import {
   FolderOpen,
   Loader2,
   RotateCcw,
+  Volume2,
+  VolumeX,
 } from 'lucide-react';
 import type { Session, Question, Feedback, ApiError } from '@contracts';
 import { generateQuestions, getSession, parseResume, toApiError } from '../lib/api';
@@ -18,6 +20,12 @@ import { QuestionCard } from '../components/QuestionCard';
 import { SessionSummary } from '../components/SessionSummary';
 import { ErrorBanner } from '../components/ErrorBanner';
 import { QUESTION_TYPE_LABELS } from '../lib/sessionReport';
+import { getScoreBand } from '../components/FeedbackPanel';
+import {
+  useInterviewerVoice,
+  feedbackScript,
+  questionScript,
+} from '../lib/interviewerVoice';
 
 const STATUS_BADGE: Record<
   Session['status'],
@@ -85,11 +93,49 @@ export const SessionPage: React.FC = () => {
     loadSessionData();
   }, [loadSessionData]);
 
+  const voice = useInterviewerVoice();
+
+  // The interviewer greets you and reads the first open question, once per
+  // visit. Browsers only allow speech after a click, which the user has already
+  // made to get here; if it is blocked, nothing happens.
+  const greetedRef = useRef<string | null>(null);
+  useEffect(() => {
+    if (!session || !questions.length || greetedRef.current === session.id) return;
+    greetedRef.current = session.id;
+    const firstOpen = questions.find((q) => !answersByQuestionId[q.id]);
+    if (!firstOpen || !voice.enabled) return;
+    const intro =
+      firstOpen.position === 1
+        ? `Hello, I'm your interviewer for ${session.role_title || 'this role'}. Let's begin. `
+        : `Welcome back. Let's pick up where you left off. `;
+    voice.speak(intro + questionScript(firstOpen.position, firstOpen.text), `q:${firstOpen.id}`);
+    // Only run when the session's questions first arrive.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [session?.id, questions.length]);
+
+  // Stop talking when leaving the session page.
+  useEffect(() => () => voice.stop(), []); // eslint-disable-line react-hooks/exhaustive-deps
+
   const handleQuestionScored = (
     feedback: Feedback,
     sessionCompleted: boolean,
     sessionOverall: number | null
   ) => {
+    // The interviewer reads your score and one fix, then moves to the next question.
+    const band = getScoreBand(feedback.overall);
+    const nextOpen = questions.find(
+      (q) => q.id !== feedback.question_id && !answersByQuestionId[q.id]
+    );
+    const tail = nextOpen
+      ? ` When you're ready, ${questionScript(nextOpen.position, nextOpen.text)}`
+      : sessionCompleted && sessionOverall !== null
+        ? ` That's all six questions. Your overall score is ${sessionOverall} out of 100. Well done.`
+        : '';
+    voice.speak(
+      feedbackScript(feedback.overall, band.label, feedback.what_worked, feedback.one_fix) + tail,
+      `fb:${feedback.question_id}`
+    );
+
     setAnswersByQuestionId((prev) => ({
       ...prev,
       [feedback.question_id]: feedback,
@@ -235,6 +281,52 @@ export const SessionPage: React.FC = () => {
 
           {/* Progress Indicator */}
           <div className="flex shrink-0 items-center gap-3">
+            {voice.supported && questions.length > 0 && (
+              <button
+                type="button"
+                data-ui="interviewer-voice-toggle"
+                onClick={() => {
+                  const next = !voice.enabled;
+                  voice.setEnabled(next);
+                  if (next) {
+                    const firstOpen = questions.find((q) => !answersByQuestionId[q.id]);
+                    if (firstOpen) {
+                      voice.speak(
+                        questionScript(firstOpen.position, firstOpen.text),
+                        `q:${firstOpen.id}`,
+                        true
+                      );
+                    }
+                  }
+                }}
+                aria-pressed={voice.enabled}
+                title={
+                  voice.enabled
+                    ? 'The interviewer reads questions and feedback aloud. Click to mute.'
+                    : 'Turn on the interviewer voice'
+                }
+                className={`inline-flex min-h-[32px] items-center gap-1.5 rounded-full border px-3 py-1 text-xs font-semibold transition-colors ${
+                  voice.enabled
+                    ? 'border-[#0d9488]/35 bg-[#0d9488]/10 text-[#0f766e] hover:bg-[#0d9488]/15'
+                    : 'border-black/15 bg-black/[0.04] text-[#6e6e73] hover:bg-black/[0.07]'
+                }`}
+              >
+                {voice.enabled ? (
+                  <Volume2
+                    className={`h-3.5 w-3.5 ${voice.speakingId ? 'animate-pulse' : ''}`}
+                    aria-hidden="true"
+                  />
+                ) : (
+                  <VolumeX className="h-3.5 w-3.5" aria-hidden="true" />
+                )}
+                <span className="hidden sm:inline">
+                  {voice.enabled ? 'Voice on' : 'Voice off'}
+                </span>
+                <span className="sr-only sm:hidden">
+                  {voice.enabled ? 'Interviewer voice on' : 'Interviewer voice off'}
+                </span>
+              </button>
+            )}
             <span className="text-xs font-semibold tabular-nums text-[#0f172a]">
               {answeredCount} of {totalQuestions} answered
             </span>
