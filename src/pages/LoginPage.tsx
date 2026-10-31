@@ -8,6 +8,7 @@ import { ErrorBanner } from '../components/ErrorBanner';
 import { Logo } from '../components/Logo';
 import { AmbientHeroCanvas } from '../components/AmbientHeroCanvas';
 import { PasswordInput } from '../components/PasswordInput';
+import { emailProblem } from '../lib/validation';
 
 export const LoginPage: React.FC = () => {
   const { user, loading: authLoading, signIn, signUp, signInDemo } = useAuth();
@@ -20,6 +21,8 @@ export const LoginPage: React.FC = () => {
   const [submitting, setSubmitting] = useState(false);
   const [demoLoading, setDemoLoading] = useState(false);
   const [error, setError] = useState<ApiError | null>(null);
+  const [emailError, setEmailError] = useState<string | null>(null);
+  const [passwordError, setPasswordError] = useState<string | null>(null);
 
   if (!authLoading && user) {
     return <Navigate to="/history" replace />;
@@ -55,8 +58,24 @@ export const LoginPage: React.FC = () => {
     }
   };
 
+  // Check the boxes before calling the server, so a typo gets a clear,
+  // field-level message instead of a vague sign-in error.
+  const checkFields = () => {
+    const eProblem = emailProblem(email);
+    let pProblem: string | null = null;
+    if (!password) pProblem = 'Please enter your password.';
+    else if (mode === 'signup' && password.length < 6)
+      pProblem = 'Use at least 6 characters for your password.';
+    setEmailError(eProblem);
+    setPasswordError(pProblem);
+    if (eProblem) document.getElementById('auth-email')?.focus();
+    else if (pProblem) document.getElementById('auth-password')?.focus();
+    return !eProblem && !pProblem;
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!checkFields()) return;
     await runAuthAction();
   };
 
@@ -216,6 +235,7 @@ export const LoginPage: React.FC = () => {
               aria-selected={mode === 'signin'}
               onClick={() => {
                 setMode('signin');
+                setPasswordError(null);
                 setError(null);
               }}
               className={`min-h-[38px] rounded-full text-xs font-semibold transition-colors ${
@@ -232,6 +252,7 @@ export const LoginPage: React.FC = () => {
               aria-selected={mode === 'signup'}
               onClick={() => {
                 setMode('signup');
+                setPasswordError(null);
                 setError(null);
               }}
               className={`min-h-[38px] rounded-full text-xs font-semibold transition-colors ${
@@ -263,11 +284,25 @@ export const LoginPage: React.FC = () => {
                 type="email"
                 autoComplete="email"
                 required
+                inputMode="email"
+                autoCapitalize="none"
+                spellCheck={false}
+                maxLength={254}
+                aria-invalid={emailError ? true : undefined}
+                aria-describedby={emailError ? 'auth-email-error' : undefined}
                 value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                onChange={(e) => {
+                  setEmail(e.target.value);
+                  if (emailError) setEmailError(null);
+                }}
                 placeholder="alex.rivera@roleready.app"
-                className="mt-1.5 block min-h-[44px] w-full rounded-2xl border border-black/15 bg-[#f1f5f9]/60 px-4 py-2.5 text-base text-[#0f172a] placeholder:text-[#aeaeb2] focus:border-[#0284c7] focus:bg-white focus:outline-none"
+                className="mt-1.5 block min-h-[44px] w-full rounded-2xl border border-black/15 aria-[invalid=true]:border-[#d70015] bg-[#f1f5f9]/60 px-4 py-2.5 text-base text-[#0f172a] placeholder:text-[#aeaeb2] focus:border-[#0284c7] focus:bg-white focus:outline-none"
               />
+              {emailError && (
+                <p id="auth-email-error" role="alert" className="mt-1.5 text-xs font-medium text-[#d70015]">
+                  {emailError}
+                </p>
+              )}
             </div>
 
             <div>
@@ -283,12 +318,29 @@ export const LoginPage: React.FC = () => {
                   mode === 'signin' ? 'current-password' : 'new-password'
                 }
                 required
-                minLength={6}
+                minLength={mode === 'signup' ? 6 : undefined}
+                maxLength={72}
+                aria-invalid={passwordError ? true : undefined}
+                aria-describedby={passwordError ? 'auth-password-error' : 'auth-password-hint'}
                 value={password}
-                onChange={(e) => setPassword(e.target.value)}
+                onChange={(e) => {
+                  setPassword(e.target.value);
+                  if (passwordError) setPasswordError(null);
+                }}
                 placeholder="••••••••••••"
-                className="mt-1.5 block min-h-[44px] w-full rounded-2xl border border-black/15 bg-[#f1f5f9]/60 px-4 py-2.5 text-base text-[#0f172a] placeholder:text-[#aeaeb2] focus:border-[#0284c7] focus:bg-white focus:outline-none"
+                className="mt-1.5 block min-h-[44px] w-full rounded-2xl border border-black/15 aria-[invalid=true]:border-[#d70015] bg-[#f1f5f9]/60 px-4 py-2.5 text-base text-[#0f172a] placeholder:text-[#aeaeb2] focus:border-[#0284c7] focus:bg-white focus:outline-none"
               />
+              {passwordError ? (
+                <p id="auth-password-error" role="alert" className="mt-1.5 text-xs font-medium text-[#d70015]">
+                  {passwordError}
+                </p>
+              ) : (
+                mode === 'signup' && (
+                  <p id="auth-password-hint" className="mt-1.5 text-xs text-[#6e6e73]">
+                    At least 6 characters.
+                  </p>
+                )
+              )}
             </div>
 
             <button
