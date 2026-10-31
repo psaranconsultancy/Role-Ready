@@ -567,6 +567,8 @@ export const QuestionCard: React.FC<QuestionCardProps> = ({
                 ? `Write at least ${20 - charCount} more character${
                     20 - charCount === 1 ? '' : 's'
                   } to submit.`
+                : charCount > 4000
+                ? `That's ${(charCount - 4000).toLocaleString()} characters over the 4,000 limit. Trim it a little to submit.`
                 : 'Ready to score.'}
             </span>
 
