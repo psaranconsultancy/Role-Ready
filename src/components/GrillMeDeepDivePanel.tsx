@@ -476,7 +476,7 @@ export const GrillMeDeepDivePanel: React.FC<GrillMeDeepDivePanelProps> = ({
 
         <div className="flex flex-wrap items-center gap-2">
           {GRILL_ME_LIVE && (
-          <button
+          <button data-tip="Set the industry, department and seniority for Grill Me"
             type="button"
             onClick={() => setShowContextEditor((prev) => !prev)}
             className="inline-flex items-center gap-1.5 rounded-full border border-white/15 bg-white/[0.06] px-3.5 py-1.5 text-xs font-semibold text-[#d2d2d7] transition-colors hover:bg-white/10"
@@ -485,7 +485,7 @@ export const GrillMeDeepDivePanel: React.FC<GrillMeDeepDivePanelProps> = ({
             <span>Niche &amp; C-Suite categories</span>
           </button>
           )}
-          <button
+          <button data-tip="See what is coming next"
             type="button"
             onClick={() => setShowPricingModal(true)}
             className="inline-flex items-center gap-1.5 rounded-full border border-white/15 bg-white/[0.06] px-3.5 py-1.5 text-xs font-semibold text-[#38bdf8] transition-colors hover:bg-white/10"
@@ -509,7 +509,7 @@ export const GrillMeDeepDivePanel: React.FC<GrillMeDeepDivePanelProps> = ({
                 or attach board decks and company links.
               </p>
             </div>
-            <button
+            <button data-tip="Save these settings and close"
               type="button"
               onClick={() => setShowContextEditor(false)}
               className="rounded-full bg-white/10 px-3 py-1 text-xs font-semibold text-white hover:bg-white/15"
@@ -526,7 +526,7 @@ export const GrillMeDeepDivePanel: React.FC<GrillMeDeepDivePanelProps> = ({
               >
                 Industry sector
               </label>
-              <select
+              <select data-tip="The industry the role is in"
                 id={`industry-select-${question.id}`}
                 value={grillContext.industry}
                 onChange={(e) =>
@@ -549,7 +549,7 @@ export const GrillMeDeepDivePanel: React.FC<GrillMeDeepDivePanelProps> = ({
               >
                 Department / Function
               </label>
-              <select
+              <select data-tip="The team or function the role sits in"
                 id={`dept-select-${question.id}`}
                 value={grillContext.department}
                 onChange={(e) =>
@@ -575,7 +575,7 @@ export const GrillMeDeepDivePanel: React.FC<GrillMeDeepDivePanelProps> = ({
               >
                 Seniority Band
               </label>
-              <select
+              <select data-tip="How senior the role is"
                 id={`seniority-select-${question.id}`}
                 value={grillContext.seniority}
                 onChange={(e) =>
@@ -604,7 +604,7 @@ export const GrillMeDeepDivePanel: React.FC<GrillMeDeepDivePanelProps> = ({
               >
                 Niche Category (Specialist Domain)
               </label>
-              <select
+              <select data-tip="A specialist area to focus on (optional)"
                 id={`niche-cat-select-${question.id}`}
                 value={grillContext.nicheCategory}
                 onChange={(e) =>
@@ -630,7 +630,7 @@ export const GrillMeDeepDivePanel: React.FC<GrillMeDeepDivePanelProps> = ({
               >
                 C-Suite Category (Executive &amp; Board Seat)
               </label>
-              <select
+              <select data-tip="An executive or board seat to focus on (optional)"
                 id={`csuite-cat-select-${question.id}`}
                 value={grillContext.cSuiteCategory}
                 onChange={(e) =>
@@ -657,7 +657,7 @@ export const GrillMeDeepDivePanel: React.FC<GrillMeDeepDivePanelProps> = ({
             >
               Specific niche focus / 90-day board priority
             </label>
-            <input
+            <input data-tip="A specific focus, e.g. a 90-day priority (optional)"
               id={`niche-input-${question.id}`}
               type="text"
               value={grillContext.nicheFocus}
@@ -688,7 +688,7 @@ export const GrillMeDeepDivePanel: React.FC<GrillMeDeepDivePanelProps> = ({
                   onChange={handleAddContextFile}
                   className="sr-only"
                 />
-                <button
+                <button data-tip="Add a file with more context, e.g. a strategy memo"
                   type="button"
                   onClick={() => contextFileInputRef.current?.click()}
                   className="inline-flex items-center gap-1 rounded-full bg-white/10 px-2.5 py-1 text-xs font-semibold text-[#38bdf8] hover:bg-white/15"
@@ -704,7 +704,7 @@ export const GrillMeDeepDivePanel: React.FC<GrillMeDeepDivePanelProps> = ({
                     className="inline-flex items-center gap-1.5 rounded-full border border-white/15 bg-white/[0.06] px-2.5 py-1 text-xs text-[#d2d2d7]"
                   >
                     <span className="max-w-[180px] truncate">{fileName}</span>
-                    <button
+                    <button data-tip={`Remove ${fileName}`}
                       type="button"
                       onClick={() => handleRemoveContextFile(fileName)}
                       aria-label={`Remove ${fileName}`}
@@ -724,7 +724,7 @@ export const GrillMeDeepDivePanel: React.FC<GrillMeDeepDivePanelProps> = ({
                 <span>Shared context links (Company URLs, Memos, Profiles)</span>
               </span>
               <div className="mt-2 flex gap-1.5">
-                <input
+                <input data-tip="Paste a link to a company page, article or profile"
                   type="url"
                   aria-label="Add context link URL"
                   value={newLinkUrl}
@@ -732,7 +732,7 @@ export const GrillMeDeepDivePanel: React.FC<GrillMeDeepDivePanelProps> = ({
                   placeholder="https://company.com/investor-memo"
                   className="min-h-[34px] flex-1 rounded-lg border border-white/15 bg-black/60 px-2.5 py-1 text-xs text-white placeholder:text-[#aeaeb2] focus:border-[#38bdf8] focus:outline-none"
                 />
-                <button
+                <button data-tip="Add this link"
                   type="button"
                   onClick={handleAddSharedLink}
                   className="rounded-lg bg-[#0284c7] px-3 py-1 text-xs font-semibold text-white hover:bg-[#0369a1]"
@@ -747,7 +747,7 @@ export const GrillMeDeepDivePanel: React.FC<GrillMeDeepDivePanelProps> = ({
                     className="inline-flex items-center gap-1.5 rounded-full border border-white/15 bg-white/[0.06] px-2.5 py-1 text-xs text-[#38bdf8]"
                   >
                     <span className="max-w-[200px] truncate">{url}</span>
-                    <button
+                    <button data-tip={`Remove ${url}`}
                       type="button"
                       onClick={() => handleRemoveSharedLink(url)}
                       aria-label={`Remove ${url}`}
@@ -876,7 +876,7 @@ export const GrillMeDeepDivePanel: React.FC<GrillMeDeepDivePanelProps> = ({
                   const meta = HEAT_LEVELS[lvl];
                   const isSelected = heat === lvl;
                   return (
-                    <button
+                    <button data-tip={`Grilling level: ${meta.shortLabel}`}
                       key={lvl}
                       type="button"
                       onClick={() => setHeat(lvl)}
@@ -922,7 +922,7 @@ export const GrillMeDeepDivePanel: React.FC<GrillMeDeepDivePanelProps> = ({
                   const p = INTERVIEWER_PERSONAS[g];
                   const active = interviewerGender === g;
                   return (
-                    <button
+                    <button data-tip={`Use the ${g} interviewer voice`}
                       key={g}
                       type="button"
                       onClick={() => setInterviewerGender(g)}
@@ -960,7 +960,7 @@ export const GrillMeDeepDivePanel: React.FC<GrillMeDeepDivePanelProps> = ({
             </div>
 
             <div className="flex items-center gap-2">
-              <button
+              <button data-tip="Go to Round 1"
                 type="button"
                 onClick={() => setActiveRound(1)}
                 className={`inline-flex min-h-[36px] items-center gap-1.5 rounded-full px-3.5 py-1 text-xs font-semibold transition-colors ${
@@ -974,7 +974,7 @@ export const GrillMeDeepDivePanel: React.FC<GrillMeDeepDivePanelProps> = ({
                   <CheckCircle2 className="h-3.5 w-3.5 text-[#14b8a6]" />
                 )}
               </button>
-              <button
+              <button data-tip="Go to Round 2"
                 type="button"
                 onClick={() => setActiveRound(2)}
                 className={`inline-flex min-h-[36px] items-center gap-1.5 rounded-full px-3.5 py-1 text-xs font-semibold transition-colors ${
@@ -1021,7 +1021,7 @@ export const GrillMeDeepDivePanel: React.FC<GrillMeDeepDivePanelProps> = ({
 
                     <div className="flex flex-wrap items-center gap-2">
                       {/* Have AI Interviewer Speak Question Aloud */}
-                      <button
+                      <button data-tip="Hear the question read aloud"
                         type="button"
                         onClick={() => handleSpeakQuestion(q.id, q.prompt)}
                         className={`inline-flex min-h-[34px] items-center gap-1.5 rounded-full border px-3 py-1 text-xs font-semibold transition-colors ${
@@ -1082,7 +1082,7 @@ export const GrillMeDeepDivePanel: React.FC<GrillMeDeepDivePanelProps> = ({
                   {/* Voice Answer Mic + Pressure Timer + Text Input */}
                   <div className="mt-4 space-y-3">
                     <div className="flex flex-wrap items-center justify-between gap-2">
-                      <button
+                      <button data-tip="Answer out loud with your microphone"
                         type="button"
                         onClick={() =>
                           startVoiceRecording(q.id, q.recommendedAnswer)
@@ -1125,7 +1125,7 @@ export const GrillMeDeepDivePanel: React.FC<GrillMeDeepDivePanelProps> = ({
                     </div>
 
                     <div className="flex flex-col gap-2.5 sm:flex-row sm:items-center">
-                      <input
+                      <input data-tip="Type your answer, or speak it with the mic"
                         type="text"
                         aria-label={`Your spoken transcript or typed defence for ${q.code}`}
                         value={customNotes[q.id] ?? ''}
@@ -1138,7 +1138,7 @@ export const GrillMeDeepDivePanel: React.FC<GrillMeDeepDivePanelProps> = ({
                         placeholder="Speak via mic above or type your defence (measures timing, filler words & calm under pressure)…"
                         className="min-h-[40px] flex-1 rounded-xl border border-white/15 bg-black/50 px-3.5 py-2 text-xs text-white placeholder:text-[#aeaeb2] focus:border-[#38bdf8] focus:outline-none"
                       />
-                      <button
+                      <button data-tip="Lock in this answer"
                         type="button"
                         onClick={() =>
                           handleSettleQuestion(q.id, q.recommendedAnswer)
@@ -1223,7 +1223,7 @@ export const GrillMeDeepDivePanel: React.FC<GrillMeDeepDivePanelProps> = ({
               <p className="text-xs font-semibold text-white sm:text-sm">
                 Round 1 frontier settled. Ready for Round 2 failure-mode probes?
               </p>
-              <button
+              <button data-tip="Move on to Round 2"
                 type="button"
                 onClick={() => setActiveRound(2)}
                 className="btn-pill-primary min-h-[38px] px-4 py-1.5 text-xs font-semibold"
@@ -1252,7 +1252,7 @@ export const GrillMeDeepDivePanel: React.FC<GrillMeDeepDivePanelProps> = ({
                   {plan.negotiationScript.proofSummary}
                 </p>
               </div>
-              <button
+              <button data-tip="Copy the negotiation script"
                 type="button"
                 onClick={handleCopyNegotiation}
                 className="inline-flex min-h-[36px] items-center gap-1.5 rounded-full border border-white/15 bg-white/10 px-3.5 py-1.5 text-xs font-semibold text-white hover:bg-white/15"
@@ -1301,7 +1301,7 @@ export const GrillMeDeepDivePanel: React.FC<GrillMeDeepDivePanelProps> = ({
               </div>
 
               <div className="flex flex-wrap items-center gap-2">
-                <button
+                <button data-tip="Copy the prep pack"
                   type="button"
                   onClick={handleCopyDossier}
                   className="inline-flex min-h-[36px] items-center gap-1.5 rounded-full border border-white/15 bg-white/10 px-3.5 py-1.5 text-xs font-semibold text-white hover:bg-white/15"
@@ -1321,7 +1321,7 @@ export const GrillMeDeepDivePanel: React.FC<GrillMeDeepDivePanelProps> = ({
                     </>
                   )}
                 </button>
-                <button
+                <button data-tip="Download the prep pack as a file"
                   type="button"
                   onClick={handleDownloadDossier}
                   className="inline-flex min-h-[36px] items-center gap-1.5 rounded-full bg-[#0284c7] px-3.5 py-1.5 text-xs font-semibold text-white hover:bg-[#0369a1]"
@@ -1334,7 +1334,7 @@ export const GrillMeDeepDivePanel: React.FC<GrillMeDeepDivePanelProps> = ({
 
             {/* Sub-tabs: Decision Records vs Domain Glossary */}
             <div className="mt-4 flex flex-wrap items-center gap-2">
-              <button
+              <button data-tip="Show the decision records"
                 type="button"
                 onClick={() => setActiveDocsTab('cdr')}
                 className={`inline-flex min-h-[34px] items-center gap-1.5 rounded-full px-3.5 py-1 text-xs font-semibold transition-colors ${
@@ -1346,7 +1346,7 @@ export const GrillMeDeepDivePanel: React.FC<GrillMeDeepDivePanelProps> = ({
                 <FileText className="h-3.5 w-3.5" aria-hidden="true" />
                 <span>Candidate Decision Records (4 CDRs)</span>
               </button>
-              <button
+              <button data-tip="Show the glossary"
                 type="button"
                 onClick={() => setActiveDocsTab('glossary')}
                 className={`inline-flex min-h-[34px] items-center gap-1.5 rounded-full px-3.5 py-1 text-xs font-semibold transition-colors ${
