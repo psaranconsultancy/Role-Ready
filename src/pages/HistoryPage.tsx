@@ -129,7 +129,7 @@ export const HistoryPage: React.FC = () => {
           <span className="font-display text-base font-bold tracking-tight text-[#0f172a]">
             Practice history
           </span>
-          <Link
+          <Link data-tip="Start a new practice interview"
             to="/new"
             className="btn-pill-primary px-4 py-1.5 text-xs font-semibold"
           >
@@ -160,7 +160,7 @@ export const HistoryPage: React.FC = () => {
                 start a fresh run to sharpen your delivery before the real room.
               </p>
             </div>
-            <Link
+            <Link data-tip="Start a new practice interview"
               to="/new"
               className="btn-pill-primary min-h-[44px] shrink-0 self-start px-6 py-2.5 text-sm font-semibold sm:self-auto"
             >
@@ -262,7 +262,7 @@ export const HistoryPage: React.FC = () => {
               tailored interview questions built from your experience.
             </p>
             <div className="mt-6">
-              <Link
+              <Link data-tip="Upload your resume and a job spec to get your first questions"
                 to="/new"
                 className="btn-pill-primary min-h-[44px] px-7 py-2.5 text-sm font-semibold"
               >
@@ -284,7 +284,7 @@ export const HistoryPage: React.FC = () => {
 
               return (
                 <div key={s.id} className="relative">
-                <Link
+                <Link data-tip="Open this session to see its questions and feedback"
                   to={`/session/${s.id}`}
                   className="bento-card-light bento-card-light-interactive group flex flex-col justify-between gap-4 p-5 pr-14 sm:flex-row sm:items-center sm:p-6 sm:pr-16"
                 >
@@ -354,7 +354,7 @@ export const HistoryPage: React.FC = () => {
                   onClick={() => handleDelete(s)}
                   disabled={deletingId === s.id}
                   aria-label={`Delete ${s.role_title || 'practice session'}${s.company ? ` at ${s.company}` : ''}`}
-                  title="Delete session"
+                  data-tip="Delete session"
                   className="absolute right-3 top-3 flex h-9 w-9 items-center justify-center rounded-full text-[#86868b] transition-colors hover:bg-[#ff3b30]/10 hover:text-[#d70015] focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#0284c7] disabled:opacity-60 sm:top-1/2 sm:-translate-y-1/2"
                 >
                   {deletingId === s.id ? (

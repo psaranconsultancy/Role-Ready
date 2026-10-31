@@ -7,6 +7,10 @@ import { isMockMode, toApiError } from '../lib/api';
 import { ErrorBanner } from '../components/ErrorBanner';
 import { Logo } from '../components/Logo';
 import { AmbientHeroCanvas } from '../components/AmbientHeroCanvas';
+import { PasswordInput } from '../components/PasswordInput';
+import { emailProblem } from '../lib/validation';
+import { CheckInbox } from '../components/CheckInbox';
+import { authLinkResult } from '../lib/supabase';
 
 export const LoginPage: React.FC = () => {
   const { user, loading: authLoading, signIn, signUp, signInDemo } = useAuth();
@@ -19,6 +23,10 @@ export const LoginPage: React.FC = () => {
   const [submitting, setSubmitting] = useState(false);
   const [demoLoading, setDemoLoading] = useState(false);
   const [error, setError] = useState<ApiError | null>(null);
+  const [emailError, setEmailError] = useState<string | null>(null);
+  const [passwordError, setPasswordError] = useState<string | null>(null);
+  const [pending, setPending] = useState<{ email: string; reason: 'signup' | 'signin' } | null>(null);
+  const linkError = authLinkResult?.kind === 'link_error' ? authLinkResult.message : null;
 
   if (!authLoading && user) {
     return <Navigate to="/history" replace />;
@@ -30,12 +38,18 @@ export const LoginPage: React.FC = () => {
     try {
       if (mode === 'signin') {
         await signIn(email, password);
-      } else {
-        await signUp(email, password);
+      } else if (await signUp(email, password)) {
+        setPending({ email: email.trim(), reason: 'signup' });
+        return;
       }
       navigate('/history');
     } catch (err) {
-      setError(toApiError(err, 'unauthorized'));
+      const apiErr = toApiError(err, 'unauthorized');
+      if (mode === 'signin' && /not confirmed/i.test(apiErr.error.message)) {
+        setPending({ email: email.trim(), reason: 'signin' });
+        return;
+      }
+      setError(apiErr);
     } finally {
       setSubmitting(false);
     }
@@ -54,8 +68,24 @@ export const LoginPage: React.FC = () => {
     }
   };
 
+  // Check the boxes before calling the server, so a typo gets a clear,
+  // field-level message instead of a vague sign-in error.
+  const checkFields = () => {
+    const eProblem = emailProblem(email);
+    let pProblem: string | null = null;
+    if (!password) pProblem = 'Please enter your password.';
+    else if (mode === 'signup' && password.length < 6)
+      pProblem = 'Use at least 6 characters for your password.';
+    setEmailError(eProblem);
+    setPasswordError(pProblem);
+    if (eProblem) document.getElementById('auth-email')?.focus();
+    else if (pProblem) document.getElementById('auth-password')?.focus();
+    return !eProblem && !pProblem;
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!checkFields()) return;
     await runAuthAction();
   };
 
@@ -133,7 +163,7 @@ export const LoginPage: React.FC = () => {
             </ul>
 
             <div className="mt-8 border-t border-white/10 pt-5 text-xs text-[#86868b]">
-              <Link
+              <Link data-tip="Back to the RoleReady home page"
                 to="/"
                 className="inline-flex items-center gap-1.5 font-medium text-[#38bdf8] hover:underline"
               >
@@ -171,7 +201,7 @@ export const LoginPage: React.FC = () => {
           {/* One-Click Demo User Button (mock user, or anonymous Supabase user) */}
           {(
             <div className="mt-6">
-              <button
+              <button data-tip="Try RoleReady straight away with a demo account. Nothing to type"
                 type="button"
                 onClick={handleDemoSignIn}
                 disabled={demoLoading || submitting}
@@ -203,18 +233,37 @@ export const LoginPage: React.FC = () => {
             </div>
           )}
 
+          {linkError && !pending && (
+            <p role="alert" className="mb-2 rounded-2xl border border-[#b45309]/25 bg-[#fffbeb] px-4 py-3 text-xs leading-relaxed text-[#92400e]">
+              {linkError} Sign in below and we’ll offer to send you a fresh link if your
+              email still needs confirming.
+            </p>
+          )}
+
+          {pending ? (
+            <CheckInbox
+              email={pending.email}
+              reason={pending.reason}
+              onBack={() => {
+                setPending(null);
+                setError(null);
+              }}
+            />
+          ) : (
+          <>
           {/* Segmented Pill Tabs */}
           <div
             role="tablist"
             aria-label="Authentication mode"
             className="mt-4 grid grid-cols-2 rounded-full bg-[#f1f5f9] p-1"
           >
-            <button
+            <button data-tip="Already have an account? Sign in here"
               type="button"
               role="tab"
               aria-selected={mode === 'signin'}
               onClick={() => {
                 setMode('signin');
+                setPasswordError(null);
                 setError(null);
               }}
               className={`min-h-[38px] rounded-full text-xs font-semibold transition-colors ${
@@ -225,12 +274,13 @@ export const LoginPage: React.FC = () => {
             >
               Sign in
             </button>
-            <button
+            <button data-tip="New here? Create a free account"
               type="button"
               role="tab"
               aria-selected={mode === 'signup'}
               onClick={() => {
                 setMode('signup');
+                setPasswordError(null);
                 setError(null);
               }}
               className={`min-h-[38px] rounded-full text-xs font-semibold transition-colors ${
@@ -257,16 +307,30 @@ export const LoginPage: React.FC = () => {
               >
                 Email address
               </label>
-              <input
+              <input data-tip="The email you use (or will use) for RoleReady"
                 id="auth-email"
                 type="email"
                 autoComplete="email"
                 required
+                inputMode="email"
+                autoCapitalize="none"
+                spellCheck={false}
+                maxLength={254}
+                aria-invalid={emailError ? true : undefined}
+                aria-describedby={emailError ? 'auth-email-error' : undefined}
                 value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                onChange={(e) => {
+                  setEmail(e.target.value);
+                  if (emailError) setEmailError(null);
+                }}
                 placeholder="alex.rivera@roleready.app"
-                className="mt-1.5 block min-h-[44px] w-full rounded-2xl border border-black/15 bg-[#f1f5f9]/60 px-4 py-2.5 text-base text-[#0f172a] placeholder:text-[#aeaeb2] focus:border-[#0284c7] focus:bg-white focus:outline-none"
+                className="mt-1.5 block min-h-[44px] w-full rounded-2xl border border-black/15 aria-[invalid=true]:border-[#d70015] bg-[#f1f5f9]/60 px-4 py-2.5 text-base text-[#0f172a] placeholder:text-[#aeaeb2] focus:border-[#0284c7] focus:bg-white focus:outline-none"
               />
+              {emailError && (
+                <p id="auth-email-error" role="alert" className="mt-1.5 text-xs font-medium text-[#d70015]">
+                  {emailError}
+                </p>
+              )}
             </div>
 
             <div>
@@ -276,22 +340,38 @@ export const LoginPage: React.FC = () => {
               >
                 Password
               </label>
-              <input
+              <PasswordInput
                 id="auth-password"
-                type="password"
                 autoComplete={
                   mode === 'signin' ? 'current-password' : 'new-password'
                 }
                 required
-                minLength={6}
+                minLength={mode === 'signup' ? 6 : undefined}
+                maxLength={72}
+                aria-invalid={passwordError ? true : undefined}
+                aria-describedby={passwordError ? 'auth-password-error' : 'auth-password-hint'}
                 value={password}
-                onChange={(e) => setPassword(e.target.value)}
+                onChange={(e) => {
+                  setPassword(e.target.value);
+                  if (passwordError) setPasswordError(null);
+                }}
                 placeholder="••••••••••••"
-                className="mt-1.5 block min-h-[44px] w-full rounded-2xl border border-black/15 bg-[#f1f5f9]/60 px-4 py-2.5 text-base text-[#0f172a] placeholder:text-[#aeaeb2] focus:border-[#0284c7] focus:bg-white focus:outline-none"
+                className="mt-1.5 block min-h-[44px] w-full rounded-2xl border border-black/15 aria-[invalid=true]:border-[#d70015] bg-[#f1f5f9]/60 px-4 py-2.5 text-base text-[#0f172a] placeholder:text-[#aeaeb2] focus:border-[#0284c7] focus:bg-white focus:outline-none"
               />
+              {passwordError ? (
+                <p id="auth-password-error" role="alert" className="mt-1.5 text-xs font-medium text-[#d70015]">
+                  {passwordError}
+                </p>
+              ) : (
+                mode === 'signup' && (
+                  <p id="auth-password-hint" className="mt-1.5 text-xs text-[#6e6e73]">
+                    At least 6 characters.
+                  </p>
+                )
+              )}
             </div>
 
-            <button
+            <button data-tip="Sign in or create your account with the details above"
               type="submit"
               disabled={submitting || demoLoading}
               className={`min-h-[46px] w-full rounded-full px-6 py-3 text-sm font-semibold transition-colors disabled:opacity-60 ${
@@ -317,6 +397,8 @@ export const LoginPage: React.FC = () => {
               )}
             </button>
           </form>
+          </>
+          )}
 
           <p className="mt-5 flex items-center justify-center gap-1.5 text-center text-xs text-[#86868b]">
             <Lock className="h-3.5 w-3.5 text-[#14b8a6]" aria-hidden="true" />

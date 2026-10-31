@@ -69,7 +69,7 @@ export const LandingPage: React.FC = () => {
 
             <div className="mt-8 flex flex-col items-center justify-center gap-3.5 sm:flex-row">
               {user ? (
-                <Link
+                <Link data-tip="Go to your practice history"
                   to="/history"
                   className="btn-pill-primary min-h-[44px] w-full px-7 py-3 text-[15px] font-semibold sm:w-auto"
                 >
@@ -78,7 +78,7 @@ export const LandingPage: React.FC = () => {
                 </Link>
               ) : (
                 <>
-                  <button
+                  <button data-tip="Jump straight in with a sample resume and job. No account needed"
                     type="button"
                     onClick={handleStartDemo}
                     disabled={startingDemo}
@@ -89,11 +89,11 @@ export const LandingPage: React.FC = () => {
                       {startingDemo ? 'Opening demo…' : 'Try the demo'}
                     </span>
                   </button>
-                  <Link
+                  <Link data-tip="Sign in, or create a free account to save your sessions"
                     to="/login"
                     className="btn-pill-secondary-dark min-h-[44px] w-full px-7 py-3 text-[15px] font-semibold sm:w-auto"
                   >
-                    Sign in
+                    Sign in / Sign up
                   </Link>
                 </>
               )}
@@ -497,7 +497,7 @@ export const LandingPage: React.FC = () => {
             seconds.
           </p>
           <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
-            <button
+            <button data-tip="Jump straight in with a sample resume and job. No account needed"
               type="button"
               onClick={handleStartDemo}
               disabled={startingDemo}
@@ -513,11 +513,11 @@ export const LandingPage: React.FC = () => {
               </span>
             </button>
             {!user && (
-              <Link
+              <Link data-tip="Sign in, or create a free account to save your sessions"
                 to="/login"
                 className="btn-pill-secondary-dark min-h-[44px] w-full px-8 py-3 text-[15px] font-semibold sm:w-auto"
               >
-                Sign in with email
+                Sign in or sign up with email
               </Link>
             )}
           </div>

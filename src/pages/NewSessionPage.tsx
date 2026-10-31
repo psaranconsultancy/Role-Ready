@@ -33,6 +33,8 @@ import {
   SAMPLE_COMPANY,
   SAMPLE_JD_TEXT,
 } from '../mocks/fixtures';
+import { guessJobSpecDetails } from '../lib/jobSpecDetails';
+import { normaliseLink } from '../lib/validation';
 import { ErrorBanner } from '../components/ErrorBanner';
 import { InterviewerPicker } from '../components/InterviewerPicker';
 import { QuestionPlanPicker, loadQuestionPlan, FOCUS_OPTIONS, type QuestionPlan } from '../components/QuestionPlanPicker';
@@ -62,6 +64,7 @@ export const NewSessionPage: React.FC = () => {
   const [company, setCompany] = useState('');
   const [jdText, setJdText] = useState('');
   const [newContextLink, setNewContextLink] = useState('');
+  const [linkError, setLinkError] = useState<string | null>(null);
   // Name of the job spec file the text was read from, if any.
   const [jdSourceName, setJdSourceName] = useState<string | null>(null);
   const [jdReading, setJdReading] = useState(false);
@@ -78,6 +81,51 @@ export const NewSessionPage: React.FC = () => {
   // creating another one (which would leave an empty draft in History).
   const [pending, setPending] = useState<{ id: string; parsed: boolean } | null>(null);
   useEffect(() => setPending(null), [file, jdText, roleTitle, company]);
+
+  // Fill in the role and company from the job spec. Only fills a field that is
+  // empty or still holds our own earlier guess, so a typed value is never lost.
+  const autoRoleRef = useRef<string | null>(null);
+  const autoCompanyRef = useRef<string | null>(null);
+  useEffect(() => {
+    const t = window.setTimeout(() => {
+      const guess = jdText.trim().length >= 40 ? guessJobSpecDetails(jdText) : { roleTitle: null, company: null };
+      setRoleTitle((cur) => {
+        const ours = !cur.trim() || cur === autoRoleRef.current;
+        if (!ours) return cur;
+        autoRoleRef.current = guess.roleTitle;
+        return guess.roleTitle ?? '';
+      });
+      setCompany((cur) => {
+        const ours = !cur.trim() || cur === autoCompanyRef.current;
+        if (!ours) return cur;
+        autoCompanyRef.current = guess.company;
+        return guess.company ?? '';
+      });
+    }, 350);
+    return () => window.clearTimeout(t);
+  }, [jdText]);
+  const filledFromSpec =
+    (!!roleTitle && roleTitle === autoRoleRef.current) ||
+    (!!company && company === autoCompanyRef.current);
+
+  // A file dropped just outside a drop zone would otherwise make the browser
+  // open it and leave this page, losing what the candidate has filled in.
+  useEffect(() => {
+    const stop = (e: DragEvent) => {
+      // Drop zones handle (and preventDefault) their own events first.
+      if (e.defaultPrevented) return;
+      if (e.dataTransfer && Array.from(e.dataTransfer.types).includes('Files')) {
+        e.preventDefault();
+        if (e.type === 'dragover') e.dataTransfer.dropEffect = 'none';
+      }
+    };
+    window.addEventListener('dragover', stop);
+    window.addEventListener('drop', stop);
+    return () => {
+      window.removeEventListener('dragover', stop);
+      window.removeEventListener('drop', stop);
+    };
+  }, []);
 
   const validateAndSelectFile = (selected: File | null) => {
     setFileError(null);
@@ -176,20 +224,43 @@ export const NewSessionPage: React.FC = () => {
     }
   };
 
+  const addContextLink = () => {
+    if (!newContextLink.trim()) return;
+    const link = normaliseLink(newContextLink);
+    if (!link) {
+      setLinkError('That doesn’t look like a web address. Try something like company.com/about.');
+      return;
+    }
+    if (!grillContext.sharedLinks.includes(link)) {
+      updateGrillContext({ ...grillContext, sharedLinks: [...grillContext.sharedLinks, link] });
+    }
+    setNewContextLink('');
+    setLinkError(null);
+  };
+
   const trimmedJdLength = jdText.trim().length;
   const isJdValid = trimmedJdLength >= 200;
-  const canSubmit = Boolean(file) && isJdValid && stage === 'idle' && !jdReading;
+  // The button stays pressable: pressing it with something missing says what,
+  // and takes the candidate to it, rather than sitting greyed out.
+  const canSubmit = stage === 'idle' && !jdReading;
+  const missing = !file ? 'your resume' : !isJdValid ? 'the job description' : null;
 
   const runPipeline = async () => {
     setFileError(null);
     setJdError(null);
     setApiError(null);
 
+    const showField = (id: string) => {
+      const el = document.getElementById(id);
+      el?.closest('section')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    };
     if (!file) {
       setFileError('Please upload your resume as a PDF file.');
+      showField('resume-upload');
       return;
     }
     if (trimmedJdLength < 200) {
+      showField('jd-textarea');
       setJdError(
         trimmedJdLength === 0
           ? 'Please upload the job spec or paste the job description.'
@@ -252,7 +323,7 @@ export const NewSessionPage: React.FC = () => {
       <div className="frosted-localnav-light sticky top-12 z-30 h-[52px] w-full">
         <div className="mx-auto flex h-full max-w-[960px] items-center justify-between px-4 sm:px-6">
           <div className="flex items-center gap-3">
-            <Link
+            <Link data-tip="Back to your practice history"
               to="/history"
               className="inline-flex items-center gap-1 text-xs font-medium text-[#6e6e73] transition-colors hover:text-[#0f172a]"
             >
@@ -313,7 +384,7 @@ export const NewSessionPage: React.FC = () => {
             </p>
           </div>
 
-          <button
+          <button data-tip="Fill everything in with a sample resume and job spec to see how it works"
             type="button"
             onClick={handleLoadSample}
             disabled={isBusy}
@@ -524,7 +595,7 @@ export const NewSessionPage: React.FC = () => {
                     </p>
                   </div>
                 </div>
-                <button
+                <button data-tip="Remove this resume and choose another"
                   type="button"
                   disabled={isBusy}
                   onClick={() => {
@@ -552,7 +623,27 @@ export const NewSessionPage: React.FC = () => {
           {/* 2. Job Spec: upload a file or paste the text */}
           <section
             data-ui="job-spec-card"
-            className="bento-card-light p-6 sm:p-8"
+            // A file dropped anywhere on this card (drop zone, text box or the
+            // "file read" banner) is read as the job spec.
+            onDragOver={(e) => {
+              if (!Array.from(e.dataTransfer.types).includes('Files')) return;
+              e.preventDefault();
+              e.dataTransfer.dropEffect = 'copy';
+              if (!isBusy && !jdReading) setJdDragOver(true);
+            }}
+            onDragLeave={(e) => {
+              if (!e.currentTarget.contains(e.relatedTarget as Node | null)) setJdDragOver(false);
+            }}
+            onDrop={(e) => {
+              if (!e.dataTransfer.files?.length) return;
+              e.preventDefault();
+              setJdDragOver(false);
+              if (isBusy || jdReading) return;
+              handleJobSpecFile(e.dataTransfer.files[0]);
+            }}
+            className={`bento-card-light p-6 sm:p-8 transition-shadow ${
+              jdDragOver ? 'ring-2 ring-[#0284c7] ring-offset-2' : ''
+            }`}
           >
             <div className="flex flex-wrap items-center justify-between gap-2">
               <label
@@ -607,7 +698,7 @@ export const NewSessionPage: React.FC = () => {
                     </p>
                   </div>
                 </div>
-                <button
+                <button data-tip="Upload a different job spec file"
                   type="button"
                   disabled={isBusy}
                   onClick={() => jdFileInputRef.current?.click()}
@@ -618,17 +709,6 @@ export const NewSessionPage: React.FC = () => {
               </div>
             ) : (
               <div
-                onDragOver={(e) => {
-                  e.preventDefault();
-                  if (!isBusy && !jdReading) setJdDragOver(true);
-                }}
-                onDragLeave={() => setJdDragOver(false)}
-                onDrop={(e) => {
-                  e.preventDefault();
-                  setJdDragOver(false);
-                  if (isBusy || jdReading) return;
-                  handleJobSpecFile(e.dataTransfer.files?.[0] ?? null);
-                }}
                 onClick={() =>
                   !isBusy && !jdReading && jdFileInputRef.current?.click()
                 }
@@ -674,7 +754,7 @@ export const NewSessionPage: React.FC = () => {
               <span className="h-px flex-1 bg-black/10" aria-hidden="true" />
             </div>
 
-            <textarea
+            <textarea data-tip="Paste the job description, or drop a PDF, Word or text file here"
               ref={jdTextareaRef}
               id="jd-textarea"
               rows={8}
@@ -697,9 +777,14 @@ export const NewSessionPage: React.FC = () => {
                 {jdError}
               </p>
             )}
+            {!jdError && !jdReading && trimmedJdLength > 0 && trimmedJdLength < 200 && (
+              <p className="mt-2.5 text-xs text-[#6e6e73]">
+                {trimmedJdLength} of at least 200 characters. Paste a little more of the posting.
+              </p>
+            )}
 
             {!jdText.trim() && !jdReading && (
-              <button
+              <button data-tip="Load a sample job spec to try it out"
                 type="button"
                 disabled={isBusy}
                 onClick={handleLoadSampleJobSpec}
@@ -719,6 +804,11 @@ export const NewSessionPage: React.FC = () => {
                 (optional)
               </span>
             </h3>
+            {filledFromSpec && (
+              <p data-ui="role-autofill-note" className="mt-1.5 text-xs text-[#0f766e]">
+                Filled in from your job spec. Change it if it's not right.
+              </p>
+            )}
             <div className="mt-4 grid gap-4 sm:grid-cols-2">
               <div>
                 <label
@@ -727,8 +817,9 @@ export const NewSessionPage: React.FC = () => {
                 >
                   Role title
                 </label>
-                <input
+                <input data-tip="The job title you're applying for. We fill it in from the job spec when we can"
                   id="role-title"
+                  maxLength={100}
                   type="text"
                   disabled={isBusy}
                   value={roleTitle}
@@ -744,8 +835,9 @@ export const NewSessionPage: React.FC = () => {
                 >
                   Company
                 </label>
-                <input
+                <input data-tip="The company you're applying to. We fill it in from the job spec when we can"
                   id="company-name"
+                  maxLength={100}
                   type="text"
                   disabled={isBusy}
                   value={company}
@@ -956,6 +1048,7 @@ export const NewSessionPage: React.FC = () => {
               </label>
               <input
                 id="new-niche-focus"
+                maxLength={150}
                 type="text"
                 disabled={isBusy}
                 value={grillContext.nicheFocus}
@@ -1045,34 +1138,41 @@ export const NewSessionPage: React.FC = () => {
                 <div className="mt-2 flex gap-1.5">
                   <input
                     type="url"
+                    inputMode="url"
+                    autoCapitalize="none"
+                    spellCheck={false}
+                    maxLength={500}
                     aria-label="Add context link URL"
+                    aria-invalid={linkError ? true : undefined}
                     disabled={isBusy}
                     value={newContextLink}
-                    onChange={(e) => setNewContextLink(e.target.value)}
+                    onChange={(e) => {
+                      setNewContextLink(e.target.value);
+                      if (linkError) setLinkError(null);
+                    }}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter') {
+                        e.preventDefault();
+                        addContextLink();
+                      }
+                    }}
                     placeholder="https://company.com/strategy-memo"
-                    className="min-h-[36px] flex-1 rounded-xl border border-black/15 bg-white px-3 py-1 text-xs text-[#0f172a] placeholder:text-[#aeaeb2] focus:border-[#0284c7] focus:outline-none"
+                    className="min-h-[36px] flex-1 rounded-xl border border-black/15 bg-white px-3 py-1 text-xs text-[#0f172a] placeholder:text-[#aeaeb2] focus:border-[#0284c7] focus:outline-none aria-[invalid=true]:border-[#d70015]"
                   />
                   <button
                     type="button"
                     disabled={isBusy}
-                    onClick={() => {
-                      const trimmed = newContextLink.trim();
-                      if (
-                        trimmed &&
-                        !grillContext.sharedLinks.includes(trimmed)
-                      ) {
-                        updateGrillContext({
-                          ...grillContext,
-                          sharedLinks: [...grillContext.sharedLinks, trimmed],
-                        });
-                        setNewContextLink('');
-                      }
-                    }}
+                    onClick={addContextLink}
                     className="rounded-xl bg-[#0284c7] px-3 py-1 text-xs font-semibold text-white hover:bg-[#0369a1]"
                   >
                     Add
                   </button>
                 </div>
+                {linkError && (
+                  <p role="alert" className="mt-1.5 text-xs font-medium text-[#d70015]">
+                    {linkError}
+                  </p>
+                )}
                 <div className="mt-2 flex flex-wrap gap-1.5">
                   {grillContext.sharedLinks.map((url) => (
                     <span
@@ -1108,11 +1208,16 @@ export const NewSessionPage: React.FC = () => {
           {/* Submit Action Bar */}
           <div className="flex flex-col items-center justify-between gap-4 pt-2 sm:flex-row">
             <p className="text-xs text-[#6e6e73]">
+              {missing && !isBusy && (
+                <span className="mb-1 block font-semibold text-[#b45309]">
+                  Still needed: {missing}.
+                </span>
+              )}
               {plan.focus === 'mixed'
                 ? `Creates ${plan.count} tailored questions, mixing behavioural, technical, situational and role fit.`
                 : `Creates ${plan.count} tailored ${FOCUS_OPTIONS.find((o) => o.value === plan.focus)?.label.toLowerCase()} questions.`}
             </p>
-            <button
+            <button data-tip="Read your resume and the job spec, then write your tailored questions"
               type="submit"
               disabled={!canSubmit}
               className="btn-pill-primary min-h-[48px] w-full px-8 py-3 text-sm font-semibold disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto"
