@@ -33,6 +33,7 @@ import {
   SAMPLE_COMPANY,
   SAMPLE_JD_TEXT,
 } from '../mocks/fixtures';
+import { guessJobSpecDetails } from '../lib/jobSpecDetails';
 import { ErrorBanner } from '../components/ErrorBanner';
 import { InterviewerPicker } from '../components/InterviewerPicker';
 import {
@@ -73,6 +74,51 @@ export const NewSessionPage: React.FC = () => {
   // creating another one (which would leave an empty draft in History).
   const [pending, setPending] = useState<{ id: string; parsed: boolean } | null>(null);
   useEffect(() => setPending(null), [file, jdText, roleTitle, company]);
+
+  // Fill in the role and company from the job spec. Only fills a field that is
+  // empty or still holds our own earlier guess, so a typed value is never lost.
+  const autoRoleRef = useRef<string | null>(null);
+  const autoCompanyRef = useRef<string | null>(null);
+  useEffect(() => {
+    const t = window.setTimeout(() => {
+      const guess = jdText.trim().length >= 40 ? guessJobSpecDetails(jdText) : { roleTitle: null, company: null };
+      setRoleTitle((cur) => {
+        const ours = !cur.trim() || cur === autoRoleRef.current;
+        if (!ours) return cur;
+        autoRoleRef.current = guess.roleTitle;
+        return guess.roleTitle ?? '';
+      });
+      setCompany((cur) => {
+        const ours = !cur.trim() || cur === autoCompanyRef.current;
+        if (!ours) return cur;
+        autoCompanyRef.current = guess.company;
+        return guess.company ?? '';
+      });
+    }, 350);
+    return () => window.clearTimeout(t);
+  }, [jdText]);
+  const filledFromSpec =
+    (!!roleTitle && roleTitle === autoRoleRef.current) ||
+    (!!company && company === autoCompanyRef.current);
+
+  // A file dropped just outside a drop zone would otherwise make the browser
+  // open it and leave this page, losing what the candidate has filled in.
+  useEffect(() => {
+    const stop = (e: DragEvent) => {
+      // Drop zones handle (and preventDefault) their own events first.
+      if (e.defaultPrevented) return;
+      if (e.dataTransfer && Array.from(e.dataTransfer.types).includes('Files')) {
+        e.preventDefault();
+        if (e.type === 'dragover') e.dataTransfer.dropEffect = 'none';
+      }
+    };
+    window.addEventListener('dragover', stop);
+    window.addEventListener('drop', stop);
+    return () => {
+      window.removeEventListener('dragover', stop);
+      window.removeEventListener('drop', stop);
+    };
+  }, []);
 
   const validateAndSelectFile = (selected: File | null) => {
     setFileError(null);
@@ -545,7 +591,27 @@ export const NewSessionPage: React.FC = () => {
           {/* 2. Job Spec: upload a file or paste the text */}
           <section
             data-ui="job-spec-card"
-            className="bento-card-light p-6 sm:p-8"
+            // A file dropped anywhere on this card (drop zone, text box or the
+            // "file read" banner) is read as the job spec.
+            onDragOver={(e) => {
+              if (!Array.from(e.dataTransfer.types).includes('Files')) return;
+              e.preventDefault();
+              e.dataTransfer.dropEffect = 'copy';
+              if (!isBusy && !jdReading) setJdDragOver(true);
+            }}
+            onDragLeave={(e) => {
+              if (!e.currentTarget.contains(e.relatedTarget as Node | null)) setJdDragOver(false);
+            }}
+            onDrop={(e) => {
+              if (!e.dataTransfer.files?.length) return;
+              e.preventDefault();
+              setJdDragOver(false);
+              if (isBusy || jdReading) return;
+              handleJobSpecFile(e.dataTransfer.files[0]);
+            }}
+            className={`bento-card-light p-6 sm:p-8 transition-shadow ${
+              jdDragOver ? 'ring-2 ring-[#0284c7] ring-offset-2' : ''
+            }`}
           >
             <div className="flex flex-wrap items-center justify-between gap-2">
               <label
@@ -611,17 +677,6 @@ export const NewSessionPage: React.FC = () => {
               </div>
             ) : (
               <div
-                onDragOver={(e) => {
-                  e.preventDefault();
-                  if (!isBusy && !jdReading) setJdDragOver(true);
-                }}
-                onDragLeave={() => setJdDragOver(false)}
-                onDrop={(e) => {
-                  e.preventDefault();
-                  setJdDragOver(false);
-                  if (isBusy || jdReading) return;
-                  handleJobSpecFile(e.dataTransfer.files?.[0] ?? null);
-                }}
                 onClick={() =>
                   !isBusy && !jdReading && jdFileInputRef.current?.click()
                 }
@@ -712,6 +767,11 @@ export const NewSessionPage: React.FC = () => {
                 (optional)
               </span>
             </h3>
+            {filledFromSpec && (
+              <p data-ui="role-autofill-note" className="mt-1.5 text-xs text-[#0f766e]">
+                Filled in from your job spec. Change it if it's not right.
+              </p>
+            )}
             <div className="mt-4 grid gap-4 sm:grid-cols-2">
               <div>
                 <label
