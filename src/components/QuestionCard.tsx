@@ -25,13 +25,14 @@ import { ErrorBanner } from './ErrorBanner';
 import { GrillFollowUp } from './GrillFollowUp';
 import { useSpeechToText } from '../lib/useSpeechToText';
 import { QUESTION_TYPE_LABELS } from '../lib/sessionReport';
-import { useInterviewerVoice, questionScript } from '../lib/interviewerVoice';
+import { useInterviewerVoice, questionScript, prefetchSpeech } from '../lib/interviewerVoice';
 
 // How long the current question can sit with no typing, speaking or
 // interviewer voice before the interviewer checks in.
 const IDLE_CHECK_IN_MS = 60_000;
 const CHECK_IN_LINE =
   "Just checking in. Would you like a bit more time, or shall we move on to the next question?";
+const MORE_TIME_LINE = 'Of course. Take all the time you need.';
 
 const REPHRASE_REQUEST =
   "I don't understand the question. Can you rephrase it in plainer words?";
@@ -91,6 +92,13 @@ export const QuestionCard: React.FC<QuestionCardProps> = ({
   const idleTimer = useRef<number | null>(null);
   const waitingForAnswer =
     isCurrent && isEditing && !existingFeedback && !submitting && !skipping;
+  // Get the check-in lines ready so the natural voice speaks without a pause.
+  useEffect(() => {
+    if (!isCurrent) return;
+    prefetchSpeech(CHECK_IN_LINE);
+    prefetchSpeech(MORE_TIME_LINE);
+  }, [isCurrent]);
+
   useEffect(() => {
     if (idleTimer.current) window.clearTimeout(idleTimer.current);
     if (!waitingForAnswer || checkIn || speech.listening || speakingHere) return;
@@ -113,7 +121,7 @@ export const QuestionCard: React.FC<QuestionCardProps> = ({
 
   const giveMoreTime = () => {
     setCheckIn(false);
-    voice.speak('Of course. Take all the time you need.', `ci:${question.id}`);
+    voice.speak(MORE_TIME_LINE, `ci:${question.id}`);
     document.getElementById(`answer-input-${question.id}`)?.focus();
   };
 
