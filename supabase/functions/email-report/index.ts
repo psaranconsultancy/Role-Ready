@@ -99,11 +99,11 @@ Deno.serve(async (request) => {
   const gmailPass = pick("GMAIL_APP_PASSWORD")?.replace(/\s+/g, "");
   if (!gmailUser || !gmailPass) {
     // Names only, never values.
-    console.error("email-report: missing secret", {
+    console.error("email-report: missing secret", JSON.stringify({
       has_user: !!gmailUser,
       has_password: !!gmailPass,
       gmail_like_names: Object.keys(env).filter((k) => /gmail|smtp|mail|app_?pass/i.test(k)),
-    });
+    }));
     return apiError("bad_request", "Email is not set up yet. Download the PDF instead.", 503);
   }
 
