@@ -9,6 +9,8 @@ import { Logo } from '../components/Logo';
 import { AmbientHeroCanvas } from '../components/AmbientHeroCanvas';
 import { PasswordInput } from '../components/PasswordInput';
 import { emailProblem } from '../lib/validation';
+import { CheckInbox } from '../components/CheckInbox';
+import { authLinkResult } from '../lib/supabase';
 
 export const LoginPage: React.FC = () => {
   const { user, loading: authLoading, signIn, signUp, signInDemo } = useAuth();
@@ -23,6 +25,8 @@ export const LoginPage: React.FC = () => {
   const [error, setError] = useState<ApiError | null>(null);
   const [emailError, setEmailError] = useState<string | null>(null);
   const [passwordError, setPasswordError] = useState<string | null>(null);
+  const [pending, setPending] = useState<{ email: string; reason: 'signup' | 'signin' } | null>(null);
+  const linkError = authLinkResult?.kind === 'link_error' ? authLinkResult.message : null;
 
   if (!authLoading && user) {
     return <Navigate to="/history" replace />;
@@ -34,12 +38,18 @@ export const LoginPage: React.FC = () => {
     try {
       if (mode === 'signin') {
         await signIn(email, password);
-      } else {
-        await signUp(email, password);
+      } else if (await signUp(email, password)) {
+        setPending({ email: email.trim(), reason: 'signup' });
+        return;
       }
       navigate('/history');
     } catch (err) {
-      setError(toApiError(err, 'unauthorized'));
+      const apiErr = toApiError(err, 'unauthorized');
+      if (mode === 'signin' && /not confirmed/i.test(apiErr.error.message)) {
+        setPending({ email: email.trim(), reason: 'signin' });
+        return;
+      }
+      setError(apiErr);
     } finally {
       setSubmitting(false);
     }
@@ -223,6 +233,24 @@ export const LoginPage: React.FC = () => {
             </div>
           )}
 
+          {linkError && !pending && (
+            <p role="alert" className="mb-2 rounded-2xl border border-[#b45309]/25 bg-[#fffbeb] px-4 py-3 text-xs leading-relaxed text-[#92400e]">
+              {linkError} Sign in below and we’ll offer to send you a fresh link if your
+              email still needs confirming.
+            </p>
+          )}
+
+          {pending ? (
+            <CheckInbox
+              email={pending.email}
+              reason={pending.reason}
+              onBack={() => {
+                setPending(null);
+                setError(null);
+              }}
+            />
+          ) : (
+          <>
           {/* Segmented Pill Tabs */}
           <div
             role="tablist"
@@ -369,6 +397,8 @@ export const LoginPage: React.FC = () => {
               )}
             </button>
           </form>
+          </>
+          )}
 
           <p className="mt-5 flex items-center justify-center gap-1.5 text-center text-xs text-[#86868b]">
             <Lock className="h-3.5 w-3.5 text-[#14b8a6]" aria-hidden="true" />

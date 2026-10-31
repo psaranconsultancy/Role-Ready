@@ -12,7 +12,8 @@ interface AuthContextValue {
   user: AppUser | null;
   loading: boolean;
   signIn: (email: string, password: string) => Promise<void>;
-  signUp: (email: string, password: string) => Promise<void>;
+  /** Resolves to true when the account needs its email confirmed first. */
+  signUp: (email: string, password: string) => Promise<boolean>;
   signInDemo: () => Promise<void>;
   signOut: () => Promise<void>;
 }
@@ -49,7 +50,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
 
   const handleSignUp = async (email: string, password: string) => {
     const created = await apiSignUp(email, password);
-    setUser(created);
+    if (created.needsConfirmation) return true;
+    setUser({ id: created.id, email: created.email });
+    return false;
   };
 
   const handleSignInDemo = async () => {

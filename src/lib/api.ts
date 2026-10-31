@@ -29,6 +29,7 @@ import {
 } from '../mocks/mockStore';
 
 export type AppUser = MockUser;
+export type SignUpResult = AppUser & { needsConfirmation?: boolean };
 
 let hasWarnedMockFallback = false;
 
@@ -153,7 +154,7 @@ function validateAuthInput(email: string, password: string): void {
   }
 }
 
-export async function signUp(email: string, password: string): Promise<AppUser> {
+export async function signUp(email: string, password: string): Promise<SignUpResult> {
   validateAuthInput(email, password);
   if (isMockMode()) {
     await fakeDelay(600, 1000);
@@ -168,11 +169,40 @@ export async function signUp(email: string, password: string): Promise<AppUser> 
   const { data, error } = await supabase.auth.signUp({
     email: email.trim(),
     password,
+    options: { emailRedirectTo: `${window.location.origin}/history` },
   });
   if (error || !data.user) {
     throw toApiError(error, 'unauthorized', error?.message || 'Could not create account.');
   }
+  // With "Confirm email" on, there is no session until the link is clicked.
+  if (!data.session) {
+    return { id: data.user.id, email: data.user.email ?? email.trim(), needsConfirmation: true };
+  }
   return { id: data.user.id, email: data.user.email ?? email.trim() };
+}
+
+/** Sends the sign-up confirmation email again. */
+export async function resendConfirmation(email: string): Promise<void> {
+  if (isMockMode()) {
+    await fakeDelay(400, 700);
+    return;
+  }
+  const { error } = await supabase.auth.resend({
+    type: 'signup',
+    email: email.trim(),
+    options: { emailRedirectTo: `${window.location.origin}/history` },
+  });
+  if (error) {
+    const err: ApiError = {
+      error: {
+        code: 'bad_request',
+        message: /rate|seconds|security purposes/i.test(error.message)
+          ? 'Please wait a minute before asking for another email.'
+          : error.message || 'Could not send the email. Please try again.',
+      },
+    };
+    throw err;
+  }
 }
 
 export async function signIn(email: string, password: string): Promise<AppUser> {
