@@ -31,7 +31,7 @@ import { useInterviewerVoice, questionScript } from '../lib/interviewerVoice';
 // interviewer voice before the interviewer checks in.
 const IDLE_CHECK_IN_MS = 60_000;
 const CHECK_IN_LINE =
-  'Take your time. Do you need more time, or would you like to move on to the next question?';
+  "Just checking in. Would you like a bit more time, or shall we move on to the next question?";
 
 const REPHRASE_REQUEST =
   "I don't understand the question. Can you rephrase it in plainer words?";
@@ -381,7 +381,7 @@ export const QuestionCard: React.FC<QuestionCardProps> = ({
             >
               <p className="flex items-center gap-2 text-sm font-semibold text-[#0f172a]">
                 <Clock className="h-4 w-4 text-[#0f766e]" aria-hidden="true" />
-                Do you need more time, or would you like to move on?
+                Just checking in. Would you like more time, or shall we move on?
               </p>
               <p className="mt-1 text-xs text-[#424245]">
                 Moving on scores this question 0. You can come back and answer it later.
