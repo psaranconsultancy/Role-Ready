@@ -111,7 +111,10 @@ export const QuestionCard: React.FC<QuestionCardProps> = ({
 
   useEffect(() => {
     if (idleTimer.current) window.clearTimeout(idleTimer.current);
+    // Only when nothing is written yet: a half-typed answer means they're thinking, not stuck,
+    // and 'Next question' would throw their draft away.
     if (!waitingForAnswer || checkIn || speech.listening || speakingHere || voice.liveActive) return;
+    if (answerText.trim() !== '') return;
     idleTimer.current = window.setTimeout(() => {
       setCheckIn(true);
       voice.speak(CHECK_IN_LINE, `ci:${question.id}`);
