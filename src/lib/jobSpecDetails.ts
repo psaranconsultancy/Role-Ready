@@ -15,11 +15,31 @@ const tidy = (s: string) =>
     .replace(/^[\s\-–—:|,.]+|[\s\-–—:|,.;!]+$/g, '')
     .trim();
 
+// "experienced and adaptable Senior Business Analyst" -> "Senior Business Analyst".
+const FILLER =
+  /^(?:an?|the|and|&|or|experienced|talented|passionate|motivated|self-motivated|driven|results-driven|dynamic|adaptable|ambitious|enthusiastic|skilled|highly|proactive|detail-oriented|exceptional|outstanding|creative|innovative|brilliant|confident|curious|seasoned|versatile|energetic|hands-on|commercially|minded|commercially-minded|strategic|analytical|organised|organized|hardworking|hard-working|friendly|great|strong|exciting|new|an|our|your)$/i;
+
+function stripFiller(text: string): string {
+  let words = text.split(' ');
+  while (words.length > 1 && FILLER.test(words[0].replace(/[,;]$/, ''))) words = words.slice(1);
+  return words.join(' ');
+}
+
+function dropLeadingAdjectives(title: string): string {
+  let words = title.split(' ');
+  // Job titles are written in capitals; leading lowercase words are description.
+  const firstCap = words.findIndex((w) => /^[A-Z0-9]/.test(w));
+  if (firstCap > 0) words = words.slice(firstCap);
+  while (words.length > 1 && FILLER.test(words[0].replace(/[,;]$/, ''))) words = words.slice(1);
+  return words.join(' ');
+}
+
 const cleanTitle = (raw: string): string | null => {
-  let t = tidy(raw)
+  let t = stripFiller(tidy(raw))
     // "Senior Analyst to join our team" -> "Senior Analyst"
     .split(/\s+(?:to|who|that|which|with|for|in|on|based|located|reporting|within|join|\(|-|–|—|\|)\s+|[,.;(]/i)[0];
   t = tidy(t.replace(/^(?:an?|the)\s+/i, ''));
+  t = dropLeadingAdjectives(t);
   if (!t || t.length > 70 || t.split(' ').length > 8) return null;
   if (!ROLE_WORD.test(t)) return null;
   return t;
@@ -64,7 +84,7 @@ export function guessJobSpecDetails(text: string): JobSpecDetails {
 
   // 2. "FinFlow is looking for a Senior Product Analyst to join..."
   const hiring = src.match(
-    /\b([A-Z][\w&.'’-]*(?:[ \t]+[A-Z][\w&.'’-]*){0,3})[ \t]+(?:is|are)[ \t]+(?:currently[ \t]+)?(?:looking[ \t]+for|hiring|seeking|searching[ \t]+for|recruiting)[ \t]+(?:an?[ \t]+|the[ \t]+)?([^\n.,;]{3,90})/
+    /\b([A-Z][\w&.'’-]*(?:[ \t]+[A-Z][\w&.'’-]*){0,3})[ \t]+(?:is|are)[ \t]+(?:currently[ \t]+)?(?:looking[ \t]+for|hiring|seeking|searching[ \t]+for|recruiting)[ \t]+(?:an?[ \t]+|the[ \t]+)?([^\n.;]{3,90})/
   );
   if (hiring) {
     setCompany(hiring[1]);
@@ -73,7 +93,7 @@ export function guessJobSpecDetails(text: string): JobSpecDetails {
 
   // 3. "We are looking for a Senior Product Analyst" / "As a Senior Analyst, you will..."
   const we = src.match(
-    /\b(?:we\s+are|we're|we\s+are\s+currently)\s+(?:looking\s+for|hiring|seeking|recruiting)\s+(?:an?\s+|the\s+)?(?:talented\s+|experienced\s+|passionate\s+)?([^\n.,;]{3,90})/i
+    /\b(?:we\s+are|we're|we\s+are\s+currently)\s+(?:looking\s+for|hiring|seeking|recruiting)\s+(?:an?\s+|the\s+)?(?:talented\s+|experienced\s+|passionate\s+)?([^\n.;]{3,90})/i
   );
   if (we) setTitle(we[1]);
   const asA = src.match(/\bAs\s+(?:an?|the|our)\s+([^\n,.;]{3,70}),\s+you\b/);
