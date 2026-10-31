@@ -1,5 +1,5 @@
-import React from 'react';
-import { RotateCcw, Award, FileDown, Mail } from 'lucide-react';
+import React, { useState } from 'react';
+import { RotateCcw, Award, FileDown, Mail, Loader2 } from 'lucide-react';
 import type { Question, Feedback, Session } from '@contracts';
 import { getScoreBand } from './FeedbackPanel';
 import { ScoreRing } from './ScoreRing';
@@ -8,6 +8,7 @@ import {
   openReport,
   QUESTION_TYPE_LABELS,
 } from '../lib/sessionReport';
+import { downloadReportPdf } from '../lib/sessionReportPdf';
 import { useAuth } from '../context/AuthContext';
 
 interface SessionSummaryProps {
@@ -26,6 +27,25 @@ export const SessionSummary: React.FC<SessionSummaryProps> = ({
   const band = getScoreBand(overallScore);
   const { user } = useAuth();
   const reportInput = { session, questions, answersByQuestionId, overallScore };
+  const [makingPdf, setMakingPdf] = useState(false);
+  const [pdfNote, setPdfNote] = useState<string | null>(null);
+
+  // Build the PDF in the browser and download it. If that fails for any
+  // reason, open the printable page instead so the candidate still gets a copy.
+  const handleDownload = async () => {
+    if (makingPdf) return;
+    setMakingPdf(true);
+    setPdfNote(null);
+    try {
+      await downloadReportPdf(reportInput);
+      setPdfNote('Report downloaded. Check your Downloads folder.');
+    } catch {
+      setPdfNote('Opened a printable copy instead. Use Save as PDF to keep it.');
+      openReport(reportInput);
+    } finally {
+      setMakingPdf(false);
+    }
+  };
   // Demo accounts have no real inbox, so leave "To" empty for them.
   const mailTo =
     user?.email?.includes('@') && !user.email.endsWith('@roleready.app')
@@ -88,11 +108,17 @@ export const SessionSummary: React.FC<SessionSummaryProps> = ({
       <div className="mt-5 flex flex-wrap items-center gap-2.5">
         <button
           type="button"
-          onClick={() => openReport(reportInput)}
-          className="inline-flex min-h-[40px] items-center gap-1.5 rounded-full border border-white/20 bg-white/[0.08] px-4 py-2 text-xs font-semibold text-white transition-colors hover:bg-white/15"
+          onClick={handleDownload}
+          disabled={makingPdf}
+          aria-busy={makingPdf}
+          className="inline-flex min-h-[40px] items-center gap-1.5 rounded-full border border-white/20 bg-white/[0.08] px-4 py-2 text-xs font-semibold text-white transition-colors hover:bg-white/15 disabled:opacity-70"
         >
-          <FileDown className="h-3.5 w-3.5" aria-hidden="true" />
-          <span>Download report (PDF)</span>
+          {makingPdf ? (
+            <Loader2 className="h-3.5 w-3.5 animate-spin" aria-hidden="true" />
+          ) : (
+            <FileDown className="h-3.5 w-3.5" aria-hidden="true" />
+          )}
+          <span>{makingPdf ? 'Making your PDF…' : 'Download report (PDF)'}</span>
         </button>
         <a
           href={buildReportMailto(reportInput, mailTo)}
@@ -101,8 +127,8 @@ export const SessionSummary: React.FC<SessionSummaryProps> = ({
           <Mail className="h-3.5 w-3.5" aria-hidden="true" />
           <span>Email it to me</span>
         </a>
-        <span className="text-xs text-[#a1a1a6]">
-          The PDF has every score, fix and stronger answer. The email has your scores and fixes.
+        <span className="text-xs text-[#a1a1a6]" role="status">
+          {pdfNote ?? 'The PDF has every score, fix and stronger answer. The email has your scores and fixes.'}
         </span>
       </div>
 
