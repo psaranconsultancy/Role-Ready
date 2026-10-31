@@ -1,5 +1,14 @@
-import { apiError, corsHeaders, jsonResponse } from "../_shared/http.ts";
-import { userClient } from "../_shared/session.ts";
+import { createClient } from "npm:@supabase/supabase-js@2";
+
+const corsHeaders = {
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
+  "Access-Control-Allow-Methods": "POST, OPTIONS",
+};
+const jsonResponse = (body: unknown, status = 200) =>
+  new Response(JSON.stringify(body), { status, headers: { ...corsHeaders, "Content-Type": "application/json" } });
+const apiError = (code: string, message: string, status: number) =>
+  jsonResponse({ error: { code, message } }, status);
 
 // Natural interviewer voice: turns one short line (a question, a check-in or
 // feedback) into speech with Gemini text-to-speech. The browser falls back to
@@ -49,21 +58,35 @@ Deno.serve(async (request) => {
   const apiKey = Deno.env.get("GEMINI_API_KEY");
   if (!apiKey) return apiError("llm_failed", "The natural voice is not available right now.", 503);
 
-  const client = userClient(request);
+  // Signed-in users only (the demo's anonymous sign-in counts).
+  const url = Deno.env.get("SUPABASE_URL");
+  const anonKey = Deno.env.get("SUPABASE_ANON_KEY") ?? Deno.env.get("SUPABASE_PUBLISHABLE_KEY");
+  const authorization = request.headers.get("Authorization");
+  if (!url || !anonKey || !authorization) return apiError("unauthorized", "Please sign in and try again.", 401);
+  const client = createClient(url, anonKey, {
+    global: { headers: { Authorization: authorization } },
+    auth: { persistSession: false, autoRefreshToken: false },
+  });
   const { data: auth, error: authError } = await client.auth.getUser();
   if (authError || !auth.user) return apiError("unauthorized", "Please sign in and try again.", 401);
 
   const model = Deno.env.get("GEMINI_TTS_MODEL") ?? DEFAULT_TTS_MODEL;
   const voice = Deno.env.get("GEMINI_TTS_VOICE") ?? DEFAULT_VOICE;
-  try {
-    try {
-      return jsonResponse(await synthesise(apiKey, model, voice, text, true));
-    } catch (first) {
-      console.warn("speak: styled request failed, retrying plain", String(first));
-      return jsonResponse(await synthesise(apiKey, model, voice, text, false));
+  // Try the main voice model, then the lighter one if it is busy or out of quota.
+  // If a model rejects the style hint (400), retry it with the hint in the text.
+  const models = [...new Set([model, "gemini-3.8-flash-lite-tts"])];
+  let lastError = "";
+  for (const m of models) {
+    for (const withStyle of [true, false]) {
+      try {
+        return jsonResponse(await synthesise(apiKey, m, voice, text, withStyle));
+      } catch (error) {
+        lastError = String(error);
+        console.warn(`speak: ${m} style=${withStyle} failed`, lastError);
+        if (!lastError.includes("tts 400")) break;
+      }
     }
-  } catch (error) {
-    console.error("speak failed", String(error));
-    return apiError("llm_failed", "The natural voice could not speak this line.", 502);
   }
+  console.error("speak failed", lastError);
+  return apiError("llm_failed", "The natural voice could not speak this line.", 502);
 });
