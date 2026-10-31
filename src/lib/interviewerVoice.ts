@@ -8,6 +8,9 @@ import { isMockMode } from './api';
 // hides every voice control, so the text flow is unchanged.
 
 const STORAGE_KEY = 'roleready.interviewerVoice';
+const GENDER_KEY = 'roleready.interviewerGender';
+
+export type InterviewerGender = 'female' | 'male';
 
 interface VoiceState {
   supported: boolean;
@@ -16,6 +19,8 @@ interface VoiceState {
   speakingId: string | null;
   /** The browser refused to speak until the user clicks something. */
   blocked: boolean;
+  /** Which interviewer voice the candidate picked. */
+  gender: InterviewerGender;
 }
 
 const synth: SpeechSynthesis | null =
@@ -29,11 +34,20 @@ const readEnabled = (): boolean => {
   }
 };
 
+const readGender = (): InterviewerGender => {
+  try {
+    return localStorage.getItem(GENDER_KEY) === 'male' ? 'male' : 'female';
+  } catch {
+    return 'female';
+  }
+};
+
 let state: VoiceState = {
   supported: synth !== null && typeof SpeechSynthesisUtterance !== 'undefined',
   enabled: readEnabled(),
   speakingId: null,
   blocked: false,
+  gender: readGender(),
 };
 
 const listeners = new Set<() => void>();
@@ -59,7 +73,11 @@ const pickVoice = () => {
     // Edge's "Natural" voices (e.g. Microsoft Sonia Online) sound far more human.
     if (/natural/i.test(v.name)) s += 6;
     if (/en[-_]GB/i.test(v.lang)) s += 4;
-    if (/daniel|serena|kate|hazel|susan|george|libby|sonia|ryan|samantha/i.test(v.name)) s += 2;
+    const female = /serena|kate|hazel|susan|libby|sonia|samantha|female|martha|stephanie|amy/i;
+    const male = /daniel|george|ryan|arthur|oliver|thomas|alfie|male\b|guy|james/i;
+    const matches =
+      state.gender === 'male' ? male.test(v.name) && !/female/i.test(v.name) : female.test(v.name);
+    if (matches) s += 3;
     if (/premium|enhanced/i.test(v.name)) s += 1;
     return s;
   };
@@ -152,24 +170,26 @@ const toWavBlob = (b64: string, mime: string): Blob => {
 };
 
 const fetchNatural = (text: string): Promise<Blob | null> => {
-  const cached = audioCache.get(text);
+  const gender = state.gender;
+  const key = `${gender}|${text}`;
+  const cached = audioCache.get(key);
   if (cached) return cached;
   const p = (async () => {
     const { data, error } = await supabase.functions.invoke<{
       audio: string;
       mime: string;
     }>('speak', {
-      body: { text },
+      body: { text, voice: gender },
     });
     if (error || !data?.audio) throw new Error('speak failed');
     naturalFailures = 0;
     return toWavBlob(data.audio, data.mime ?? '');
   })().catch(() => {
-    audioCache.delete(text);
+    audioCache.delete(key);
     naturalFailures += 1;
     return null;
   });
-  audioCache.set(text, p);
+  audioCache.set(key, p);
   if (audioCache.size > 40) audioCache.delete(audioCache.keys().next().value as string);
   return p;
 };
@@ -334,6 +354,19 @@ export const speak = (text: string, id: string, force = false) => {
   }
 };
 
+/** Switch between the female and male interviewer. */
+export const setInterviewerGender = (gender: InterviewerGender) => {
+  try {
+    localStorage.setItem(GENDER_KEY, gender);
+  } catch {
+    /* private mode: keep it for this visit only */
+  }
+  stopSpeaking();
+  setState({ gender });
+  chosenVoice = null;
+  pickVoice();
+};
+
 export const setVoiceEnabled = (enabled: boolean) => {
   try {
     localStorage.setItem(STORAGE_KEY, enabled ? 'on' : 'off');
@@ -360,6 +393,7 @@ export function useInterviewerVoice() {
     speak,
     stop: stopSpeaking,
     setEnabled: setVoiceEnabled,
+    setGender: setInterviewerGender,
   };
 }
 
