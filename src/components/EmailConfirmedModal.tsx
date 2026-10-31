@@ -66,7 +66,7 @@ export const EmailConfirmedModal: React.FC = () => {
           >
             Start my first practice
           </button>
-          <button
+          <button data-tip="Close this message"
             type="button"
             onClick={() => setOpen(false)}
             className="min-h-[42px] w-full rounded-full text-sm font-semibold text-[#6e6e73] hover:text-[#0f172a]"

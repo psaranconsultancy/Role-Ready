@@ -52,7 +52,7 @@ export const ErrorBanner: React.FC<ErrorBannerProps> = ({
       </div>
 
       {onRetry && (
-        <button
+        <button data-tip="Try that again"
           type="button"
           onClick={onRetry}
           className="inline-flex min-h-[38px] shrink-0 items-center justify-center gap-1.5 self-start rounded-full bg-[#0f172a] px-4 py-1.5 text-xs font-semibold text-white transition-colors hover:bg-[#333336] sm:self-center"

@@ -118,7 +118,7 @@ export const FeedbackPanel: React.FC<FeedbackPanelProps> = ({
           </div>
         </div>
 
-        <button
+        <button data-tip="Answer this question again"
           type="button"
           onClick={onTryAgain}
           className="btn-pill-secondary-light min-h-[38px] px-4 py-1.5 text-xs font-semibold"
@@ -228,7 +228,7 @@ export const FeedbackPanel: React.FC<FeedbackPanelProps> = ({
               A stronger answer, using your resume
             </h4>
           </div>
-          <button
+          <button data-tip="Copy the stronger answer"
             type="button"
             onClick={handleCopyStronger}
             className="btn-pill-secondary-light min-h-[32px] px-3 py-1 text-xs font-semibold"

@@ -930,7 +930,7 @@ export const NewSessionPage: React.FC = () => {
                 >
                   Industry
                 </label>
-                <select
+                <select data-tip="The industry the role is in"
                   id="new-industry-select"
                   disabled={isBusy}
                   value={grillContext.industry}
@@ -960,7 +960,7 @@ export const NewSessionPage: React.FC = () => {
                 >
                   Department
                 </label>
-                <select
+                <select data-tip="The team or function the role sits in"
                   id="new-dept-select"
                   disabled={isBusy}
                   value={grillContext.department}
@@ -990,7 +990,7 @@ export const NewSessionPage: React.FC = () => {
                 >
                   Seniority
                 </label>
-                <select
+                <select data-tip="How senior the role is"
                   id="new-seniority-select"
                   disabled={isBusy}
                   value={grillContext.seniority}
@@ -1023,7 +1023,7 @@ export const NewSessionPage: React.FC = () => {
                 >
                   Specialist area
                 </label>
-                <select
+                <select data-tip="A specialist area to focus on (optional)"
                   id="new-niche-category-select"
                   disabled={isBusy}
                   value={grillContext.nicheCategory}
@@ -1053,7 +1053,7 @@ export const NewSessionPage: React.FC = () => {
                 >
                   Executive or board role
                 </label>
-                <select
+                <select data-tip="An executive or board seat to focus on (optional)"
                   id="new-csuite-category-select"
                   disabled={isBusy}
                   value={grillContext.cSuiteCategory}
@@ -1084,7 +1084,7 @@ export const NewSessionPage: React.FC = () => {
               >
                 Your specialist focus or first-90-days goal
               </label>
-              <input
+              <input data-tip="A specific focus, e.g. a 90-day priority (optional)"
                 id="new-niche-focus"
                 maxLength={150}
                 type="text"
@@ -1130,7 +1130,7 @@ export const NewSessionPage: React.FC = () => {
                     }}
                     className="sr-only"
                   />
-                  <button
+                  <button data-tip="Add a file with more context, e.g. a strategy memo"
                     type="button"
                     disabled={isBusy}
                     onClick={() => extraContextFileRef.current?.click()}
@@ -1147,7 +1147,7 @@ export const NewSessionPage: React.FC = () => {
                       className="inline-flex items-center gap-1.5 rounded-full border border-black/10 bg-white px-2.5 py-1 text-xs text-[#0f172a]"
                     >
                       <span className="max-w-[180px] truncate">{fileName}</span>
-                      <button
+                      <button data-tip={`Remove ${fileName}`}
                         type="button"
                         onClick={() =>
                           updateGrillContext({
@@ -1174,7 +1174,7 @@ export const NewSessionPage: React.FC = () => {
                   <span>Links (company website, articles, profiles)</span>
                 </span>
                 <div className="mt-2 flex gap-1.5">
-                  <input
+                  <input data-tip="Paste a link to a company page, article or profile"
                     type="url"
                     inputMode="url"
                     autoCapitalize="none"
@@ -1197,7 +1197,7 @@ export const NewSessionPage: React.FC = () => {
                     placeholder="https://company.com/strategy-memo"
                     className="min-h-[36px] flex-1 rounded-xl border border-black/15 bg-white px-3 py-1 text-xs text-[#0f172a] placeholder:text-[#aeaeb2] focus:border-[#0284c7] focus:outline-none aria-[invalid=true]:border-[#d70015]"
                   />
-                  <button
+                  <button data-tip="Add this link"
                     type="button"
                     disabled={isBusy}
                     onClick={addContextLink}
@@ -1218,7 +1218,7 @@ export const NewSessionPage: React.FC = () => {
                       className="inline-flex items-center gap-1.5 rounded-full border border-black/10 bg-white px-2.5 py-1 text-xs text-[#0369a1]"
                     >
                       <span className="max-w-[180px] truncate">{url}</span>
-                      <button
+                      <button data-tip={`Remove ${url}`}
                         type="button"
                         onClick={() =>
                           updateGrillContext({

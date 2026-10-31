@@ -85,7 +85,7 @@ export const ComingNextSection: React.FC<ComingNextSectionProps> = ({
           onClick={(e) => e.stopPropagation()}
         >
           {onCloseModal && (
-            <button
+            <button data-tip="Close the roadmap"
               type="button"
               onClick={onCloseModal}
               aria-label="Close roadmap"

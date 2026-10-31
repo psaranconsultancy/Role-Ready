@@ -319,7 +319,7 @@ export const Header: React.FC = () => {
                   </p>
                   <p className="mt-0.5 text-sm text-[#f8fafc]">{user.email}</p>
                 </div>
-                <button
+                <button data-tip="Sign out of RoleReady"
                   type="button"
                   onClick={handleSignOut}
                   disabled={signingOut}
@@ -330,7 +330,7 @@ export const Header: React.FC = () => {
                 </button>
               </div>
             ) : (
-              <button
+              <button data-tip="Try a full practice with sample data, no sign-up"
                 type="button"
                 onClick={handleTryDemo}
                 disabled={startingDemo}
