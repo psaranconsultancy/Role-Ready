@@ -11,7 +11,7 @@ import {
 // time. Shown only when the live switch is on (see isLiveInterviewEnabled).
 
 const STATUS_TEXT: Record<LiveStatus, string> = {
-  idle: 'Talk through your six questions out loud. The interviewer listens and replies in real time.',
+  idle: 'Talk through your questions out loud. The interviewer listens and replies in real time.',
   connecting: 'Connecting to your interviewer…',
   listening: 'Your turn. Speak naturally; you can interrupt at any time.',
   speaking: 'The interviewer is speaking…',

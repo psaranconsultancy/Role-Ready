@@ -10,6 +10,7 @@ import type {
   GrillHeat,
   GrillFollowUpResponse,
   GrillReplyResponse,
+  QuestionFocus,
 } from '@contracts';
 import { supabase } from './supabase';
 import {
@@ -251,8 +252,10 @@ export async function createSession(params: {
   jdText: string;
   roleTitle?: string;
   company?: string;
+  questionCount?: number;
+  questionFocus?: QuestionFocus;
 }): Promise<Session> {
-  const { file, jdText, roleTitle, company } = params;
+  const { file, jdText, roleTitle, company, questionCount, questionFocus } = params;
 
   const isPdf =
     file.type === 'application/pdf' || file.name.toLowerCase().endsWith('.pdf');
@@ -302,6 +305,8 @@ export async function createSession(params: {
       jdText: jdText.trim(),
       roleTitle,
       company,
+      questionCount,
+      questionFocus,
     });
   }
 
@@ -314,6 +319,8 @@ export async function createSession(params: {
       company: company?.trim() || null,
       jd_text: jdText.trim(),
       status: 'draft',
+      ...(questionCount ? { question_count: questionCount } : {}),
+      ...(questionFocus ? { question_focus: questionFocus } : {}),
     })
     .select('*')
     .single();
@@ -388,7 +395,8 @@ export async function parseResume(sessionId: string): Promise<ParseResumeRespons
 }
 
 export async function generateQuestions(
-  sessionId: string
+  sessionId: string,
+  plan?: { count?: number; focus?: QuestionFocus }
 ): Promise<GenerateQuestionsResponse> {
   const user = await getUser();
   if (!user) {
@@ -401,7 +409,7 @@ export async function generateQuestions(
   if (isMockMode()) {
     await fakeDelay(800, 1450);
     try {
-      return mockGenerateQuestions(user.id, sessionId);
+      return mockGenerateQuestions(user.id, sessionId, plan?.count);
     } catch (err) {
       throw toApiError(err, 'llm_failed', 'Failed to generate interview questions.');
     }
@@ -410,7 +418,8 @@ export async function generateQuestions(
   const { data, error } = await supabase.functions.invoke<GenerateQuestionsResponse>(
     'generate-questions',
     {
-      body: { session_id: sessionId },
+      // Without a plan the function uses what the session saved at setup.
+      body: { session_id: sessionId, ...(plan?.count ? { count: plan.count } : {}), ...(plan?.focus ? { focus: plan.focus } : {}) },
     }
   );
   if (error || !data) {

@@ -199,7 +199,7 @@ export const HistoryPage: React.FC = () => {
                 </span>
               </p>
               <p className="mt-1 text-xs text-[#0f766e]">
-                All 6 questions answered
+                Every question answered
               </p>
             </div>
 
@@ -258,7 +258,7 @@ export const HistoryPage: React.FC = () => {
               No practice sessions yet
             </h2>
             <p className="mx-auto mt-2 max-w-md text-sm text-[#6e6e73]">
-              Upload your resume PDF and the job spec (or paste its text) to generate six
+              Upload your resume PDF and the job spec (or paste its text) to generate
               tailored interview questions built from your experience.
             </p>
             <div className="mt-6">
@@ -339,7 +339,7 @@ export const HistoryPage: React.FC = () => {
                       </div>
                     ) : (
                       <span className="text-xs text-[#86868b]">
-                        6 questions ready
+                        {s.question_count ?? 6} questions ready
                       </span>
                     )}
 

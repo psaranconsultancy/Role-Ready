@@ -35,6 +35,8 @@ import {
 } from '../mocks/fixtures';
 import { ErrorBanner } from '../components/ErrorBanner';
 import { InterviewerPicker } from '../components/InterviewerPicker';
+import { QuestionPlanPicker, loadQuestionPlan, FOCUS_OPTIONS, type QuestionPlan } from '../components/QuestionPlanPicker';
+import { DEFAULT_QUESTION_COUNT } from '@contracts';
 import {
   JOB_SPEC_ACCEPT,
   JobSpecReadError,
@@ -69,6 +71,9 @@ export const NewSessionPage: React.FC = () => {
   const [jdError, setJdError] = useState<string | null>(null);
   const [apiError, setApiError] = useState<ApiError | null>(null);
   const [stage, setStage] = useState<GenerationStage>('idle');
+  const [plan, setPlan] = useState<QuestionPlan>(() =>
+    loadQuestionPlan({ count: DEFAULT_QUESTION_COUNT, focus: 'mixed' })
+  );
   // Session made by an earlier attempt; a retry carries on with it instead of
   // creating another one (which would leave an empty draft in History).
   const [pending, setPending] = useState<{ id: string; parsed: boolean } | null>(null);
@@ -202,6 +207,8 @@ export const NewSessionPage: React.FC = () => {
           jdText,
           roleTitle: roleTitle.trim() || undefined,
           company: company.trim() || undefined,
+          questionCount: plan.count,
+          questionFocus: plan.focus,
         });
         sessionId = created.id;
         setPending({ id: sessionId, parsed: false });
@@ -213,7 +220,7 @@ export const NewSessionPage: React.FC = () => {
       }
 
       setStage('generating');
-      await generateQuestions(sessionId);
+      await generateQuestions(sessionId, plan);
 
       navigate(`/session/${sessionId}`);
     } catch (err) {
@@ -287,7 +294,7 @@ export const NewSessionPage: React.FC = () => {
               }`}
             >
               <span className="font-bold tabular-nums">2</span>
-              <span>6 questions</span>
+              <span>{plan.count} questions</span>
             </span>
           </div>
         </div>
@@ -302,7 +309,7 @@ export const NewSessionPage: React.FC = () => {
             </h2>
             <p className="mt-1.5 text-sm text-[#6e6e73] sm:text-base">
               Upload your PDF resume and add the job spec (upload the file or
-              paste the text) to get six questions tailored to both.
+              paste the text) to get questions tailored to both.
             </p>
           </div>
 
@@ -750,6 +757,8 @@ export const NewSessionPage: React.FC = () => {
             </div>
           </section>
 
+          <QuestionPlanPicker value={plan} onChange={setPlan} disabled={isBusy} />
+
           {/* 4. Deep Context: Industry, Department, C-Suite Level, Uploads & Links */}
           <section
             data-ui="deep-context-card"
@@ -770,7 +779,7 @@ export const NewSessionPage: React.FC = () => {
             </div>
             <p id="deep-context-coming-soon" className="mt-1 text-xs text-[#6e6e73]">
               Coming soon, and optional: you don&apos;t need any of this for your
-              six questions today. When it ships, you can pick your industry, department, seniority,
+              questions today. When it ships, you can pick your industry, department, seniority,
               specialist area and executive role, or attach presentations, case
               studies and company links. Grill With Docs will use them to ask
               tougher follow-up questions and build you a downloadable summary
@@ -1099,8 +1108,9 @@ export const NewSessionPage: React.FC = () => {
           {/* Submit Action Bar */}
           <div className="flex flex-col items-center justify-between gap-4 pt-2 sm:flex-row">
             <p className="text-xs text-[#6e6e73]">
-              Creates 6 tailored questions (2 behavioural, 2 technical, 2
-              role-specific).
+              {plan.focus === 'mixed'
+                ? `Creates ${plan.count} tailored questions, mixing behavioural, technical, situational and role fit.`
+                : `Creates ${plan.count} tailored ${FOCUS_OPTIONS.find((o) => o.value === plan.focus)?.label.toLowerCase()} questions.`}
             </p>
             <button
               type="submit"
@@ -1121,7 +1131,7 @@ export const NewSessionPage: React.FC = () => {
                 </>
               ) : (
                 <>
-                  <span>Generate 6 questions</span>
+                  <span>Generate {plan.count} questions</span>
                   <ArrowRight className="h-4 w-4" aria-hidden="true" />
                 </>
               )}

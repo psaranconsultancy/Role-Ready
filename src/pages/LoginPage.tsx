@@ -79,7 +79,7 @@ export const LoginPage: React.FC = () => {
 
             <p className="mt-3 text-sm leading-relaxed text-[#d2d2d7] sm:text-base">
               RoleReady pairs your PDF resume with the job description to write
-              six targeted interview questions and score your answers.
+              5, 10 or 15 targeted interview questions and score your answers.
             </p>
 
             <div className="visual-media-frame mt-6 h-44 w-full border border-white/15">
@@ -94,7 +94,7 @@ export const LoginPage: React.FC = () => {
               <div className="absolute bottom-3 left-3 right-3 flex items-center justify-between gap-2 rounded-xl bg-black/65 px-3 py-2 text-xs text-white backdrop-blur-md">
                 <span>Rehearse in private until your delivery feels natural</span>
                 <span className="shrink-0 font-semibold text-[#14b8a6]">
-                  6 questions
+                  5, 10 or 15 questions
                 </span>
               </div>
             </div>
