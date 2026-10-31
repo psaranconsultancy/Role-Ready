@@ -19,6 +19,7 @@ import {
   mockParseResume,
   mockGenerateQuestions,
   mockScoreAnswer,
+  mockSkipAnswer,
   mockGetSession,
   mockListSessions,
   mockDeleteSession,
@@ -675,4 +676,68 @@ export async function listSessions(): Promise<Session[]> {
     throw toApiError(error, 'bad_request', 'Failed to load your interview sessions.');
   }
   return (data ?? []) as Session[];
+}
+
+/** The answer text saved for a skipped question. */
+export const SKIPPED_ANSWER_TEXT = '(Skipped: no answer given)';
+
+export const isSkippedAnswer = (f: Pick<Feedback, 'answer_text'> | undefined): boolean =>
+  !!f && f.answer_text === SKIPPED_ANSWER_TEXT;
+
+/**
+ * Skip a question and move on. It is saved as answered with a score of 0, so
+ * the session can still finish. Answering it later replaces the 0.
+ */
+export async function skipQuestion(question: Question): Promise<ScoreAnswerResponse> {
+  const user = await getUser();
+  if (!user) {
+    const err: ApiError = { error: { code: 'unauthorized', message: 'You must be signed in.' } };
+    throw err;
+  }
+  const feedback: Feedback = {
+    question_id: question.id,
+    answer_text: SKIPPED_ANSWER_TEXT,
+    scores: { relevance: 1, evidence: 1, structure: 1, impact: 1 },
+    overall: 0,
+    what_worked: 'This question was skipped, so there is nothing to score yet.',
+    one_fix: 'Come back to this question when you are ready: describe the situation, what you did and the result, with a number if you can.',
+    stronger_answer: '',
+    unsupported_claims: [],
+  };
+
+  if (isMockMode()) {
+    await fakeDelay(300, 600);
+    return mockSkipAnswer(user.id, question.id, feedback);
+  }
+
+  const { error: upsertError } = await supabase.from('answers').upsert(
+    {
+      ...feedback,
+      session_id: question.session_id,
+      user_id: user.id,
+      updated_at: new Date().toISOString(),
+    },
+    { onConflict: 'question_id' }
+  );
+  if (upsertError) throw toApiError(upsertError, 'bad_request', 'Could not skip this question. Please try again.');
+
+  const [{ data: answered, error: aErr }, { count, error: qErr }] = await Promise.all([
+    supabase.from('answers').select('overall').eq('session_id', question.session_id),
+    supabase.from('questions').select('id', { count: 'exact', head: true }).eq('session_id', question.session_id),
+  ]);
+  if (aErr || qErr) throw toApiError(aErr ?? qErr, 'bad_request', 'Could not update this session.');
+  const total = count ?? 6;
+  const completed = (answered?.length ?? 0) >= total;
+  const overall = completed
+    ? Math.round(answered!.reduce((t, r) => t + (r.overall as number), 0) / answered!.length)
+    : null;
+  await supabase
+    .from('sessions')
+    .update(
+      completed
+        ? { status: 'completed', overall_score: overall, completed_at: new Date().toISOString() }
+        : { status: 'in_progress' }
+    )
+    .eq('id', question.session_id);
+  return { ...feedback, session_completed: completed, session_overall: overall };
 }

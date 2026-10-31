@@ -562,3 +562,30 @@ export function mockGrillReply(
     better_reply: `Fair question. On my resume I list "${lineText}". My part was the decision itself: I scoped the work, made the call on what to build first, and tracked the result week by week. That is the number I would stand behind in a reference check.`,
   };
 }
+
+/** Skip a question: saved as answered with a score of 0 so the session can finish. */
+export function mockSkipAnswer(userId: string, questionId: string, feedback: Feedback): ScoreAnswerResponse {
+  const store = loadStore(userId);
+  const question = store.questions.find((q) => q.id === questionId);
+  const session = question ? store.sessions.find((s) => s.id === question.session_id) : undefined;
+  if (!question || !session) {
+    throw { error: { code: 'not_found' as const, message: 'Question not found.' } };
+  }
+  const idx = store.answers.findIndex((a) => a.question_id === questionId);
+  if (idx >= 0) store.answers[idx] = feedback;
+  else store.answers.push(feedback);
+  const ids = new Set(store.questions.filter((q) => q.session_id === session.id).map((q) => q.id));
+  const answers = store.answers.filter((a) => ids.has(a.question_id));
+  const done = ids.size > 0 && answers.length >= ids.size;
+  let overall: number | null = null;
+  if (done) {
+    overall = Math.round(answers.reduce((t, a) => t + a.overall, 0) / answers.length);
+    session.status = 'completed';
+    session.overall_score = overall;
+    session.completed_at = new Date().toISOString();
+  } else {
+    session.status = 'in_progress';
+  }
+  saveStore(store);
+  return { ...feedback, session_completed: done, session_overall: overall };
+}

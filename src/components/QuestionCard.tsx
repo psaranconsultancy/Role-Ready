@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
   Loader2,
   Send,
@@ -7,6 +7,9 @@ import {
   Mic,
   Square,
   Volume2,
+  Clock,
+  SkipForward,
+  ArrowDown,
 } from 'lucide-react';
 import type {
   Question,
@@ -15,7 +18,7 @@ import type {
   JdRequirement,
   ApiError,
 } from '@contracts';
-import { isClarification, scoreAnswer, toApiError } from '../lib/api';
+import { isClarification, isSkippedAnswer, scoreAnswer, skipQuestion, toApiError } from '../lib/api';
 import { ReferenceChip } from './ReferenceChip';
 import { FeedbackPanel, getScoreBand } from './FeedbackPanel';
 import { ErrorBanner } from './ErrorBanner';
@@ -23,6 +26,12 @@ import { GrillFollowUp } from './GrillFollowUp';
 import { useSpeechToText } from '../lib/useSpeechToText';
 import { QUESTION_TYPE_LABELS } from '../lib/sessionReport';
 import { useInterviewerVoice, questionScript } from '../lib/interviewerVoice';
+
+// How long the current question can sit with no typing, speaking or
+// interviewer voice before the interviewer checks in.
+const IDLE_CHECK_IN_MS = 60_000;
+const CHECK_IN_LINE =
+  'Take your time. Do you need more time, or would you like to move on to the next question?';
 
 const REPHRASE_REQUEST =
   "I don't understand the question. Can you rephrase it in plainer words?";
@@ -41,6 +50,11 @@ interface QuestionCardProps {
     sessionCompleted: boolean,
     sessionOverall: number | null
   ) => void;
+  /** True for the first unanswered question: the one the interviewer is on. */
+  isCurrent?: boolean;
+  /** Position of the next unanswered question, for the "Next question" button. */
+  nextPosition?: number | null;
+  onGoToQuestion?: (position: number) => void;
 }
 
 
@@ -50,6 +64,9 @@ export const QuestionCard: React.FC<QuestionCardProps> = ({
   resumeLines,
   jdRequirements,
   onScored,
+  isCurrent = false,
+  nextPosition = null,
+  onGoToQuestion,
 }) => {
   const [answerText, setAnswerText] = useState(
     existingFeedback?.answer_text ?? ''
@@ -67,6 +84,57 @@ export const QuestionCard: React.FC<QuestionCardProps> = ({
   const speech = useSpeechToText((text) =>
     setAnswerText((prev) => (prev.trim() ? `${prev.trimEnd()} ${text}` : text))
   );
+
+  // Check in when the candidate goes quiet on the current question.
+  const [checkIn, setCheckIn] = useState(false);
+  const [skipping, setSkipping] = useState(false);
+  const idleTimer = useRef<number | null>(null);
+  const waitingForAnswer =
+    isCurrent && isEditing && !existingFeedback && !submitting && !skipping;
+  useEffect(() => {
+    if (idleTimer.current) window.clearTimeout(idleTimer.current);
+    if (!waitingForAnswer || checkIn || speech.listening || speakingHere) return;
+    idleTimer.current = window.setTimeout(() => {
+      setCheckIn(true);
+      voice.speak(CHECK_IN_LINE, `ci:${question.id}`);
+    }, IDLE_CHECK_IN_MS);
+    return () => {
+      if (idleTimer.current) window.clearTimeout(idleTimer.current);
+    };
+    // Any typing restarts the clock.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [waitingForAnswer, checkIn, speech.listening, speakingHere, answerText]);
+
+  // Typing or speaking an answer means they're still going: drop the prompt.
+  useEffect(() => {
+    if (checkIn && (speech.listening || answerText.trim().length > 0)) setCheckIn(false);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [speech.listening, answerText]);
+
+  const giveMoreTime = () => {
+    setCheckIn(false);
+    voice.speak('Of course. Take all the time you need.', `ci:${question.id}`);
+    document.getElementById(`answer-input-${question.id}`)?.focus();
+  };
+
+  const skipThisQuestion = async () => {
+    speech.stop();
+    voice.stop();
+    setSkipping(true);
+    setError(null);
+    try {
+      const res = await skipQuestion(question);
+      const { session_completed, session_overall, ...feedback } = res;
+      setCheckIn(false);
+      setAnswerText(feedback.answer_text);
+      setIsEditing(false);
+      onScored(feedback, session_completed, session_overall);
+    } catch (err) {
+      setError(toApiError(err, 'bad_request', 'Could not skip this question. Please try again.'));
+    } finally {
+      setSkipping(false);
+    }
+  };
 
   useEffect(() => {
     if (existingFeedback) {
@@ -144,6 +212,7 @@ export const QuestionCard: React.FC<QuestionCardProps> = ({
     setIsEditing(true);
   };
 
+  const skipped = isSkippedAnswer(existingFeedback);
   const textareaId = `answer-input-${question.id}`;
   const scoreBand = existingFeedback
     ? getScoreBand(existingFeedback.overall)
@@ -173,7 +242,7 @@ export const QuestionCard: React.FC<QuestionCardProps> = ({
           >
             <CheckCircle2 className="h-3.5 w-3.5" aria-hidden="true" />
             <span>
-              Scored {existingFeedback.overall}/100 · {scoreBand.label}
+              {skipped ? 'Skipped · 0/100' : `Scored ${existingFeedback.overall}/100 · ${scoreBand.label}`}
             </span>
           </span>
         ) : (
@@ -302,6 +371,46 @@ export const QuestionCard: React.FC<QuestionCardProps> = ({
       {/* Answer Editor or Read-Only Submitted Answer */}
       {isEditing ? (
         <form onSubmit={handleSubmit} className="mt-5" noValidate>
+          {checkIn && (
+            <div
+              role="alertdialog"
+              aria-live="assertive"
+              aria-label="Interviewer check-in"
+              data-ui="idle-check-in"
+              className="mb-4 rounded-2xl border border-[#0d9488]/30 bg-[#0d9488]/[0.07] p-4"
+            >
+              <p className="flex items-center gap-2 text-sm font-semibold text-[#0f172a]">
+                <Clock className="h-4 w-4 text-[#0f766e]" aria-hidden="true" />
+                Do you need more time, or would you like to move on?
+              </p>
+              <p className="mt-1 text-xs text-[#424245]">
+                Moving on scores this question 0. You can come back and answer it later.
+              </p>
+              <div className="mt-3 flex flex-wrap gap-2">
+                <button
+                  type="button"
+                  onClick={giveMoreTime}
+                  className="btn-pill-primary min-h-[40px] px-5 py-2 text-xs font-semibold"
+                >
+                  I need more time
+                </button>
+                <button
+                  type="button"
+                  onClick={skipThisQuestion}
+                  disabled={skipping}
+                  className="btn-pill-secondary-light min-h-[40px] px-5 py-2 text-xs font-semibold disabled:opacity-50"
+                >
+                  {skipping ? (
+                    <Loader2 className="h-3.5 w-3.5 animate-spin" aria-hidden="true" />
+                  ) : (
+                    <SkipForward className="h-3.5 w-3.5" aria-hidden="true" />
+                  )}
+                  <span>Next question</span>
+                </button>
+              </div>
+            </div>
+          )}
+
           <div className="flex flex-wrap items-center justify-between gap-2">
             <label
               htmlFor={textareaId}
@@ -433,6 +542,17 @@ export const QuestionCard: React.FC<QuestionCardProps> = ({
             </span>
 
             <div className="flex w-full items-center justify-end gap-2 sm:w-auto">
+              {!submitting && !existingFeedback && (
+                <button
+                  type="button"
+                  onClick={skipThisQuestion}
+                  disabled={skipping}
+                  title="Move on now. This question scores 0 until you come back to it."
+                  className="btn-pill-secondary-light min-h-[42px] px-4 py-2 text-xs font-semibold disabled:opacity-50"
+                >
+                  {skipping ? 'Skipping…' : 'Skip for now'}
+                </button>
+              )}
               {!submitting && (
                 <button
                   type="button"
@@ -480,7 +600,7 @@ export const QuestionCard: React.FC<QuestionCardProps> = ({
             </div>
           </div>
         </form>
-      ) : (
+      ) : skipped ? null : (
         <div className="mt-5 rounded-2xl border border-black/[0.07] bg-[#f1f5f9]/70 p-4">
           <div className="mb-1.5 flex items-center justify-between text-xs text-[#6e6e73]">
             <span className="font-semibold text-[#0f172a]">
@@ -494,12 +614,43 @@ export const QuestionCard: React.FC<QuestionCardProps> = ({
         </div>
       )}
 
-      {/* Scored Feedback Panel */}
-      {existingFeedback && !isEditing && (
+      {/* Scored Feedback Panel (or a short note for a skipped question) */}
+      {existingFeedback && !isEditing && !skipped && (
         <FeedbackPanel
           feedback={existingFeedback}
           onTryAgain={handleTryAgain}
         />
+      )}
+      {existingFeedback && !isEditing && skipped && (
+        <div className="mt-4 flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-black/[0.07] bg-white p-4">
+          <p className="text-sm text-[#424245]">
+            Skipped, so this question scores 0 for now. Answer it any time to replace the 0.
+          </p>
+          <button
+            type="button"
+            onClick={() => {
+              setAnswerText('');
+              handleTryAgain();
+            }}
+            className="btn-pill-primary min-h-[40px] px-5 py-2 text-xs font-semibold"
+          >
+            Answer it now
+          </button>
+        </div>
+      )}
+
+      {existingFeedback && !isEditing && nextPosition && onGoToQuestion && (
+        <div className="mt-4 flex justify-end">
+          <button
+            type="button"
+            data-ui="next-question"
+            onClick={() => onGoToQuestion(nextPosition)}
+            className="btn-pill-primary min-h-[42px] px-6 py-2 text-xs font-semibold"
+          >
+            <ArrowDown className="h-3.5 w-3.5" aria-hidden="true" />
+            <span>Next question (Q{nextPosition})</span>
+          </button>
+        </div>
       )}
 
       {existingFeedback && isEditing && (
@@ -514,13 +665,13 @@ export const QuestionCard: React.FC<QuestionCardProps> = ({
 
       {/* Grill Me: a tougher follow-up on the scored answer, with a Heat Dial.
           Shown once the answer is scored, so unanswered cards stay short. */}
-      {existingFeedback ? (
+      {existingFeedback && !skipped ? (
         <GrillFollowUp
           question={question}
           feedback={existingFeedback}
           resumeLines={resumeLines}
         />
-      ) : (
+      ) : skipped ? null : (
         <p className="mt-5 flex items-center gap-1.5 text-xs text-[#6e6e73]">
           <Sparkles className="h-3.5 w-3.5 text-[#0369a1]" aria-hidden="true" />
           <span>

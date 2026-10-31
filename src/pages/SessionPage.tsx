@@ -15,7 +15,7 @@ import {
   VolumeX,
 } from 'lucide-react';
 import type { Session, Question, Feedback, ApiError } from '@contracts';
-import { generateQuestions, getSession, isMockMode, parseResume, toApiError } from '../lib/api';
+import { generateQuestions, getSession, isMockMode, isSkippedAnswer, parseResume, toApiError } from '../lib/api';
 import { QuestionCard } from '../components/QuestionCard';
 import { SessionSummary } from '../components/SessionSummary';
 import { ErrorBanner } from '../components/ErrorBanner';
@@ -133,10 +133,23 @@ export const SessionPage: React.FC = () => {
       : sessionCompleted && sessionOverall !== null
         ? ` That's all six questions. Your overall score is ${sessionOverall} out of 100. Well done.`
         : '';
-    voice.speak(
-      feedbackScript(feedback.overall, band.label, feedback.what_worked, feedback.one_fix) + tail,
-      `fb:${feedback.question_id}`
-    );
+    if (isSkippedAnswer(feedback)) {
+      // Skipped: move straight on to the next question.
+      voice.speak(
+        nextOpen
+          ? `No problem, let's move on. ${questionScript(nextOpen.position, nextOpen.text)}`
+          : sessionCompleted && sessionOverall !== null
+            ? `No problem. That's the end of the interview. Your overall score is ${sessionOverall} out of 100.`
+            : "No problem, let's move on.",
+        nextOpen ? `q:${nextOpen.id}` : `fb:${feedback.question_id}`
+      );
+      if (nextOpen) window.setTimeout(() => scrollToQuestion(nextOpen.position), 150);
+    } else {
+      voice.speak(
+        feedbackScript(feedback.overall, band.label, feedback.what_worked, feedback.one_fix) + tail,
+        `fb:${feedback.question_id}`
+      );
+    }
 
     setAnswersByQuestionId((prev) => ({
       ...prev,
@@ -245,6 +258,7 @@ export const SessionPage: React.FC = () => {
         )
       : null);
 
+  const currentOpenId = questions.find((q) => !answersByQuestionId[q.id])?.id ?? null;
   const statusMeta = STATUS_BADGE[session.status] ?? STATUS_BADGE.ready;
   const resumeLines = session.resume_lines ?? [];
   const jdRequirements = session.jd_requirements ?? [];
@@ -524,7 +538,9 @@ export const SessionPage: React.FC = () => {
                         </span>
                       </span>
 
-                      {ans ? (
+                      {ans && isSkippedAnswer(ans) ? (
+                        <span className="text-xs text-[#86868b]">Skipped</span>
+                      ) : ans ? (
                         <span className="text-xs font-semibold tabular-nums text-[#0f766e]">
                           {ans.overall}
                         </span>
@@ -543,6 +559,19 @@ export const SessionPage: React.FC = () => {
             {questions.map((q) => (
               <QuestionCard
                 key={q.id}
+                isCurrent={q.id === currentOpenId}
+                nextPosition={
+                  questions.find(
+                    (o) => o.position > q.position && !answersByQuestionId[o.id]
+                  )?.position ??
+                  questions.find((o) => o.id !== q.id && !answersByQuestionId[o.id])?.position ??
+                  null
+                }
+                onGoToQuestion={(pos) => {
+                  scrollToQuestion(pos);
+                  const target = questions.find((o) => o.position === pos);
+                  if (target) voice.speak(questionScript(target.position, target.text), `q:${target.id}`);
+                }}
                 question={q}
                 existingFeedback={answersByQuestionId[q.id]}
                 resumeLines={resumeLines}
