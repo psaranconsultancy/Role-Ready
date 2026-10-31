@@ -12,6 +12,8 @@ interface VoiceState {
   enabled: boolean;
   /** Which thing is being read right now, e.g. "q:<id>" or "fb:<id>". */
   speakingId: string | null;
+  /** The browser refused to speak until the user clicks something. */
+  blocked: boolean;
 }
 
 const synth: SpeechSynthesis | null =
@@ -31,6 +33,7 @@ let state: VoiceState = {
   supported: synth !== null && typeof SpeechSynthesisUtterance !== 'undefined',
   enabled: readEnabled(),
   speakingId: null,
+  blocked: false,
 };
 
 const listeners = new Set<() => void>();
@@ -48,12 +51,14 @@ const pickVoice = () => {
   const voices = synth.getVoices();
   if (!voices.length) return;
   const english = voices.filter((v) => /^en[-_]/i.test(v.lang));
+  // Voices built into the computer are far more reliable than Chrome's
+  // network voices ("Google UK English…"), which can fail silently.
   const score = (v: SpeechSynthesisVoice) => {
     let s = 0;
+    if (v.localService) s += 5;
     if (/en[-_]GB/i.test(v.lang)) s += 4;
-    if (/natural|neural|online|google|premium|enhanced/i.test(v.name)) s += 3;
-    if (/samantha|daniel|serena|libby|sonia|ryan/i.test(v.name)) s += 2;
-    if (v.localService) s += 1;
+    if (/daniel|serena|kate|hazel|susan|george|libby|sonia|ryan|samantha/i.test(v.name)) s += 2;
+    if (/premium|enhanced/i.test(v.name)) s += 1;
     return s;
   };
   chosenVoice = [...english].sort((a, b) => score(b) - score(a))[0] ?? null;
@@ -66,7 +71,7 @@ if (synth) {
 // Chrome stops long utterances after ~15 seconds, so speak sentence-sized
 // chunks one after another. Keep references so they are not garbage-collected
 // mid-speech (another Chrome quirk that drops the `end` event).
-let activeUtterances: SpeechSynthesisUtterance[] = [];
+const live: { utterances: SpeechSynthesisUtterance[] } = { utterances: [] };
 let runToken = 0;
 
 const splitIntoChunks = (text: string): string[] => {
@@ -90,7 +95,7 @@ const splitIntoChunks = (text: string): string[] => {
 
 export const stopSpeaking = () => {
   runToken += 1;
-  activeUtterances = [];
+  live.utterances = [];
   if (synth && (synth.speaking || synth.pending)) synth.cancel();
   if (state.speakingId !== null) setState({ speakingId: null });
 };
@@ -109,54 +114,62 @@ export const speak = (text: string, id: string, force = false) => {
   stopSpeaking();
   const token = runToken;
   if (!chosenVoice) pickVoice();
-
   const chunks = splitIntoChunks(clean);
-  activeUtterances = chunks.map((chunk, i) => {
-    const u = new SpeechSynthesisUtterance(chunk);
-    if (chosenVoice) {
+  setState({ speakingId: id });
+
+  const finish = () => {
+    if (token !== runToken) return;
+    live.utterances = [];
+    setState({ speakingId: null });
+  };
+
+  // Speak one chunk at a time; Chrome is more reliable this way than with a
+  // long queue. If the chosen voice fails, retry that chunk with the default.
+  const sayChunk = (i: number, useChosen: boolean) => {
+    if (token !== runToken) return;
+    if (i >= chunks.length) return finish();
+    const u = new SpeechSynthesisUtterance(chunks[i]);
+    if (useChosen && chosenVoice) {
       u.voice = chosenVoice;
       u.lang = chosenVoice.lang;
     } else {
       u.lang = 'en-GB';
     }
-    u.rate = 1;
-    u.pitch = 1;
-    const isLast = i === chunks.length - 1;
-    const done = () => {
-      if (token === runToken && isLast) {
-        activeUtterances = [];
-        setState({ speakingId: null });
-      }
+    let started = false;
+    u.onstart = () => {
+      started = true;
+      if (state.blocked) setState({ blocked: false });
     };
-    u.onend = done;
-    u.onerror = () => {
-      if (token === runToken) {
-        activeUtterances = [];
-        setState({ speakingId: null });
+    u.onend = () => sayChunk(i + 1, useChosen);
+    u.onerror = (e: SpeechSynthesisErrorEvent) => {
+      if (token !== runToken || e.error === 'interrupted' || e.error === 'canceled') return;
+      if (e.error === 'not-allowed') {
+        setState({ blocked: true });
+        return finish();
       }
+      if (useChosen && chosenVoice) return sayChunk(i, false);
+      finish();
     };
-    return u;
-  });
-
-  setState({ speakingId: id });
-  // Safari and some Chrome builds sit "paused" after a cancel; resume first.
-  try {
-    synth.resume();
-  } catch {
-    /* ignore */
-  }
-  activeUtterances.forEach((u) => synth.speak(u));
-
-  // Some browsers never fire `end` (no voices installed, or speech blocked
-  // before a click). Clear the "speaking" state once the queue is empty.
-  const watchdog = window.setInterval(() => {
-    if (token !== runToken) return window.clearInterval(watchdog);
-    if (!synth.speaking && !synth.pending) {
-      window.clearInterval(watchdog);
-      activeUtterances = [];
-      setState({ speakingId: null });
+    live.utterances = [u];
+    try {
+      synth.resume();
+    } catch {
+      /* ignore */
     }
-  }, 1000);
+    synth.speak(u);
+    // Some browsers never start or end (no voices, or speech blocked before a
+    // click). Don't leave the "speaking" state stuck.
+    window.setTimeout(() => {
+      if (token === runToken && !started && !synth.speaking) {
+        if (useChosen && chosenVoice) return sayChunk(i, false);
+        setState({ blocked: true });
+        finish();
+      }
+    }, 3000);
+  };
+
+  // Chrome can drop a speak() that comes straight after cancel(); wait a beat.
+  window.setTimeout(() => sayChunk(0, true), 80);
 };
 
 export const setVoiceEnabled = (enabled: boolean) => {

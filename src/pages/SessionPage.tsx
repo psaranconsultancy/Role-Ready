@@ -288,7 +288,8 @@ export const SessionPage: React.FC = () => {
                 type="button"
                 data-ui="interviewer-voice-toggle"
                 onClick={() => {
-                  const next = !voice.enabled;
+                  // Speech was blocked until a click: this click turns it on.
+                  const next = voice.blocked ? true : !voice.enabled;
                   voice.setEnabled(next);
                   if (next) {
                     const firstOpen = questions.find((q) => !answersByQuestionId[q.id]);
@@ -322,7 +323,7 @@ export const SessionPage: React.FC = () => {
                   <VolumeX className="h-3.5 w-3.5" aria-hidden="true" />
                 )}
                 <span className="hidden sm:inline">
-                  {voice.enabled ? 'Voice on' : 'Voice off'}
+                  {voice.enabled && voice.blocked ? 'Tap for voice' : voice.enabled ? 'Voice on' : 'Voice off'}
                 </span>
                 <span className="sr-only sm:hidden">
                   {voice.enabled ? 'Interviewer voice on' : 'Interviewer voice off'}
