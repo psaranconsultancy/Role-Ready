@@ -243,7 +243,7 @@ export const SessionPage: React.FC = () => {
             different account.
           </p>
           <div className="mt-6">
-            <Link
+            <Link data-tip="Back to your practice history"
               to="/history"
               className="btn-pill-primary min-h-[42px] px-6 py-2 text-xs font-semibold"
             >
@@ -285,7 +285,7 @@ export const SessionPage: React.FC = () => {
       <div className="frosted-localnav-light sticky top-12 z-30 h-[54px] w-full">
         <div className="mx-auto flex h-full max-w-[1080px] items-center justify-between gap-4 px-4 sm:px-6">
           <div className="flex min-w-0 items-center gap-2.5">
-            <Link
+            <Link data-tip="Back to your practice history"
               to="/history"
               className="inline-flex shrink-0 items-center gap-1 text-xs font-medium text-[#6e6e73] transition-colors hover:text-[#0f172a]"
             >
@@ -334,7 +334,7 @@ export const SessionPage: React.FC = () => {
                   }
                 }}
                 aria-pressed={voice.enabled}
-                title={
+                data-tip={
                   voice.enabled
                     ? 'The interviewer reads questions and feedback aloud. Click to mute.'
                     : 'Turn on the interviewer voice'
@@ -378,7 +378,7 @@ export const SessionPage: React.FC = () => {
                     true
                   );
                 }}
-                title={`Interviewer voice: ${voice.gender}. Click to switch to a ${voice.gender === 'female' ? 'male' : 'female'} interviewer.`}
+                data-tip={`Interviewer voice: ${voice.gender}. Click to switch to a ${voice.gender === 'female' ? 'male' : 'female'} interviewer.`}
                 aria-label={`Interviewer voice is ${voice.gender}. Switch to ${voice.gender === 'female' ? 'male' : 'female'}.`}
                 className="inline-flex min-h-[32px] items-center gap-1 rounded-full border border-[#0ea5e9]/35 bg-[#0ea5e9]/10 px-3 py-1 text-xs font-semibold text-[#0369a1] transition-colors hover:bg-[#0ea5e9]/15"
               >
@@ -428,7 +428,7 @@ export const SessionPage: React.FC = () => {
         {/* Extracted Evidence Drawer */}
         {(resumeLines.length > 0 || jdRequirements.length > 0) && (
           <div data-ui="evidence-drawer" className="bento-card-light px-5 py-4 sm:px-6">
-            <button
+            <button data-tip="Show or hide the resume lines and job requirements we used"
               type="button"
               onClick={() => setShowReferences((prev) => !prev)}
               aria-expanded={showReferences}
@@ -515,7 +515,7 @@ export const SessionPage: React.FC = () => {
               </div>
             )}
             <div className="mt-6 flex flex-col items-center justify-center gap-3 sm:flex-row">
-              <button
+              <button data-tip="Finish creating the questions for this session"
                 type="button"
                 onClick={finishSetup}
                 disabled={finishing}
@@ -528,7 +528,7 @@ export const SessionPage: React.FC = () => {
                 )}
                 <span>{finishing ? 'Writing your questions…' : 'Finish setting up'}</span>
               </button>
-              <Link
+              <Link data-tip="Start a fresh practice session"
                 to="/new"
                 className="btn-pill-secondary-light min-h-[42px] px-6 py-2 text-xs font-semibold"
               >
@@ -555,7 +555,7 @@ export const SessionPage: React.FC = () => {
                 const isAnswered = Boolean(ans);
                 return (
                   <li key={q.id}>
-                    <button
+                    <button data-tip="Jump to this question"
                       type="button"
                       onClick={() => scrollToQuestion(q.position)}
                       className="flex w-full items-center justify-between gap-2 rounded-xl px-2.5 py-2 text-left text-xs transition-colors hover:bg-[#f1f5f9]"

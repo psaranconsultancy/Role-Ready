@@ -84,7 +84,7 @@ export const LiveInterviewPanel: React.FC<{ sessionId: string }> = ({ sessionId 
         </div>
 
         {active ? (
-          <button
+          <button data-tip="Stop the live interview"
             type="button"
             onClick={end}
             className="inline-flex min-h-[42px] items-center gap-1.5 rounded-full border border-[#d70015]/35 bg-[#d70015]/10 px-5 py-2 text-xs font-semibold text-[#d70015] hover:bg-[#d70015]/15"
@@ -93,7 +93,7 @@ export const LiveInterviewPanel: React.FC<{ sessionId: string }> = ({ sessionId 
             <span>End interview</span>
           </button>
         ) : (
-          <button
+          <button data-tip="Start a spoken interview with the AI interviewer"
             type="button"
             onClick={start}
             className="btn-pill-primary min-h-[42px] px-5 py-2 text-xs font-semibold"

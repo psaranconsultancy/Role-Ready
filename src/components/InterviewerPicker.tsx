@@ -38,7 +38,7 @@ export const InterviewerPicker: React.FC = () => {
           const selected = voice.gender === o.value;
           const playing = selected && voice.speakingId === 'preview';
           return (
-            <button
+            <button data-tip="Choose who reads your questions aloud"
               key={o.value}
               type="button"
               role="radio"

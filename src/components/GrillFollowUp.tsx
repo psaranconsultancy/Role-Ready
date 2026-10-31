@@ -198,7 +198,7 @@ export const GrillFollowUp: React.FC<GrillFollowUpProps> = ({
             const m = HEAT_LEVELS[level];
             const active = heat === level;
             return (
-              <button
+              <button data-tip="Pick how tough the follow-up question should be"
                 key={level}
                 type="button"
                 aria-pressed={active}
@@ -228,7 +228,7 @@ export const GrillFollowUp: React.FC<GrillFollowUpProps> = ({
       )}
 
       {feedback && !followUp && (
-        <button
+        <button data-tip="Get a tougher follow-up question on your answer"
           type="button"
           onClick={ask}
           disabled={loading !== null}
@@ -300,7 +300,7 @@ export const GrillFollowUp: React.FC<GrillFollowUpProps> = ({
                 </span>
               </div>
               {speech.supported && (
-                <button
+                <button data-tip="Speak your reply and we'll type it for you"
                   type="button"
                   disabled={loading !== null}
                   onClick={speech.listening ? speech.stop : speech.start}
@@ -324,7 +324,7 @@ export const GrillFollowUp: React.FC<GrillFollowUpProps> = ({
                   {speech.error}
                 </p>
               )}
-              <textarea
+              <textarea data-tip="Answer the follow-up here"
                 id={replyId}
                 rows={4}
                 value={reply}
@@ -342,7 +342,7 @@ export const GrillFollowUp: React.FC<GrillFollowUpProps> = ({
                     : 'Ready.'}
                 </span>
                 <div className="flex w-full gap-2 sm:w-auto">
-                  <button
+                  <button data-tip="Get a different follow-up question"
                     type="button"
                     onClick={ask}
                     disabled={loading !== null}
@@ -355,7 +355,7 @@ export const GrillFollowUp: React.FC<GrillFollowUpProps> = ({
                     )}
                     <span>Different question</span>
                   </button>
-                  <button
+                  <button data-tip="See how your reply holds up"
                     type="submit"
                     disabled={!replyValid || loading !== null}
                     className="btn-pill-primary min-h-[42px] flex-1 px-6 py-2 text-xs font-semibold disabled:cursor-not-allowed disabled:opacity-50 sm:flex-none"
@@ -400,7 +400,7 @@ export const GrillFollowUp: React.FC<GrillFollowUpProps> = ({
                     <p className="text-xs font-semibold text-[#38bdf8]">
                       A stronger reply, from your resume
                     </p>
-                    <button
+                    <button data-tip="Copy the stronger reply"
                       type="button"
                       onClick={copyBetter}
                       className="inline-flex items-center gap-1 text-xs font-semibold text-[#38bdf8] hover:text-white"
@@ -418,7 +418,7 @@ export const GrillFollowUp: React.FC<GrillFollowUpProps> = ({
                   </p>
                 </div>
                 <div className="flex flex-wrap gap-2">
-                  <button
+                  <button data-tip="Try replying to the same follow-up again"
                     type="button"
                     onClick={() => {
                       setVerdict(null);
@@ -429,7 +429,7 @@ export const GrillFollowUp: React.FC<GrillFollowUpProps> = ({
                     <RotateCcw className="h-3.5 w-3.5" aria-hidden="true" />
                     <span>Reply again</span>
                   </button>
-                  <button
+                  <button data-tip="Get another follow-up question"
                     type="button"
                     onClick={ask}
                     disabled={loading !== null}

@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { Loader2 } from 'lucide-react';
 import { AuthProvider, useAuth } from './context/AuthContext';
+import { Tooltips } from './components/Tooltips';
 import { Header } from './components/Header';
 import { LandingPage } from './pages/LandingPage';
 import { LoginPage } from './pages/LoginPage';
@@ -46,6 +47,7 @@ const AppRoutes: React.FC = () => {
   return (
     <div className="min-h-screen bg-[#f1f5f9] text-[#0f172a]">
       <ScrollToTop />
+      <Tooltips />
       <Header />
       <Routes>
         <Route path="/" element={<LandingPage />} />
