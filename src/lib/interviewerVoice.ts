@@ -21,6 +21,8 @@ interface VoiceState {
   blocked: boolean;
   /** Which interviewer voice the candidate picked. */
   gender: InterviewerGender;
+  /** A live two-way interview is running: stay quiet and skip check-ins. */
+  liveActive: boolean;
 }
 
 const synth: SpeechSynthesis | null =
@@ -48,6 +50,7 @@ let state: VoiceState = {
   speakingId: null,
   blocked: false,
   gender: readGender(),
+  liveActive: false,
 };
 
 const listeners = new Set<() => void>();
@@ -224,7 +227,7 @@ export const stopSpeaking = () => {
  * the per-question "Hear it" button, which is an explicit request).
  */
 export const speak = (text: string, id: string, force = false) => {
-  if (!state.supported) return;
+  if (!state.supported || state.liveActive) return;
   if (!state.enabled && !force) return;
   const clean = text.trim();
   if (!clean) return;
@@ -352,6 +355,12 @@ export const speak = (text: string, id: string, force = false) => {
       }
     }, 1000);
   }
+};
+
+/** The live interviewer is talking: keep the read-aloud voice quiet. */
+export const setLiveActive = (liveActive: boolean) => {
+  if (liveActive) stopSpeaking();
+  if (state.liveActive !== liveActive) setState({ liveActive });
 };
 
 /** Switch between the female and male interviewer. */

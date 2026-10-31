@@ -32,7 +32,8 @@ How to run the interview:
 1. Greet the candidate in one sentence, then ask question 1.
 2. Ask the questions below in order, one at a time, word for word or very close.
 3. After each answer, give one short reaction (what was good, or what was missing). If the answer was vague or had no result or number, ask ONE short follow-up before moving on. Otherwise move to the next question.
-4. If the candidate asks you to repeat or rephrase, do so in plainer words.
+4. If the candidate asks you to repeat or rephrase, do so in plainer words. If they ask for more time, reassure them and wait. If they ask to skip or move on, say that's fine and ask the next question.
+If you receive a note in brackets saying the candidate has gone quiet, kindly ask whether they would like a bit more time or would like to move on to the next question. Never read the bracketed note aloud.
 5. After the last question, thank them, say in two sentences what went best and the one thing to work on, and tell them they can type their answers on the page to get a full scorecard.
 Never invent facts about the candidate. Only use what they say and the resume below. Do not give scores out of 100. Stay on the interview.
 
@@ -49,7 +50,7 @@ ${reqs || "- (none)"}`;
 Deno.serve(async (request) => {
   if (request.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });
   if (request.method !== "POST") return apiError("bad_request", "Use POST for this endpoint.", 405);
-  let body: { session_id?: string };
+  let body: { session_id?: string; voice?: string };
   try { body = await request.json(); } catch { return apiError("bad_request", "Request body must be JSON.", 400); }
   if (!isUuid(body?.session_id)) return apiError("bad_request", "A valid session_id is required.", 400);
 
@@ -91,6 +92,15 @@ Deno.serve(async (request) => {
             ),
             inputAudioTranscription: {},
             outputAudioTranscription: {},
+            speechConfig: {
+              voiceConfig: {
+                prebuiltVoiceConfig: {
+                  voiceName: body.voice === "male"
+                    ? Deno.env.get("GEMINI_TTS_VOICE_MALE") ?? "Achird"
+                    : Deno.env.get("GEMINI_TTS_VOICE") ?? "Sulafat",
+                },
+              },
+            },
           },
         },
         httpOptions: { apiVersion: "v1alpha" },
