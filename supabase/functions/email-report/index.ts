@@ -89,9 +89,21 @@ Deno.serve(async (request) => {
   try { body = await request.json(); } catch { return apiError("bad_request", "Request body must be JSON.", 400); }
   if (!isUuid(body?.session_id)) return apiError("bad_request", "A valid session_id is required.", 400);
 
-  const gmailUser = Deno.env.get("GMAIL_USER");
-  const gmailPass = Deno.env.get("GMAIL_APP_PASSWORD")?.replace(/\s+/g, "");
+  // Find the secrets even if a name was typed with different case or spaces.
+  const env = Deno.env.toObject();
+  const pick = (want: string) => {
+    const key = Object.keys(env).find((k) => k.trim().toUpperCase() === want);
+    return key ? env[key]?.trim() : undefined;
+  };
+  const gmailUser = pick("GMAIL_USER");
+  const gmailPass = pick("GMAIL_APP_PASSWORD")?.replace(/\s+/g, "");
   if (!gmailUser || !gmailPass) {
+    // Names only, never values.
+    console.error("email-report: missing secret", {
+      has_user: !!gmailUser,
+      has_password: !!gmailPass,
+      gmail_like_names: Object.keys(env).filter((k) => /gmail|smtp|mail|app_?pass/i.test(k)),
+    });
     return apiError("bad_request", "Email is not set up yet. Download the PDF instead.", 503);
   }
 
