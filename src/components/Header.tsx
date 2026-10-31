@@ -57,7 +57,7 @@ export const Header: React.FC = () => {
         className="frosted-globalnav-dark sticky top-0 z-50 h-12 w-full text-[#f8fafc]"
       >
         <div className="mx-auto flex h-full max-w-[1080px] items-center justify-between gap-4 pl-[max(1rem,env(safe-area-inset-left))] pr-[max(1rem,env(safe-area-inset-right))] sm:pl-[max(1.5rem,env(safe-area-inset-left))] sm:pr-[max(1.5rem,env(safe-area-inset-right))]">
-          <Link
+          <Link data-tip="Go to the RoleReady home page"
             to="/"
             className="flex h-11 items-center gap-2 transition-opacity hover:opacity-90"
             aria-label="RoleReady Home"
@@ -84,7 +84,7 @@ export const Header: React.FC = () => {
 
             {user ? (
               <>
-                <Link
+                <Link data-tip="See your past sessions and scores"
                   to="/history"
                   aria-current={isHistory ? 'page' : undefined}
                   className={`inline-flex items-center gap-1.5 text-xs font-medium transition-colors ${
@@ -96,7 +96,7 @@ export const Header: React.FC = () => {
                   <Clock className="h-3.5 w-3.5" aria-hidden="true" />
                   <span>History</span>
                 </Link>
-                <Link
+                <Link data-tip="Start a new practice interview"
                   to="/new"
                   aria-current={isNew ? 'page' : undefined}
                   className={`inline-flex items-center gap-1.5 text-xs font-medium transition-colors ${
@@ -139,7 +139,7 @@ export const Header: React.FC = () => {
               type="button"
               onClick={() => setShowPricingModal(true)}
               className="inline-flex items-center gap-1.5 whitespace-nowrap rounded-full border border-[#ff9f0a]/35 bg-[#ff9f0a]/10 px-2.5 py-0.5 text-xs font-medium text-[#ff9f0a] transition-colors hover:bg-[#ff9f0a]/20"
-              title="See what's coming next: specialist and executive question sets, Grill With Docs, and salary scripts"
+              data-tip="See what's coming next: specialist and executive question sets, Grill With Docs, and salary scripts"
             >
               <Flame className="h-3 w-3" aria-hidden="true" />
               <span>Coming soon</span>
@@ -157,7 +157,7 @@ export const Header: React.FC = () => {
 
             {user ? (
               <div className="flex items-center gap-2.5">
-                <Link
+                <Link data-tip="Start a new practice interview"
                   to="/new"
                   className="btn-pill-primary px-3.5 py-1 text-xs font-semibold"
                 >
@@ -169,7 +169,7 @@ export const Header: React.FC = () => {
                 >
                   {user.email}
                 </span>
-                <button
+                <button data-tip="Sign out of RoleReady"
                   type="button"
                   onClick={handleSignOut}
                   disabled={signingOut}
@@ -181,13 +181,13 @@ export const Header: React.FC = () => {
               </div>
             ) : (
               <div className="flex items-center gap-2.5">
-                <Link
+                <Link data-tip="Sign in, or create a free account to save your sessions"
                   to="/login"
                   className="px-2.5 py-1 text-xs font-medium text-[#f8fafc]/80 transition-colors hover:text-white"
                 >
-                  Sign in
+                  Sign in / Sign up
                 </Link>
-                <button
+                <button data-tip="Jump straight in with a sample resume and job. No account needed"
                   type="button"
                   onClick={handleTryDemo}
                   disabled={startingDemo}
@@ -203,14 +203,14 @@ export const Header: React.FC = () => {
           {/* Mobile Action + Animated 2-Line Menu Toggle */}
           <div className="flex items-center gap-2 lg:hidden">
             {user ? (
-              <Link
+              <Link data-tip="Start a new practice interview"
                 to="/new"
                 className="btn-pill-primary px-3 py-1 text-xs font-semibold"
               >
                 New
               </Link>
             ) : (
-              <button
+              <button data-tip="Jump straight in with a sample resume and job. No account needed"
                 type="button"
                 onClick={handleTryDemo}
                 disabled={startingDemo}
@@ -220,7 +220,7 @@ export const Header: React.FC = () => {
               </button>
             )}
 
-            <button
+            <button data-tip="Open or close the menu"
               type="button"
               onClick={() => setMobileMenuOpen((prev) => !prev)}
               aria-expanded={mobileMenuOpen}
@@ -302,7 +302,7 @@ export const Header: React.FC = () => {
                     to="/login"
                     className="flex items-center justify-between py-4 font-display text-2xl font-bold tracking-tight text-[#f8fafc] hover:text-[#38bdf8]"
                   >
-                    <span>Sign in or create account</span>
+                    <span>Sign in or sign up</span>
                     <ArrowRight className="h-5 w-5 text-[#86868b]" />
                   </Link>
                 </>

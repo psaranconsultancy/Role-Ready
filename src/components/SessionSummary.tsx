@@ -142,7 +142,7 @@ export const SessionSummary: React.FC<SessionSummaryProps> = ({
         </div>
 
         {weakestQuestion && (
-          <button
+          <button data-tip="Jump to your lowest-scoring question and try it again"
             type="button"
             onClick={() => scrollToQuestion(weakestQuestion.position)}
             className="btn-pill-primary min-h-[42px] shrink-0 self-start px-5 py-2 text-xs font-semibold tabular-nums sm:self-center"
@@ -158,7 +158,7 @@ export const SessionSummary: React.FC<SessionSummaryProps> = ({
 
       {/* Session report: printable page (save as PDF) or the user's own mail app */}
       <div className="mt-5 flex flex-wrap items-center gap-2.5">
-        <button
+        <button data-tip="Save a PDF with every score, fix and stronger answer"
           type="button"
           onClick={handleDownload}
           disabled={makingPdf}
@@ -301,7 +301,7 @@ export const SessionSummary: React.FC<SessionSummaryProps> = ({
                 : 'bg-[#ff453a]';
 
           return (
-            <button
+            <button data-tip="Jump to this question"
               key={q.id}
               type="button"
               onClick={() => scrollToQuestion(q.position)}

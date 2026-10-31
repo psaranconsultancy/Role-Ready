@@ -285,7 +285,7 @@ export const QuestionCard: React.FC<QuestionCardProps> = ({
 
       {voice.supported && (
         <div className="mt-2.5 flex flex-wrap items-center gap-2">
-          <button
+          <button data-tip="Hear the interviewer read this question aloud"
             type="button"
             data-ui="hear-question"
             onClick={() =>
@@ -410,14 +410,14 @@ export const QuestionCard: React.FC<QuestionCardProps> = ({
                 Moving on scores this question 0. You can come back and answer it later.
               </p>
               <div className="mt-3 flex flex-wrap gap-2">
-                <button
+                <button data-tip="Keep going. We'll give you more time on this question"
                   type="button"
                   onClick={giveMoreTime}
                   className="btn-pill-primary min-h-[40px] px-5 py-2 text-xs font-semibold"
                 >
                   I need more time
                 </button>
-                <button
+                <button data-tip="Move on. This question scores 0 until you come back to it"
                   type="button"
                   onClick={skipThisQuestion}
                   disabled={skipping}
@@ -468,7 +468,7 @@ export const QuestionCard: React.FC<QuestionCardProps> = ({
 
           {speech.supported && (
             <div className="mt-2 flex flex-wrap items-center gap-2.5">
-              <button
+              <button data-tip="Speak your answer and we'll type it for you. Press again to stop"
                 type="button"
                 disabled={submitting}
                 onClick={() => {
@@ -520,7 +520,7 @@ export const QuestionCard: React.FC<QuestionCardProps> = ({
             </p>
           )}
 
-          <textarea
+          <textarea data-tip="Write your answer here, or use Speak your answer"
             id={textareaId}
             rows={5}
             disabled={submitting}
@@ -578,14 +578,14 @@ export const QuestionCard: React.FC<QuestionCardProps> = ({
                   type="button"
                   onClick={skipThisQuestion}
                   disabled={skipping}
-                  title="Move on now. This question scores 0 until you come back to it."
+                  data-tip="Move on now. This question scores 0 until you come back to it."
                   className="btn-pill-secondary-light min-h-[42px] px-4 py-2 text-xs font-semibold disabled:opacity-50"
                 >
                   {skipping ? 'Skipping…' : 'Skip for now'}
                 </button>
               )}
               {!submitting && (
-                <button
+                <button data-tip="Not sure what's being asked? We'll put the question another way"
                   type="button"
                   onClick={() => handleSubmit(undefined, true)}
                   className="btn-pill-secondary-light min-h-[42px] px-4 py-2 text-xs font-semibold"
@@ -594,7 +594,7 @@ export const QuestionCard: React.FC<QuestionCardProps> = ({
                 </button>
               )}
               {existingFeedback && !submitting && (
-                <button
+                <button data-tip="Put back your last scored answer and stop editing"
                   type="button"
                   onClick={() => {
                     speech.stop();
@@ -608,7 +608,7 @@ export const QuestionCard: React.FC<QuestionCardProps> = ({
                 </button>
               )}
 
-              <button
+              <button data-tip="Get your score, what worked, one fix and a stronger answer"
                 type="submit"
                 disabled={!isValidLength || submitting}
                 className="btn-pill-primary min-h-[42px] w-full px-6 py-2 text-xs font-semibold disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto"
@@ -658,7 +658,7 @@ export const QuestionCard: React.FC<QuestionCardProps> = ({
           <p className="text-sm text-[#424245]">
             Skipped, so this question scores 0 for now. Answer it any time to replace the 0.
           </p>
-          <button
+          <button data-tip="Clear your answer and have another go at this question"
             type="button"
             onClick={() => {
               setAnswerText('');
@@ -673,7 +673,7 @@ export const QuestionCard: React.FC<QuestionCardProps> = ({
 
       {existingFeedback && !isEditing && nextPosition && onGoToQuestion && (
         <div className="mt-4 flex justify-end">
-          <button
+          <button data-tip="Go to the next question"
             type="button"
             data-ui="next-question"
             onClick={() => onGoToQuestion(nextPosition)}
