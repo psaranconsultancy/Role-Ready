@@ -49,6 +49,7 @@ export const LoginPage: React.FC = () => {
         setPending({ email: email.trim(), reason: 'signin' });
         return;
       }
+      if (/already have an account/i.test(apiErr.error.message)) setMode('signin');
       setError(apiErr);
     } finally {
       setSubmitting(false);
