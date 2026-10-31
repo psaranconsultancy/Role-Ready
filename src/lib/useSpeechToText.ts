@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
+import { stopSpeaking } from './interviewerVoice';
 
 // Browser speech-to-text (PRD should-have: the free fallback for a voice mock).
 // Uses the Web Speech API, which Chrome, Edge and Safari support. Where it is
@@ -71,6 +72,8 @@ export function useSpeechToText(onFinalText: (text: string) => void) {
     const Ctor = getRecognitionCtor();
     if (!Ctor || recognitionRef.current || startingRef.current) return;
     setError(null);
+    // Silence the interviewer first so the mic does not type up its voice.
+    stopSpeaking();
 
     // Ask for the mic first. On phones a blocked mic often makes speech
     // recognition fail silently (button goes red, nothing happens), whereas

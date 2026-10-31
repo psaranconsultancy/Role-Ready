@@ -28,6 +28,7 @@ import { HEAT_LEVELS, useSubscriptionTier } from '../lib/tiers';
 import { ReferenceChip } from './ReferenceChip';
 import { ErrorBanner } from './ErrorBanner';
 import { useSpeechToText } from '../lib/useSpeechToText';
+import { useInterviewerVoice } from '../lib/interviewerVoice';
 
 interface GrillFollowUpProps {
   question: Question;
@@ -85,6 +86,7 @@ export const GrillFollowUp: React.FC<GrillFollowUpProps> = ({
   const [error, setError] = useState<ApiError | null>(null);
   const [lastAction, setLastAction] = useState<'ask' | 'judge'>('ask');
   const [copied, setCopied] = useState(false);
+  const voice = useInterviewerVoice();
   const speech = useSpeechToText((text) =>
     setReply((prev) => (prev.trim() ? `${prev.trimEnd()} ${text}` : text))
   );
@@ -108,7 +110,9 @@ export const GrillFollowUp: React.FC<GrillFollowUpProps> = ({
     setVerdict(null);
     setReply('');
     try {
-      setFollowUp(await askGrillFollowUp(question.id, heat));
+      const asked = await askGrillFollowUp(question.id, heat);
+      setFollowUp(asked);
+      voice.speak(asked.followup, `g:${question.id}`);
       setAskedHeat(heat);
     } catch (err) {
       setError(
@@ -123,13 +127,14 @@ export const GrillFollowUp: React.FC<GrillFollowUpProps> = ({
     if (e) e.preventDefault();
     if (!followUp || !replyValid || loading) return;
     speech.stop();
+    voice.stop();
     setLoading('judge');
     setLastAction('judge');
     setError(null);
     try {
-      setVerdict(
-        await judgeGrillReply(question.id, askedHeat, followUp.followup, reply)
-      );
+      const judged = await judgeGrillReply(question.id, askedHeat, followUp.followup, reply);
+      setVerdict(judged);
+      voice.speak(judged.feedback, `gv:${question.id}`);
     } catch (err) {
       setError(
         toApiError(err, 'llm_failed', 'Grill Me could not judge your reply. Please try again.')
@@ -447,7 +452,7 @@ export const GrillFollowUp: React.FC<GrillFollowUpProps> = ({
       <p className="mt-6 flex items-start gap-1.5 border-t border-white/10 pt-4 text-xs text-[#a1a1a6]">
         <Clock className="mt-0.5 h-3.5 w-3.5 shrink-0 text-[#ff9f0a]" aria-hidden="true" />
         <span>
-          Coming soon: a spoken AI interviewer with a male or female voice,
+          Coming soon: a live two-way voice interview with a male or female voice,
           specialist and executive question sets, and salary negotiation scripts.
         </span>
       </p>

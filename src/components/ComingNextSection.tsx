@@ -11,8 +11,8 @@ interface ComingNextSectionProps {
 const COMING_NEXT = [
   {
     Icon: Mic,
-    title: 'Spoken AI interviewer',
-    text: 'Answer out loud to a male or female AI voice that asks follow-ups in real time.',
+    title: 'Live two-way voice interview',
+    text: 'A real-time conversation with a male or female AI voice that listens and replies as you talk.',
   },
   {
     Icon: Briefcase,
@@ -47,7 +47,7 @@ export const ComingNextSection: React.FC<ComingNextSectionProps> = ({
         </h2>
         <p className="mt-3 text-base text-[#6e6e73] sm:text-lg">
           Everything in RoleReady today is free to try, including Grill Me
-          follow-ups and spoken answers. Here is what we are building next.
+          follow-ups, spoken answers and an interviewer who reads questions aloud. Here is what we are building next.
         </p>
       </div>
 

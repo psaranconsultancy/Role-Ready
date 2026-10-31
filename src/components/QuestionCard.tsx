@@ -6,6 +6,7 @@ import {
   Sparkles,
   Mic,
   Square,
+  Volume2,
 } from 'lucide-react';
 import type {
   Question,
@@ -21,6 +22,7 @@ import { ErrorBanner } from './ErrorBanner';
 import { GrillFollowUp } from './GrillFollowUp';
 import { useSpeechToText } from '../lib/useSpeechToText';
 import { QUESTION_TYPE_LABELS } from '../lib/sessionReport';
+import { useInterviewerVoice, questionScript } from '../lib/interviewerVoice';
 
 const REPHRASE_REQUEST =
   "I don't understand the question. Can you rephrase it in plainer words?";
@@ -59,6 +61,9 @@ export const QuestionCard: React.FC<QuestionCardProps> = ({
     rephrased_question: string;
     hint: string;
   } | null>(null);
+  const voice = useInterviewerVoice();
+  const speakingHere =
+    voice.speakingId !== null && voice.speakingId.endsWith(`:${question.id}`);
   const speech = useSpeechToText((text) =>
     setAnswerText((prev) => (prev.trim() ? `${prev.trimEnd()} ${text}` : text))
   );
@@ -98,6 +103,7 @@ export const QuestionCard: React.FC<QuestionCardProps> = ({
     if (e) e.preventDefault();
     if ((!isValidLength && !askToRephrase) || submitting) return;
     speech.stop();
+    voice.stop();
 
     setSubmitting(true);
     setError(null);
@@ -110,6 +116,10 @@ export const QuestionCard: React.FC<QuestionCardProps> = ({
         // A request to explain the question, not an answer: show plainer wording, keep editing.
         setClarified(res.clarification);
         setAnswerText('');
+        voice.speak(
+          `Let me put that another way. ${res.clarification.rephrased_question} ${res.clarification.hint}`,
+          `cl:${question.id}`
+        );
         return;
       }
       setClarified(null);
@@ -180,6 +190,55 @@ export const QuestionCard: React.FC<QuestionCardProps> = ({
       >
         {question.text}
       </h2>
+
+      {voice.supported && (
+        <div className="mt-2.5 flex flex-wrap items-center gap-2">
+          <button
+            type="button"
+            data-ui="hear-question"
+            onClick={() =>
+              speakingHere
+                ? voice.stop()
+                : voice.speak(
+                    questionScript(question.position, question.text),
+                    `q:${question.id}`,
+                    true
+                  )
+            }
+            aria-pressed={speakingHere}
+            className={`inline-flex min-h-[34px] items-center gap-1.5 rounded-full border px-3.5 py-1 text-xs font-semibold transition-colors ${
+              speakingHere
+                ? 'border-[#0d9488]/40 bg-[#0d9488]/10 text-[#0f766e] hover:bg-[#0d9488]/15'
+                : 'border-[#0284c7]/25 bg-white text-[#0369a1] hover:bg-[#0284c7]/[0.06]'
+            }`}
+          >
+            {speakingHere ? (
+              <>
+                <Square className="h-3 w-3" aria-hidden="true" />
+                <span>Stop the interviewer</span>
+              </>
+            ) : (
+              <>
+                <Volume2 className="h-3.5 w-3.5" aria-hidden="true" />
+                <span>Hear the question</span>
+              </>
+            )}
+          </button>
+          {speakingHere && (
+            <span
+              className="inline-flex items-center gap-1.5 text-xs text-[#0f766e]"
+              aria-live="polite"
+            >
+              <span className="flex h-3 items-end gap-[2px]" aria-hidden="true">
+                <span className="voice-bar h-full w-[3px] rounded-full bg-[#0d9488]" />
+                <span className="voice-bar h-full w-[3px] rounded-full bg-[#0d9488] [animation-delay:150ms]" />
+                <span className="voice-bar h-full w-[3px] rounded-full bg-[#0d9488] [animation-delay:300ms]" />
+              </span>
+              Interviewer speaking
+            </span>
+          )}
+        </div>
+      )}
 
       {question.why_asking && (
         <p className="mt-3 text-sm leading-relaxed text-[#424245]">
