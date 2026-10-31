@@ -15,6 +15,7 @@ import {
 import type { ApiError } from '@contracts';
 import {
   createSession,
+  extractJobDetails,
   deleteSession,
   parseResume,
   generateQuestions,
@@ -79,25 +80,46 @@ export const NewSessionPage: React.FC = () => {
 
   // Fill in the role and company from the job spec. Only fills a field that is
   // empty or still holds our own earlier guess, so a typed value is never lost.
+  // A quick in-browser guess appears at once; then the AI reads the spec and
+  // replaces it with the real job title and company (or clears a wrong guess).
   const autoRoleRef = useRef<string | null>(null);
   const autoCompanyRef = useRef<string | null>(null);
+  const aiRequestRef = useRef(0);
+  const [aiReading, setAiReading] = useState(false);
+  const applyGuess = (guess: { roleTitle: string | null; company: string | null }) => {
+    setRoleTitle((cur) => {
+      const ours = !cur.trim() || cur === autoRoleRef.current;
+      if (!ours) return cur;
+      autoRoleRef.current = guess.roleTitle;
+      return guess.roleTitle ?? '';
+    });
+    setCompany((cur) => {
+      const ours = !cur.trim() || cur === autoCompanyRef.current;
+      if (!ours) return cur;
+      autoCompanyRef.current = guess.company;
+      return guess.company ?? '';
+    });
+  };
   useEffect(() => {
-    const t = window.setTimeout(() => {
-      const guess = jdText.trim().length >= 40 ? guessJobSpecDetails(jdText) : { roleTitle: null, company: null };
-      setRoleTitle((cur) => {
-        const ours = !cur.trim() || cur === autoRoleRef.current;
-        if (!ours) return cur;
-        autoRoleRef.current = guess.roleTitle;
-        return guess.roleTitle ?? '';
-      });
-      setCompany((cur) => {
-        const ours = !cur.trim() || cur === autoCompanyRef.current;
-        if (!ours) return cur;
-        autoCompanyRef.current = guess.company;
-        return guess.company ?? '';
-      });
+    const text = jdText.trim();
+    const quick = window.setTimeout(() => {
+      applyGuess(text.length >= 40 ? guessJobSpecDetails(jdText) : { roleTitle: null, company: null });
     }, 350);
-    return () => window.clearTimeout(t);
+    const requestId = ++aiRequestRef.current;
+    setAiReading(false);
+    const ai = window.setTimeout(async () => {
+      if (text.length < 200) return;
+      setAiReading(true);
+      const result = await extractJobDetails(jdText);
+      if (requestId !== aiRequestRef.current) return; // the spec changed meanwhile
+      setAiReading(false);
+      if (result) applyGuess(result);
+    }, 1200);
+    return () => {
+      window.clearTimeout(quick);
+      window.clearTimeout(ai);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [jdText]);
   const filledFromSpec =
     (!!roleTitle && roleTitle === autoRoleRef.current) ||
@@ -502,7 +524,9 @@ export const NewSessionPage: React.FC = () => {
           {/* 1. Resume PDF Upload Bento Card */}
           <section
             data-ui="upload-card"
-            className="bento-card-light p-6 sm:p-8"
+            className={`bento-card-light p-6 sm:p-8 transition-shadow ${
+              fileError ? 'outline outline-2 outline-offset-2 outline-[#d70015]' : ''
+            }`}
           >
             <div className="flex items-center justify-between gap-2">
               <label
@@ -559,7 +583,9 @@ export const NewSessionPage: React.FC = () => {
                 className={`mt-4 flex cursor-pointer flex-col items-center justify-center rounded-[20px] border-2 border-dashed px-6 py-9 text-center transition-colors ${
                   dragOver
                     ? 'border-[#0284c7] bg-[#0284c7]/[0.06]'
-                    : 'border-black/15 bg-[#f1f5f9]/70 hover:border-[#0284c7]/60 hover:bg-[#f1f5f9]'
+                    : fileError
+                      ? 'border-[#d70015] bg-[#fff1f2]'
+                      : 'border-black/15 bg-[#f1f5f9]/70 hover:border-[#0284c7]/60 hover:bg-[#f1f5f9]'
                 }`}
               >
                 <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#0284c7]/10 text-[#0369a1]">
@@ -635,7 +661,11 @@ export const NewSessionPage: React.FC = () => {
               handleJobSpecFile(e.dataTransfer.files[0]);
             }}
             className={`bento-card-light p-6 sm:p-8 transition-shadow ${
-              jdDragOver ? 'ring-2 ring-[#0284c7] ring-offset-2' : ''
+              jdDragOver
+                ? 'ring-2 ring-[#0284c7] ring-offset-2'
+                : jdError
+                  ? 'outline outline-2 outline-offset-2 outline-[#d70015]'
+                  : ''
             }`}
           >
             <div className="flex flex-wrap items-center justify-between gap-2">
@@ -759,7 +789,8 @@ export const NewSessionPage: React.FC = () => {
                 if (jdError) setJdError(null);
               }}
               placeholder="Paste the full job description here (responsibilities, skills and tools)…"
-              className="mt-3 block w-full rounded-[18px] border border-black/15 bg-[#f1f5f9]/60 p-4 text-base leading-relaxed text-[#0f172a] placeholder:text-[#aeaeb2] focus:border-[#0284c7] focus:bg-white focus:outline-none"
+              aria-invalid={jdError ? true : undefined}
+              className="mt-3 block w-full rounded-[18px] border border-black/15 aria-[invalid=true]:border-2 aria-[invalid=true]:border-[#d70015] aria-[invalid=true]:focus:border-[#d70015] bg-[#f1f5f9]/60 p-4 text-base leading-relaxed text-[#0f172a] placeholder:text-[#aeaeb2] focus:border-[#0284c7] focus:bg-white focus:outline-none"
             />
 
             {jdError && (
@@ -797,10 +828,17 @@ export const NewSessionPage: React.FC = () => {
                 (optional)
               </span>
             </h3>
-            {filledFromSpec && (
-              <p data-ui="role-autofill-note" className="mt-1.5 text-xs text-[#0f766e]">
-                Filled in from your job spec. Change it if it's not right.
+            {aiReading ? (
+              <p data-ui="role-autofill-note" className="mt-1.5 inline-flex items-center gap-1.5 text-xs text-[#0369a1]">
+                <Loader2 className="h-3 w-3 animate-spin" aria-hidden="true" />
+                Reading the job title and company from your job spec…
               </p>
+            ) : (
+              filledFromSpec && (
+                <p data-ui="role-autofill-note" className="mt-1.5 text-xs text-[#0f766e]">
+                  Filled in from your job spec. Change it if it's not right.
+                </p>
+              )
             )}
             <div className="mt-4 grid gap-4 sm:grid-cols-2">
               <div>
