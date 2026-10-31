@@ -1,13 +1,13 @@
-import { useSyncExternalStore } from "react";
-import { supabase } from "./supabase";
-import { isMockMode } from "./api";
+import { useSyncExternalStore } from 'react';
+import { supabase } from './supabase';
+import { isMockMode } from './api';
 
 // The talking interviewer: reads questions and feedback aloud with the
 // browser's built-in speech synthesis (free, no API key, works offline in most
 // browsers). Where speechSynthesis is missing, `supported` is false and the UI
 // hides every voice control, so the text flow is unchanged.
 
-const STORAGE_KEY = "roleready.interviewerVoice";
+const STORAGE_KEY = 'roleready.interviewerVoice';
 
 interface VoiceState {
   supported: boolean;
@@ -19,20 +19,18 @@ interface VoiceState {
 }
 
 const synth: SpeechSynthesis | null =
-  typeof window !== "undefined" && "speechSynthesis" in window
-    ? window.speechSynthesis
-    : null;
+  typeof window !== 'undefined' && 'speechSynthesis' in window ? window.speechSynthesis : null;
 
 const readEnabled = (): boolean => {
   try {
-    return localStorage.getItem(STORAGE_KEY) !== "off";
+    return localStorage.getItem(STORAGE_KEY) !== 'off';
   } catch {
     return true;
   }
 };
 
 let state: VoiceState = {
-  supported: synth !== null && typeof SpeechSynthesisUtterance !== "undefined",
+  supported: synth !== null && typeof SpeechSynthesisUtterance !== 'undefined',
   enabled: readEnabled(),
   speakingId: null,
   blocked: false,
@@ -61,12 +59,7 @@ const pickVoice = () => {
     // Edge's "Natural" voices (e.g. Microsoft Sonia Online) sound far more human.
     if (/natural/i.test(v.name)) s += 6;
     if (/en[-_]GB/i.test(v.lang)) s += 4;
-    if (
-      /daniel|serena|kate|hazel|susan|george|libby|sonia|ryan|samantha/i.test(
-        v.name,
-      )
-    )
-      s += 2;
+    if (/daniel|serena|kate|hazel|susan|george|libby|sonia|ryan|samantha/i.test(v.name)) s += 2;
     if (/premium|enhanced/i.test(v.name)) s += 1;
     return s;
   };
@@ -74,7 +67,7 @@ const pickVoice = () => {
 };
 if (synth) {
   pickVoice();
-  synth.addEventListener?.("voiceschanged", pickVoice);
+  synth.addEventListener?.('voiceschanged', pickVoice);
 }
 
 // Chrome stops long utterances after ~15 seconds, so speak sentence-sized
@@ -85,11 +78,11 @@ let runToken = 0;
 
 const splitIntoChunks = (text: string): string[] => {
   const sentences = text
-    .replace(/\s+/g, " ")
+    .replace(/\s+/g, ' ')
     .trim()
     .match(/[^.!?]+[.!?]*\s*/g) ?? [text];
   const chunks: string[] = [];
-  let current = "";
+  let current = '';
   for (const s of sentences) {
     if ((current + s).length > 180 && current) {
       chunks.push(current.trim());
@@ -109,20 +102,19 @@ const splitIntoChunks = (text: string): string[] => {
 // ?voice=browser to the address to force the built-in voice (?voice=natural
 // switches back).
 
-const NATURAL_KEY = "roleready.naturalVoice";
+const NATURAL_KEY = 'roleready.naturalVoice';
 let naturalFailures = 0;
 let currentAudio: { el: HTMLAudioElement; url: string } | null = null;
 const audioCache = new Map<string, Promise<Blob | null>>();
 
 const naturalEnabled = (): boolean => {
-  if (typeof window === "undefined" || typeof Audio === "undefined")
-    return false;
+  if (typeof window === 'undefined' || typeof Audio === 'undefined') return false;
   if (naturalFailures >= 3 || isMockMode()) return false;
   try {
-    const param = new URLSearchParams(window.location.search).get("voice");
-    if (param === "browser") localStorage.setItem(NATURAL_KEY, "off");
-    if (param === "natural") localStorage.removeItem(NATURAL_KEY);
-    return localStorage.getItem(NATURAL_KEY) !== "off";
+    const param = new URLSearchParams(window.location.search).get('voice');
+    if (param === 'browser') localStorage.setItem(NATURAL_KEY, 'off');
+    if (param === 'natural') localStorage.removeItem(NATURAL_KEY);
+    return localStorage.getItem(NATURAL_KEY) !== 'off';
   } catch {
     return true;
   }
@@ -135,21 +127,18 @@ const toWavBlob = (b64: string, mime: string): Blob => {
   for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
   if (
     /wav/i.test(mime) ||
-    (bytes[0] === 0x52 &&
-      bytes[1] === 0x49 &&
-      bytes[2] === 0x46 &&
-      bytes[3] === 0x46)
+    (bytes[0] === 0x52 && bytes[1] === 0x49 && bytes[2] === 0x46 && bytes[3] === 0x46)
   ) {
-    return new Blob([bytes], { type: "audio/wav" });
+    return new Blob([bytes], { type: 'audio/wav' });
   }
   const rate = Number(/rate=(\d+)/i.exec(mime)?.[1] ?? 24000);
   const header = new DataView(new ArrayBuffer(44));
   const str = (o: number, t: string) =>
     [...t].forEach((c, i) => header.setUint8(o + i, c.charCodeAt(0)));
-  str(0, "RIFF");
+  str(0, 'RIFF');
   header.setUint32(4, 36 + bytes.length, true);
-  str(8, "WAVE");
-  str(12, "fmt ");
+  str(8, 'WAVE');
+  str(12, 'fmt ');
   header.setUint32(16, 16, true);
   header.setUint16(20, 1, true);
   header.setUint16(22, 1, true);
@@ -157,9 +146,9 @@ const toWavBlob = (b64: string, mime: string): Blob => {
   header.setUint32(28, rate * 2, true);
   header.setUint16(32, 2, true);
   header.setUint16(34, 16, true);
-  str(36, "data");
+  str(36, 'data');
   header.setUint32(40, bytes.length, true);
-  return new Blob([header.buffer, bytes], { type: "audio/wav" });
+  return new Blob([header.buffer, bytes], { type: 'audio/wav' });
 };
 
 const fetchNatural = (text: string): Promise<Blob | null> => {
@@ -169,28 +158,27 @@ const fetchNatural = (text: string): Promise<Blob | null> => {
     const { data, error } = await supabase.functions.invoke<{
       audio: string;
       mime: string;
-    }>("speak", {
+    }>('speak', {
       body: { text },
     });
-    if (error || !data?.audio) throw new Error("speak failed");
+    if (error || !data?.audio) throw new Error('speak failed');
     naturalFailures = 0;
-    return toWavBlob(data.audio, data.mime ?? "");
+    return toWavBlob(data.audio, data.mime ?? '');
   })().catch(() => {
     audioCache.delete(text);
     naturalFailures += 1;
     return null;
   });
   audioCache.set(text, p);
-  if (audioCache.size > 40)
-    audioCache.delete(audioCache.keys().next().value as string);
+  if (audioCache.size > 40) audioCache.delete(audioCache.keys().next().value as string);
   return p;
 };
 
 /** Start making the natural voice for a line we expect to speak soon. */
 export const prefetchSpeech = (text: string) => {
   const clean = text.trim();
-  if (clean && state.supported && state.enabled && naturalEnabled())
-    void fetchNatural(clean);
+  if (!clean || !state.supported || !state.enabled || !naturalEnabled()) return;
+  splitIntoChunks(clean).forEach((c) => void fetchNatural(c));
 };
 
 const stopAudio = () => {
@@ -235,43 +223,52 @@ export const speak = (text: string, id: string, force = false) => {
   };
 
   if (naturalEnabled()) {
-    // Wait a little for the natural voice; past that, use the browser voice.
-    const waitMs = Math.min(12000, 5000 + clean.length * 12);
-    const timeout = new Promise<"timeout">((r) =>
-      window.setTimeout(() => r("timeout"), waitMs),
-    );
-    void Promise.race([fetchNatural(clean), timeout]).then((blob) => {
+    // Make every sentence at once and play them in order, so the first one
+    // starts in a couple of seconds. Any sentence that is slow or fails is
+    // read by the browser voice instead, from that point on.
+    const parts = chunks.map((c) => fetchNatural(c));
+    const playPart = (i: number) => {
       if (token !== runToken) return;
-      if (!(blob instanceof Blob)) return browserSpeak();
-      const url = URL.createObjectURL(blob);
-      const el = new Audio(url);
-      currentAudio = { el, url };
-      el.onended = () => finish();
-      el.onerror = () => {
+      if (i >= chunks.length) return finish();
+      const waitMs = Math.min(9000, 4500 + chunks[i].length * 15);
+      const timeout = new Promise<'timeout'>((r) => window.setTimeout(() => r('timeout'), waitMs));
+      void Promise.race([parts[i], timeout]).then((blob) => {
         if (token !== runToken) return;
-        stopAudio();
-        browserSpeak();
-      };
-      el.play().then(
-        () => {
-          if (state.blocked) setState({ blocked: false });
-        },
-        (err: { name?: string }) => {
+        if (!(blob instanceof Blob)) return browserSpeak(i);
+        const url = URL.createObjectURL(blob);
+        const el = new Audio(url);
+        currentAudio = { el, url };
+        el.onended = () => {
+          stopAudio();
+          playPart(i + 1);
+        };
+        el.onerror = () => {
           if (token !== runToken) return;
           stopAudio();
-          if (err?.name === "NotAllowedError") {
-            setState({ blocked: true });
-            return finish();
+          browserSpeak(i);
+        };
+        el.play().then(
+          () => {
+            if (state.blocked) setState({ blocked: false });
+          },
+          (err: { name?: string }) => {
+            if (token !== runToken) return;
+            stopAudio();
+            if (err?.name === 'NotAllowedError') {
+              setState({ blocked: true });
+              return finish();
+            }
+            browserSpeak(i);
           }
-          browserSpeak();
-        },
-      );
-    });
+        );
+      });
+    };
+    playPart(0);
     return;
   }
-  browserSpeak();
+  browserSpeak(0);
 
-  function browserSpeak() {
+  function browserSpeak(start: number) {
     if (!synth) return finish();
 
     // Speak one chunk at a time; Chrome is more reliable this way than with a
@@ -284,7 +281,7 @@ export const speak = (text: string, id: string, force = false) => {
         u.voice = chosenVoice;
         u.lang = chosenVoice.lang;
       } else {
-        u.lang = "en-GB";
+        u.lang = 'en-GB';
       }
       let started = false;
       u.onstart = () => {
@@ -293,13 +290,8 @@ export const speak = (text: string, id: string, force = false) => {
       };
       u.onend = () => sayChunk(i + 1, useChosen);
       u.onerror = (e: SpeechSynthesisErrorEvent) => {
-        if (
-          token !== runToken ||
-          e.error === "interrupted" ||
-          e.error === "canceled"
-        )
-          return;
-        if (e.error === "not-allowed") {
+        if (token !== runToken || e.error === 'interrupted' || e.error === 'canceled') return;
+        if (e.error === 'not-allowed') {
           setState({ blocked: true });
           return finish();
         }
@@ -325,15 +317,14 @@ export const speak = (text: string, id: string, force = false) => {
     };
 
     // Chrome can drop a speak() that comes straight after cancel(); wait a beat.
-    window.setTimeout(() => sayChunk(0, true), 80);
+    window.setTimeout(() => sayChunk(start, true), 80);
 
     // Chrome sometimes never fires the last `end` event, which would leave the
     // interviewer "speaking" for ever (and the idle check-in never starting).
     // Two quiet checks in a row mean it has finished.
     let quietChecks = 0;
     const watchdog = window.setInterval(() => {
-      if (token !== runToken || state.speakingId !== id)
-        return window.clearInterval(watchdog);
+      if (token !== runToken || state.speakingId !== id) return window.clearInterval(watchdog);
       quietChecks = !synth.speaking && !synth.pending ? quietChecks + 1 : 0;
       if (quietChecks >= 2) {
         window.clearInterval(watchdog);
@@ -345,7 +336,7 @@ export const speak = (text: string, id: string, force = false) => {
 
 export const setVoiceEnabled = (enabled: boolean) => {
   try {
-    localStorage.setItem(STORAGE_KEY, enabled ? "on" : "off");
+    localStorage.setItem(STORAGE_KEY, enabled ? 'on' : 'off');
   } catch {
     /* private mode: keep it for this visit only */
   }
@@ -358,6 +349,8 @@ const subscribe = (l: () => void) => {
   return () => listeners.delete(l);
 };
 const getSnapshot = () => state;
+/** Current voice state, outside React. */
+export const getVoiceState = () => state;
 
 /** React hook: the interviewer voice state, plus the actions. */
 export function useInterviewerVoice() {
@@ -371,20 +364,19 @@ export function useInterviewerVoice() {
 }
 
 // Stop talking when the user leaves the page or the tab reloads.
-if (typeof window !== "undefined") {
-  window.addEventListener("pagehide", () => stopSpeaking());
+if (typeof window !== 'undefined') {
+  window.addEventListener('pagehide', () => stopSpeaking());
 }
 
 // ---- What the interviewer says -------------------------------------------
 
-export const questionScript = (position: number, text: string) =>
-  `Question ${position}. ${text}`;
+export const questionScript = (position: number, text: string) => `Question ${position}. ${text}`;
 
 export const feedbackScript = (
   overall: number,
   bandLabel: string,
   whatWorked: string,
-  oneFix: string,
+  oneFix: string
 ) =>
   `You scored ${overall} out of 100. ${bandLabel}. ` +
   `What worked: ${whatWorked} ` +
