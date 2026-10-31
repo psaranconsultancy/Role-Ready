@@ -163,7 +163,7 @@ export const LoginPage: React.FC = () => {
             </ul>
 
             <div className="mt-8 border-t border-white/10 pt-5 text-xs text-[#86868b]">
-              <Link
+              <Link data-tip="Back to the RoleReady home page"
                 to="/"
                 className="inline-flex items-center gap-1.5 font-medium text-[#38bdf8] hover:underline"
               >
@@ -201,7 +201,7 @@ export const LoginPage: React.FC = () => {
           {/* One-Click Demo User Button (mock user, or anonymous Supabase user) */}
           {(
             <div className="mt-6">
-              <button
+              <button data-tip="Try RoleReady straight away with a demo account. Nothing to type"
                 type="button"
                 onClick={handleDemoSignIn}
                 disabled={demoLoading || submitting}
@@ -257,7 +257,7 @@ export const LoginPage: React.FC = () => {
             aria-label="Authentication mode"
             className="mt-4 grid grid-cols-2 rounded-full bg-[#f1f5f9] p-1"
           >
-            <button
+            <button data-tip="Already have an account? Sign in here"
               type="button"
               role="tab"
               aria-selected={mode === 'signin'}
@@ -274,7 +274,7 @@ export const LoginPage: React.FC = () => {
             >
               Sign in
             </button>
-            <button
+            <button data-tip="New here? Create a free account"
               type="button"
               role="tab"
               aria-selected={mode === 'signup'}
@@ -307,7 +307,7 @@ export const LoginPage: React.FC = () => {
               >
                 Email address
               </label>
-              <input
+              <input data-tip="The email you use (or will use) for RoleReady"
                 id="auth-email"
                 type="email"
                 autoComplete="email"
@@ -371,7 +371,7 @@ export const LoginPage: React.FC = () => {
               )}
             </div>
 
-            <button
+            <button data-tip="Sign in or create your account with the details above"
               type="submit"
               disabled={submitting || demoLoading}
               className={`min-h-[46px] w-full rounded-full px-6 py-3 text-sm font-semibold transition-colors disabled:opacity-60 ${

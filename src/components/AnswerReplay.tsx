@@ -10,7 +10,7 @@ export const AnswerReplay: React.FC<{ questionId: string }> = ({ questionId }) =
 
   return (
     <div data-ui="answer-replay" className="mb-3 flex flex-wrap items-center gap-2.5">
-      <button
+      <button data-tip="Listen back to how you sounded"
         type="button"
         onClick={player.playing ? player.stop : player.play}
         aria-pressed={player.playing}

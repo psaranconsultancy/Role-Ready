@@ -316,7 +316,7 @@ export const NewSessionPage: React.FC = () => {
       <div className="frosted-localnav-light sticky top-12 z-30 h-[52px] w-full">
         <div className="mx-auto flex h-full max-w-[960px] items-center justify-between px-4 sm:px-6">
           <div className="flex items-center gap-3">
-            <Link
+            <Link data-tip="Back to your practice history"
               to="/history"
               className="inline-flex items-center gap-1 text-xs font-medium text-[#6e6e73] transition-colors hover:text-[#0f172a]"
             >
@@ -377,7 +377,7 @@ export const NewSessionPage: React.FC = () => {
             </p>
           </div>
 
-          <button
+          <button data-tip="Fill everything in with a sample resume and job spec to see how it works"
             type="button"
             onClick={handleLoadSample}
             disabled={isBusy}
@@ -588,7 +588,7 @@ export const NewSessionPage: React.FC = () => {
                     </p>
                   </div>
                 </div>
-                <button
+                <button data-tip="Remove this resume and choose another"
                   type="button"
                   disabled={isBusy}
                   onClick={() => {
@@ -691,7 +691,7 @@ export const NewSessionPage: React.FC = () => {
                     </p>
                   </div>
                 </div>
-                <button
+                <button data-tip="Upload a different job spec file"
                   type="button"
                   disabled={isBusy}
                   onClick={() => jdFileInputRef.current?.click()}
@@ -747,7 +747,7 @@ export const NewSessionPage: React.FC = () => {
               <span className="h-px flex-1 bg-black/10" aria-hidden="true" />
             </div>
 
-            <textarea
+            <textarea data-tip="Paste the job description, or drop a PDF, Word or text file here"
               ref={jdTextareaRef}
               id="jd-textarea"
               rows={8}
@@ -777,7 +777,7 @@ export const NewSessionPage: React.FC = () => {
             )}
 
             {!jdText.trim() && !jdReading && (
-              <button
+              <button data-tip="Load a sample job spec to try it out"
                 type="button"
                 disabled={isBusy}
                 onClick={handleLoadSampleJobSpec}
@@ -810,7 +810,7 @@ export const NewSessionPage: React.FC = () => {
                 >
                   Role title
                 </label>
-                <input
+                <input data-tip="The job title you're applying for. We fill it in from the job spec when we can"
                   id="role-title"
                   maxLength={100}
                   type="text"
@@ -828,7 +828,7 @@ export const NewSessionPage: React.FC = () => {
                 >
                   Company
                 </label>
-                <input
+                <input data-tip="The company you're applying to. We fill it in from the job spec when we can"
                   id="company-name"
                   maxLength={100}
                   type="text"
@@ -1207,7 +1207,7 @@ export const NewSessionPage: React.FC = () => {
               Creates 6 tailored questions (2 behavioural, 2 technical, 2
               role-specific).
             </p>
-            <button
+            <button data-tip="Read your resume and the job spec, then write your tailored questions"
               type="submit"
               disabled={!canSubmit}
               className="btn-pill-primary min-h-[48px] w-full px-8 py-3 text-sm font-semibold disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto"

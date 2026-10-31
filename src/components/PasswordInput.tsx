@@ -24,7 +24,7 @@ export const PasswordInput: React.FC<Props> = ({ className = '', ...props }) => 
         aria-label={visible ? 'Hide password' : 'Show password'}
         aria-pressed={visible}
         aria-controls={props.id}
-        title={visible ? 'Hide password' : 'Show password'}
+        data-tip={visible ? 'Hide password' : 'Show password'}
         className="absolute bottom-0 right-1 flex h-[44px] w-11 items-center justify-center rounded-full text-[#6e6e73] transition-colors hover:text-[#0369a1] focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#0284c7]"
       >
         {visible ? (
